@@ -1,0 +1,279 @@
+﻿// Import bootstrap styles first, so that these can be overridden.
+@import "../wwwroot/lib/bootstrap-4.3.1/scss/bootstrap.scss";
+
+@import "variables";
+@import "index";
+@import "visual_tools";
+
+html {
+    height: 100vh;
+    font-size: 0.6rem;
+}
+
+body {
+    min-height: 100vh;
+    position: relative;
+}
+
+.wrapper {
+    min-height: calc(100vh - 40px - 104px);
+}
+
+.sci-nav {
+    min-height: 40px;
+}
+
+.sci-footer {
+    min-height: 104px;
+    font-size: 0.9rem;
+}
+
+.main-text {
+    max-width: 100vw;
+    width: 100%;
+}
+
+.main {
+    max-width: 100vw;
+    width: 100%;
+}
+
+.sql-scroll {
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
+    border: 1px solid $gray-500;
+    padding: 5px;
+    max-width: 700px;
+}
+
+.query-results {
+    max-width: 100%;
+
+    h3, h2, h1, pre {
+        font-size: 1rem;
+    }
+}
+
+.form-card {
+    max-width: 700px;
+}
+
+.flex-fill {
+    flex: 1;
+}
+
+@include media-breakpoint-up(sm) {
+    html {
+        font-size: 1rem;
+    }
+
+    .search-bar {
+        display: none;
+    }
+}
+
+@include media-breakpoint-up(md) {
+
+    .wrapper {
+        min-height: calc(100vh - 56px - 104px);
+    }
+
+    .main-text {
+        max-width: 580px;
+    }
+
+    .main {
+        margin-left: 220px;
+    }
+
+    .sci-footer {
+        margin-right: 220px;
+        width: calc(100vw - 250px);
+    }
+}
+
+@media (min-width: 1040px) {
+    .search-bar {
+        display: block;
+        width: 250px;
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .main-text {
+        max-width: 740px;
+    }
+}
+
+@include media-breakpoint-up(xl) {
+    .search-bar {
+        width: 400px;
+    }
+}
+
+.dropdown-item {
+    font-weight: 200;
+    white-space: normal;
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.scrollable-menu {
+    height: auto;
+    max-height: 250px;
+    overflow-x: hidden;
+}
+
+.sciserver-thumbnail {
+    max-width: 100px;
+}
+
+.editor {
+    height: 612px;
+    border: 1px solid $gray-500;
+}
+
+.form-control {
+    height: calc(1.5em + 0.5rem);
+}
+
+.control-label {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 400px;
+    max-width: calc(100vw - 220px - 45px);
+    display: inline-block
+}
+// BACKGROUND STYLES
+// ---------------------------------------------------
+.bg-blue {
+    color: $white-80;
+    background-color: $sciserver-blue;
+}
+
+.bg-blue a {
+    color: $white-50;
+    text-decoration: none;
+}
+
+.bg-blue a:hover, .bg-blue a:focus, .bg-blue a:active {
+    color: $white-80;
+    text-decoration: none;
+}
+
+.bg-purple {
+    color: $sdss-dark-10;
+    background-color: mix($white, $sdss-purple, 80);
+}
+
+.bg-purple li:hover, .bg-purple li:focus, .bg-purple li:active {
+    background-color: mix($white, $sdss-purple, 70);
+    background-image: none;
+}
+
+.bg-purple a {
+    color: $sdss-dark-20;
+    text-decoration: none;
+}
+
+.bg-purple a:hover, .bg-purple a:focus {
+    color: $sdss-dark-20;
+    text-decoration: none;
+}
+
+.card-body li:hover, .bg-purple li:focus, .bg-purple li:active {
+    background-color: mix($white, $sdss-purple, 70);
+    background-image: none;
+}
+
+.card-body a {
+    color: $sdss-purple;
+    font-weight: bold;
+}
+
+.card-body a:hover, .bg-purple a:focus {
+    color: $sdss-dark-20;
+    text-decoration: underline;
+}
+// TEXT STYLES
+// ---------------------------------------------------
+.text-semi-transparent {
+    color: $white-80;
+}
+// CARDS
+// ---------------------------------------------------
+.icon {
+    max-height: calc(150px - 2rem);
+    max-width: 150px;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+.card-blue {
+    background-color: $sciserver-blue;
+    color: $white-80;
+}
+
+.btn-blue {
+    background-color: $sciserver-blue;
+    color: $white-80;
+}
+
+.btn-blue:hover, .btn-blue:focus, .btn-blue:active, .btn-blue:active:focus, .btn-blue.active, .open > .dropdown-toggle.btn-blue {
+    color: $white;
+}
+
+[data-toggle="collapse"], [data-toggle="dropdown"] {
+    cursor: pointer
+}
+
+// SIDEBAR
+// ---------------------------------------------------
+.sidebar {
+    top: 0;
+    position: fixed;
+    padding-top: calc(56px + 1rem); /* Height of navbar */
+    padding-right: 1rem;
+    padding-left: 1rem;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    width: 220px; /* Fixed width for unity across inner pages (regardless of sidebar content) */
+    min-height: 100vh;
+    z-index: 1010; /* render behind navbar and footer */
+}
+
+.sidebar .nav-item {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+}
+
+.sidebar .nav-link {
+    padding-top: 0;
+    padding-right: 0.5rem;
+    padding-left: calc(1.5rem - 15px);
+}
+
+.navbar-fixed-bottom {
+    // render over sidebar
+    position: relative;
+    z-index: 1020;
+}
+
+.index-nav {
+    // Added for IE compatibility
+    z-index: 1020;
+    width: 100%;
+}
+
+.font-size-small {
+    font-size: small;
+    font-weight: bold;
+    padding-right: 10px;
+    vertical-align: middle;
+    text-transform: uppercase;
+}

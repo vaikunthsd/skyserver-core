@@ -1,0 +1,89 @@
+﻿@import "variables";
+
+.index-card {
+    border: $white-10;
+}
+
+.inner {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.outer {
+    background-color: $purple-40;
+    margin-top: 1rem;
+}
+
+.plus-minus {
+    text-indent: -9999px;
+    line-height: 0;
+    font-size: 1rem;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 600;
+}
+
+.plus-minus:after {
+    content: "\f068";
+    text-indent: 0;
+    display: block;
+    height: 1rem;
+    line-height: 1rem;
+}
+
+.card-header.collapsed .plus-minus:after {
+    /* symbol for "collapsed" card */
+    content: '\f067';
+}
+
+.logo {
+    height: 2.5rem;
+
+    @media(min-width: 768px) {
+        height: 4rem;
+    }
+
+    @media(min-width: 992px) {
+        height: 6.5em;
+    }
+}
+
+.index-background {
+    min-height: calc(100vh - 56px - 66px);
+    width: 100%;
+    background-image: url("../images/big_dipper.png");
+    background-repeat: repeat;
+    background-position: center;
+    background-attachment: fixed;
+
+    h1 {
+        font-size: 2.5rem;
+        line-height: 2.5rem;
+    }
+
+    h2 {
+        color: $white-80;
+        max-width: 30rem;
+        font-size: 1rem;
+    }
+
+    @media(min-width: 768px) {
+        h1 {
+            font-size: 4rem;
+            line-height: 4rem;
+        }
+    }
+
+    @media(min-width: 992px) {
+        padding: 0;
+
+        h1 {
+            font-size: 6.5rem;
+            line-height: 6.5rem;
+        }
+
+        h2 {
+            max-width: 40rem;
+            font-size: 1.25rem;
+        }
+    }
+}

@@ -1,0 +1,195 @@
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model SkyserverCore.Models.SkyQueryCrossMatchModel
+@{
+    ViewData["Title"] = "SkyQuery CrossMatch";
+    Layout = "/Views/Shared/_CrossMatchToolsLayout.cshtml";
+    //Html.RenderPartial("messagesAlerts");
+
+
+}
+<h1>@ViewData["Title"]</h1>
+<p>
+    This tool uses <a href="<%=string.IsNullOrEmpty(token) ? skyqueryurl : skyqueryurl + " ?token="+token%>" target="_blank">SkyQuery</a>  web services to run a crossmatch between catalogs of astronomical sources.
+    <br />
+    SkyQuery documentation available <a href="<%=string.IsNullOrEmpty(token) ? skyqueryurl + " Apps/Docs/Default.aspx" : skyqueryurl + "Apps/Docs/Default.aspx?token="+token%>" target="_blank">HERE.</a>
+
+    References to SkyQuery technical papers:
+    <a href="http://scholar.google.hu/citations?view_op=view_citation&hl=hu&user=kllQz-YAAAAJ&cstart=20&sortby=pubdate&citation_for_view=kllQz-YAAAAJ:YsMSGLbcyi4C" target="_blank">Paper 1</a>,
+    <a href="http://scholar.google.hu/citations?view_op=view_citation&hl=hu&user=kllQz-YAAAAJ&cstart=20&sortby=pubdate&citation_for_view=kllQz-YAAAAJ:qxL8FJ1GzNcC" target="_blank">Paper 2</a>,
+    <a href="http://scholar.google.hu/citations?view_op=view_citation&hl=hu&user=kllQz-YAAAAJ&cstart=20&sortby=pubdate&citation_for_view=kllQz-YAAAAJ:roLk4NBRz8UC" target="_blank">Paper 3.</a>
+</p>
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("IsLogedIn") == "true")
+{
+    <div class="card">
+        <div class="card-heading">
+            <h3 align="center">Schema Browser</h3>
+        </div>
+        <div class="card-body">
+            <nav aria-label="breadcrumb">
+                <div id="catalog-path" class="breadcrumb">
+                    <!--<li><a href="#" onclick="updateCatalogs();"><i class="glyphicon glyphicon-home"></i></a></li>-->
+                    <span class="breadcrumb-item"><a href="javascript:void(0)" onclick="updateCatalogs();">CATALOGS <i class="glyphicon glyphicon-home"></i></a></span>
+                    <span id="catalogInPath" class="breadcrumb-item d-none"></span>
+                    <span id="tableInPath" class="breadcrumb-item d-none"></span>
+                    <span id="waitSpinner" class="fa fa-spinner fa-spin fa-3x fa-fw d-none" style="font-size:16px"></span>
+                </div>
+            </nav>
+
+            <div id="schemaTitle" align="center">Catalogs list</div>
+            <!--
+                <div class="list-group schema-browser" id="DataCatalogs" style="max-height: 500px;overflow-y: scroll;overflow-x: scroll;"></div>
+            -->
+            <table id="SchemaTable" class="table table-bordered hover schema-browser-table" style="width:100%;">
+                <!--
+                <thead>
+                    <tr>
+                        <th>Catalog Names</th>
+                    </tr>
+                </thead>
+                -->
+            </table>
+        </div>
+    </div>
+    <h3 align="center">CrossMatch Query:</h3>
+    <div class="dropdown">
+        <label class="dropdown-toggle sample-queries-button btn btn-outline-secondary" data-toggle="dropdown" role="button" aria-expanded="false">Sample Queries <span class="caret"></span></label>
+        <ul class="dropdown-menu scrollable-menu" role="menu" id="samples" aria-labelledby="dropdownMenu">
+            <li><a tabindex="0" href="#" id="simple1">Simple Query</a></li>
+            <li><a tabindex="1" href="#" id="simple2">CrossMatch Query</a></li>
+        </ul>
+    </div>
+    <div class="card card-default">
+        <div class="">
+            <div id="editor">SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
+INTO twowayxmatch
+FROM XMATCH(
+MUST EXIST IN SDSSDR7:PhotoObjAll AS s
+WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
+MUST EXIST IN GALEXGR6:PhotoObjAll AS g
+WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
+LIMIT BAYESFACTOR TO 1e3
+) AS x
+WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
+AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5
+            </div>
+        </div>
+    </div>
+
+
+    <p>
+        <button type="button" align="center" class="btn btn-lg btn-primary" id="submit" style="min-width:8rem;">
+            Submit
+            <i id="submittingLongQuerySpinner" class="fa fa-spinner fa-spin fa-3x fa-fw d-none" style="font-size:16px"></i>
+        </button>
+        <button type="button" align="center" class="btn btn-lg btn-primary" id="quick" style="min-width:8rem;">
+            Quick
+            <i id="submittingQuickQuerySpinner" class="fa fa-spinner fa-spin fa-3x fa-fw d-none" style="font-size:16px"></i>
+        </button>
+        <button type="button" class="btn btn-lg btn-outline-secondary" style="min-width:6rem;" id="info">Info</button>
+    </p>
+    <h3 align="center">My CrossMatch History</h3>
+    <div class="table-responsive">
+        <p align="left">
+            Top # of jobs: &nbsp; <input name="numberOfJobs" id="numberOfJobs" type="text" value="20" size="4" />
+            <button align="center" type="button" class="sample-queries-button primary" id="refreshJobsTableButton"> Refresh Table<i id="waitSpinnerJobsTable" class="fa fa-spinner fa-spin fa-3x fa-fw d-none" style="font-size:16px"></i></button>
+        </p>
+        <table id="jobsTable" class="table-bordered order-column compact jobsTableClass"></table>
+    </div>
+    <textarea class="form-control d-none" id="crossMatchQuery" rows="19">dsedsd</textarea>
+
+
+    <!-- confirm changes modal -->
+    <div class="modal fade" id="queryWasSubmittedModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h2 class="modal-title text-center" id="exampleModalLabel">Query submitted Successfully!</h2>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">&nbsp;&nbsp;  Close &nbsp;&nbsp;</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="showJobsTable()">Show query job</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div>
+        <p>
+            Please <a href="#" onclick="window.location.href = '@Model.AuthenticationURL_Login' + '?callbackUrl=' + window.location.href;">Sign In</a> in order to use the SkyQuery tool.
+        </p>
+    </div>
+}
+@section Scripts {
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+            integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript" src="http://cdn.datatables.net/1.10.12/js/jquery.dataTables.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+    <script type="text/javascript" src="http://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/dataTables.bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.3/ace.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ext-language_tools.js"></script>
+
+
+    <script>
+        var skyqueryUrl = '@Model.skyQueryBaseUrl'
+
+    </script>
+    <script src="~/js/skyquery.js"></script>
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/skyserver.css" />
+
+    <style>
+        /*
+        .schema-browser-table  > tbody > tr > td {
+                vertical-align: top;
+        }
+        */
+        table.dataTable tbody td {
+            vertical-align: top !important;
+        }
+
+        div.dataTables_wrapper {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        #editor {
+            /** Setting height is also important, otherwise editor wont showup**/
+            min-height: 300px;
+        }
+
+        .ace_autocomplete {
+            width: 270px;
+            z-index: 200000;
+            background: #666;
+            color: #eee;
+            border: 0 lightgray solid;
+            position: fixed;
+            box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+            line-height: 1.4;
+        }
+    </style>
+
+}

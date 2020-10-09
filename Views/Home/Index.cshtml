@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Home";
+    ViewData["HeaderStyle"] = "_splashheader";
+    Layout = "/Views/Shared/_EmptyLayout.cshtml";
+
+    Html.RenderPartial("_IndexContent");
+}
+<div class="page-index">
+</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/skyserver.css"/>
+}
+

@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../scripts/skyserver.js"],"names":["$","tooltip"],"mappings":";;AACAA,CAAC,CAAC,YAAY;AACVA,EAAAA,CAAC,CAAC,yBAAD,CAAD,CAA6BC,OAA7B;AACH,CAFA,CAAD","sourcesContent":["﻿\r\n$(function () {\r\n    $('[data-toggle=\"tooltip\"]').tooltip();\r\n});"],"file":"skyserver.js"}

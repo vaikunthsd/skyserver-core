@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+<div class="_messages">
+    <nav class="navbar navbar-static-top navbar-custom">
+
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <span class="navbar-brand">
+                    <a target="_blank" href="http://www.sciserver.org/" class=""><img class="" src="~/images/sciserverlogo.png" alt="Sciserver logo" /></a>
+                </span>
+            </div>
+            <div class="sciserver-messages">
+
+            </div>
+            <div class="skyserver-nav">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        @if (HttpContextAccessor.HttpContext.Session.GetString("IsLogedIn") == "true")
+                        {
+                            <a class="dropdown-toggle" data-toggle="dropdown">@HttpContextAccessor.HttpContext.Session.GetString("USERID")<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="https://apps.sciserver.org/dashboard/files#">Profile</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">History</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Help</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a class="dropdown-toggle" href="#" onclick="window.location.href = '/Home/Logout';">Sign Out</a></li>
+                            </ul>
+                        }
+                        else
+                        {
+                            <a class="dropdown-toggle" href="#" onclick="window.location.href = '@Model.AuthenticationURL_Login' + '?callbackUrl=' + window.location.href;">Sign In</a>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>

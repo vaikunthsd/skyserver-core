@@ -1,0 +1,40 @@
+﻿<script src="~/js/wz_tooltip.js"></script>
+<div class="text-center">
+    <div class="dropdown">
+        <button type="button" id="dquickmenulabel" class="btn btn-blue btn-lg dropdown-toggle" data-toggle="dropdown">
+            Quick Tools <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu scrollable-menu bg-purple" aria-labelled-by="dquickmenulabel">
+            <li class="dropdown-item">
+                <div onmouseover="Tip('Navigate lets you look around in the vicinity of a given point on the sky.')" onmouseout="UnTip()">
+                    @Html.ActionLink("Navigate", "navi", "VisualTools")
+                </div>
+            </li>
+            <li class="dropdown-item">
+                <div onmouseover="Tip('Finding Chart helps you specify the location, height, and width (in celestial coordinates) to look in.')" onmouseout="UnTip()">
+                    <a href="/VisualTools/chartinfo">Finding Chart</a>
+                </div>
+            </li>
+            <li class="dropdown-item">
+                <div onmouseover="Tip('Explore helps you find objects based on their object IDs or their sky position.')" onmouseout="UnTip()">
+                    @Html.ActionLink("Explore", "obj", "VisualTools")
+                </div>
+            </li>
+            <li class="dropdown-item">
+                <div onmouseover="Tip('Quick Look helps you get basic SDSS data about a single object.')" onmouseout="UnTip()">
+                    @Html.ActionLink("Quick Look", "quickobj", "VisualTools")
+                </div>
+            </li>
+            <li class="dropdown-item">
+                <div onmouseover="Tip('The EZ Search form helps you create a SQL query to search the database.')" onmouseout="UnTip()">
+                    @Html.ActionLink("EZSearch", "ezSearch", "SearchTools")
+                </div>
+            </li>
+            <li class="dropdown-item">
+                <div onmouseover="Tip('SQL Search lets you use freeform SQL to search the database')" onmouseout="UnTip()">
+                    @Html.ActionLink("SQL Search", "sql", "SearchTools")
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

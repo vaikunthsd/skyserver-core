@@ -1,0 +1,33 @@
+﻿// SDSS COLORS
+// ---------------------------------------------------
+$sdss-purple: #6256a3; // sdss purple
+$sdss-light-10: lighten( $sdss-purple, 10% ); // lighter
+$sdss-light-50: lighten( $sdss-purple, 50% ); // lighter
+$sdss-light-90: lighten( $sdss-purple, 90% ); // lighter
+$sdss-dark-10: darken( $sdss-purple, 10% ); // darker
+$sdss-dark-15: darken( $sdss-purple, 15% ); // darker
+$sdss-dark-20: darken( $sdss-purple, 20% ); // darker
+$sdss-dark-50: darken( $sdss-purple, 50% ); // darker
+$sdss-gray: #434F5B; //steel gray
+$color-complement: spin( $sdss-purple, 180 );
+
+// SCISERVER COLORS
+// ---------------------------------------------------
+$sciserver-blue: #003466; // SciServer blue
+$sciserver-light-05: lighten($sciserver-blue, 5%); // lighter
+$sciserver-light-10: lighten($sciserver-blue, 10%); // lighter
+$sciserver-light-20: lighten($sciserver-blue, 20%); // lighter
+
+// SEMI TRANSPARENT COLORS
+//
+$white-10: rgba(255, 255, 255, 0.1);
+$white-50: rgba(255, 255, 255, 0.5);
+$white-80: rgba(255, 255, 255, 0.8);
+// transparentize(color, x) --> reduces alpha by 100x%
+$purple-50: transparentize($sdss-purple, 0.5);
+$purple-90: transparentize($sdss-purple, 0.1);
+$purple-20: transparentize($sdss-purple, 0.8);
+$purple-30: transparentize($sdss-purple, 0.7);
+$purple-40: transparentize($sdss-purple, 0.6);
+
+$dropdown-link-hover-bg: $sciserver-blue;

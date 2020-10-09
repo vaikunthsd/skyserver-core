@@ -1,0 +1,94 @@
+﻿<nav class="index-nav navbar sticky-top navbar-expand-md navbar-dark bg-blue text-semi-transparent sci-nav">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#sticky-nav" aria-controls="sticky-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="sticky-nav">
+        <ul class="navbar-nav nav">
+            <li class="nav-item nav-link">@Html.ActionLink("Home", "Index", "Home")</li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="dropdownMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Visual Tools
+                </a>
+                <ul class="dropdown-menu bg-purple" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">@Html.ActionLink("Index", "Index", "VisualTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Navigate", "navi", "VisualTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Explore", "obj", "VisualTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Finding Chart", "chartinfo", "VisualTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Quick Look", "quickobj", "VisualTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Image List", "list", "VisualTools")</li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="dropdownMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Search Tools
+                </a>
+                <ul class="dropdown-menu bg-purple" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">@Html.ActionLink("Index", "Index", "SearchTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("SQL Search", "sql", "SearchTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("EZ Search", "ezsearch", "SearchTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Rectangular Search", "rect", "SearchTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Radial Search", "radial", "SearchTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Imaging Search", "IQS", "SearchTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Spectroscopic Search", "SQS", "SearchTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("IR Spectroscopic Search", "IRQS", "SearchTools")</li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="dropdownMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    CrossMatch Tools
+                </a>
+                <ul class="dropdown-menu bg-purple" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">@Html.ActionLink("Index", "Index", "CrossMatchTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("CrossMatch ID", "ObjectCrossID", "CrossMatchTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Skyquery CrossMatch", "SkyQueryCrossMatch", "CrossMatchTools")</li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="dropdownMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More Tools
+                </a>
+                <ul class="dropdown-menu bg-purple" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">@Html.ActionLink("Index", "Index", "MoreTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("My History", "UserHistory", "MoreTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Schema Browser", "browser", "MoreTools")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Scrolling Sky", "scrollhome", "MoreTools")</li>
+                    <li class="dropdown-item">
+                        @Html.ActionLink("Get Images", "getimghome", "MoreTools")
+                        <ul class="list-unstyled ml-3">
+                            <li>@Html.ActionLink("Get Fields", "fields", "MoreTools")</li>
+                            <li>@Html.ActionLink("Get Spectra", "spectra", "MoreTools")</li>
+                            <li>@Html.ActionLink("Get Plate", "plate", "MoreTools")</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="dropdownMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Support
+                </a>
+                <ul class="dropdown-menu bg-purple" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">@Html.ActionLink("Index", "Index", "Support")</li>
+                    <li class="dropdown-item">@Html.ActionLink("About the Data", "intro", "Support")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Sample Queries", "realquery", "Support")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Famous Places", "placeshome", "Support")</li>
+                    <li class="dropdown-item">@Html.ActionLink("SQL in SkyServer", "sql_help", "Support")</li>
+                    <li role="separator" class="divider"></li>
+                    <li class="dropdown-item">@Html.ActionLink("Sitemap", "Sitemap", "Support")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Site Search", "SiteSearch", "Support")</li>
+                    <li class="dropdown-item">@Html.ActionLink("Contact", "contact", "Support")</li>
+                    <environment include="Development">
+                        <li role="separator" class="divider"></li>
+                        <li class="dropdown-item">@Html.ActionLink("Styles", "Styles", "Support")</li>
+                    </environment>
+                    <li class="dropdown-item"><a href="#">Workbook</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    @*@{
+        Html.RenderPartial("_SiteSearch");
+    }*@
+    @{
+        Html.RenderPartial("_UserDropdown", (GenericModel)@ViewBag.GenericModel);
+    }
+</nav>

@@ -1,0 +1,124 @@
+@model SkyserverCore.Models.ObjectCrossIDModel
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/objectCrossId.js"></script>
+}
+@{
+    Layout = "/Views/Shared/_CrossMatchToolsLayout.cshtml";
+    ViewData["Title"] = "Object CrossID";
+}
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="~/css/skyserver.css" />
+}
+<h1>@ViewData["Title"]</h1>
+<hr />
+<div>
+    <form asp-action="ObjectCrossID" enctype="multipart/form-data">
+        <input type="hidden" name="searchtool" id="searchtool" value="CrossID" />
+        <input type="hidden" name="TaskName" id="TaskName" value="Skyserver.CrossId" />
+        <input type="hidden" name="ReturnHtml" id="ReturnHtml" value="true" />
+        <div class="form-group">
+            <a class="qtitle" href="#" onmouseover="return escape('What type of objects do you want to search for - mages or spectra?');">Search type</a>
+            <a class="qtitle" href="#" onmouseover="return escape('Do you want to get the nearest object or all nearby objects, and primary observations only or all?');">Search scope </a>
+            <a class="qtitle" href="#" onmouseover="return escape('Are you uploading positions or SDSS IDs?');">Upload type </a>
+            <a class="qtitle" href="#" onmouseover="return escape('Do you want to find spectra matching images, and vice-versa?');">JOIN with</a>
+        </div>
+        <div class="form-group">
+            <input id="searchType1" name="searchType" value="photo" type=radio onclick="disableFields(false,true,true);" CHECKED>
+            Images<br>(PhotoObj)
+        </div>
+        <div class="form-group">
+            <input id="photoScope1" name="photoScope" value="nearPrim" type=radio CHECKED />Nearest Primary Object<br>
+            <input id="photoScope2" name="photoScope" value="nearObj" type=radio />Nearest Object<br>
+            <input id="photoScope3" name="photoScope" value="allPrim" type=radio />All Nearby Primary Objects<br>
+            <input id="photoScope4" name="photoScope" value="allObj" type=radio />All Nearby Objects<br>
+        </div>
+        <div class="form-group">
+            <input id="photoUpType1" name="photoUpType" value="ra-dec" type=radio onclick="doRaDecSample(15.5,0.5,14.5,0.6,13.9,0.8,197.614,18.438);" CHECKED />RA, dec<br>
+            <input id="photoUpType2" name="photoUpType" value="run-rerun" type=radio onclick="doSdssIdSample();" />run-rerun-camcol-field-obj
+        </div>
+        <div class="form-group">
+            <input id="joinSpec" name="joinSpec" type="checkbox" onclick="photoQuery()" />Spectra
+        </div>
+        <div class="form-group">
+            <input id="searchType2" name="searchType" value="spectro" type="radio" onclick="disableFields(true,false,true);">Spectra (SpecObj)
+        </div>
+        <div class="form-group">
+            <input id="spectroScope1" name="spectroScope" value="nearPrim" type=radio CHECKED>Nearest Primary Spectrum<br>
+            <input id="spectroScope2" name="spectroScope" value="nearObj" type=radio>Nearest Spectrum<br>
+            <input id="spectroScope3" name="spectroScope" value="allPrim" type=radio>All Nearby Primary Spectra<br>
+            <input id="spectroScope4" name="spectroScope" value="allObj" type=radio>All Nearby Spectra<br>
+        </div>
+        <div class="form-group">
+            <input id="spectroUpType1" name="spectroUpType" value="ra-dec" type=radio onclick="doRaDecSample(15.5,0.5,14.5,0.6,13.9,0.8,197.614,18.438);" CHECKED>RA, dec <br>
+            <input id="spectroUpType2" name="spectroUpType" value="plate-mjd-fiber" type=radio onclick="doPmfSample();">plate-MJD-fiberID
+        </div>
+        <div class="form-group">
+            <input id="joinPhoto" name="joinPhoto" type="checkbox" onclick="specQuery()">Images<br>
+        </div>
+        <div class="form-group">
+            <input id="searchType3" name="searchType" value="apogee" type="radio" onclick="disableFields(true,true,false);"> Infrared Spectra (apogeeStar)
+        </div>
+        <div class="form-group">
+            <input id="apogeeScope1" name="apogeeScope" value="nearPrim" type=radio CHECKED>Nearest
+        </div>
+        <div class="form-group">
+            <input id="apogeeUpType1" name="apogeeUpType" value="ra-dec" type=radio onclick="doRaDecSample(15.5,0.5,14.5,0.6,13.9,0.8,197.614,18.438);" CHECKED>Equatorial (RA/dec)
+            <input id="apogeeUpType2" name="apogeeUpType" value="l-b" type=radio onclick="doLBSample();">Galactic (L/B)
+        </div>
+        <div class="form-group">
+            Search radius [arcmin] Max 3.0 arcmin<input id=radius name=radius VALUE="0.5" SIZE="3">
+        </div>
+        <div class="form-group">
+            Number of preceding non-data columns<input id=firstcol name=firstcol VALUE="1" SIZE="1">
+        </div>
+        <div class="form-group">
+            Cut and paste your upload list here:<br />
+            Or upload it as text file
+            <TEXTAREA cols='40' name='paste' id='paste' rows='4'>  name  ra       dec
+A1   15.5    0.5
+A2   14.5    0.6
+A3   13.9    0.8
+A4   197.614    18.438
+</TEXTAREA>
+        </div>
+        <div class="form-group">
+            <input type="file" name="upload" asp-for="upload">
+        </div>
+        <div class="form-group">
+            <b>Type your <a href="#">SQL query</a> here (see <a href="#">below for help</a>):</b>
+        </div>
+        <div class="form-group">
+            <TEXTAREA cols='85' name='uquery' rows='6'>
+SELECT 
+p.objID, p.ra, p.dec, p.run, p.rerun, p.camcol, p.field,
+dbo.fPhotoTypeN(p.type) as type,
+p.modelMag_u, p.modelMag_g, p.modelMag_r, p.modelMag_i, p.modelMag_z 
+FROM #upload u
+JOIN #x x ON x.up_id = u.up_id
+JOIN PhotoTag p ON p.objID = x.objID 
+ORDER BY x.up_id
+</TEXTAREA>
+        </div>
+        <div class="form-group">
+            <label asp-for="format" class="control-label">Output Format</label>
+            <label class="radio-label" for="HTML"> @Html.RadioButtonFor(m => m.format, "HTML")<span>HTML</span></label>
+            <label class="radio-label" for="CSV"> @Html.RadioButtonFor(m => m.format, "CSV")<span>CSV</span></label>
+            <label class="radio-label" for="XML"> @Html.RadioButtonFor(m => m.format, "XML")<span>XML</span></label>
+            <label class="radio-label" for="JSON"> @Html.RadioButtonFor(m => m.format, "JSON")<span>JSON</span></label>
+            <label class="radio-label" for="VOTable"> @Html.RadioButtonFor(m => m.format, "VOTable")<span>VOTable</span></label>
+            <label class="radio-label" for="FITS"> @Html.RadioButtonFor(m => m.format, "FITS")<span>FITS</span></label>
+            <label class="radio-label" for="MyDB"> @Html.RadioButtonFor(m => m.format, "MyDB")<span>MyDB</span></label>
+            <span asp-validation-for="format" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="TableName" class="control-label"> Table Name</label>
+            <input type="text" asp-for="TableName" name="TableName" class="form-control" id="TableName" value="" />
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Submit" class="btn btn-success" />
+            <input type="reset" value="Reset" class="btn btn-danger" />
+        </div>
+    </form>
+</div>

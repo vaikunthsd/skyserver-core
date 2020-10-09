@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <Configurations>Debug;Release;themeConfig</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
+    <!-- <PackageReference Include="Microsoft.AspNetCore.App" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="scripts\canvasState.js" />
+    <Content Include="scripts\chartVisual.js" />
+    <Content Include="scripts\Control.js" />
+    <Content Include="scripts\Coord.js" />
+    <Content Include="scripts\hammer.js" />
+    <Content Include="scripts\ImageList.js" />
+    <Content Include="scripts\ImagingQuery.js" />
+    <Content Include="scripts\IRspectrosearch.js" />
+    <Content Include="scripts\navigateVisual.js" />
+    <Content Include="scripts\objectCrossId.js" />
+    <Content Include="scripts\radialsearch.js" />
+    <Content Include="scripts\rectangularsearch.js" />
+    <Content Include="scripts\searchformcheckbox.js" />
+    <Content Include="scripts\sharedVisual.js" />
+    <Content Include="scripts\showCanvas.js" />
+    <Content Include="scripts\skyquery.js" />
+    <Content Include="scripts\skyserver.js" />
+    <Content Include="scripts\spectrosearch.js" />
+    <Content Include="scripts\sqlsearch.js" />
+    <Content Include="scripts\STARTBall.js" />
+    <Content Include="scripts\userhistory.js" />
+    <Content Include="scripts\validate_search.js" />
+    <Content Include="scripts\wz_tooltip.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grunt" Version="0.1.13" />
+    <!-- <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" /> -->
+    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Web">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Web.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\css\" />
+    <Folder Include="wwwroot\js\" />
+    <Folder Include="wwwroot\lib\jquery.unobtrusive-ajax\" />
+    <Folder Include="wwwroot\lib\jstree\dist\themes\default\" />
+    <Folder Include="wwwroot\lib\jstree\dist\themes\default-dark\" />
+  </ItemGroup>
+
+</Project>

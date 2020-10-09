@@ -1,0 +1,590 @@
+﻿<div class="container-fluid index-background">
+    @{
+        Html.RenderPartial("_Header");
+
+    }
+    <div class="row mx-5">
+        <div class="col-lg-4">
+            <!--How Card-->
+            <div class="card index-card outer" id="how">
+                <div class="card-header collapsed card-blue" data-toggle="collapse" href="#howAccordion" aria-expanded="false" aria-controls="howAccordion">
+                    <div class="row">
+                        <div class="col">How do I get data?</div>
+                        <div class="col-auto plus-minus"></div>
+                    </div>
+                </div>
+                <div id="howAccordion" class="card-body collapse" data-parent="#how">
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#visualAccordion" aria-expanded="false" aria-controls="visualAccordion">
+                            <div class="row">
+                                <div class="col">Use a Visual Tool</div>
+                                <div class="col-auto text-center"><i class="fas fa-angle-down" style="font-size: 1.25rem;"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Nested Search Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#search" aria-expanded="false" aria-controls="search">
+                            <div class="row">
+                                <div class="col">Search for an object with...</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="search" class="collapse" data-parent="#howAccordion">
+                            <div class="card-body bg-purple">
+                                <ul class="styled-list fa-ul">
+                                    <li>
+                                        <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                                        @Html.ActionLink("Image List", "list", "VisualTools"): generate image cutouts from object positions
+                                    </li>
+                                    <li>
+                                        <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                                        @Html.ActionLink("Imaging Search", "IQS", "SearchTools"): Form-based query for imaging data
+                                    </li>
+                                    <li>
+                                        <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                                        @Html.ActionLink("IR Spectroscopic Search", "IRQS", "SearchTools"): Form-based query for infrared spectroscopic data
+                                    </li>
+                                    <li>
+                                        <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                                        @Html.ActionLink("Spectroscopic Search", "SQS", "SearchTools"): Form-based query for spectroscopic data
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Nested Location Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#location" aria-expanded="false" aria-controls="location">
+                            <div class="row">
+                                <div class="col">Search for an object by location</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="location" class="collapse" data-parent="#howAccordion">
+                            <div class="card-body bg-purple">
+                                <ul class="styled-list fa-ul">
+                                    <li>
+                                        <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                                        @Html.ActionLink("Radial Search", "radial", "SearchTools"): Search the sky around a given point
+                                    </li>
+                                    <li>
+                                        <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                                        @Html.ActionLink("Rectangular Search", "rect", "SearchTools"): Search the sky in a rectangular region
+                                    </li>
+                                    <li>
+                                        <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                                        @Html.ActionLink("EZ Search", "ezsearch", "SearchTools"): Easy search form
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Visual Tools Card-->
+            <div class="card index-card outer" id="visual">
+                <div class="card-header collapsed card-blue" data-toggle="collapse" href="#visualAccordion" aria-expanded="false" aria-controls="visualAccordion" aria-multiselectable="false">
+                    <div class="row">
+                        <div class="col">Visual Tools</div>
+                        <div class="col-auto plus-minus"></div>
+                    </div>
+                </div>
+                <div id="visualAccordion" class="card-body collapse" data-parent="#visual">
+                    <!--Nested Navigate Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#navigate" aria-expanded="false" aria-controls="navigate">
+                            <div class="row">
+                                <div class="col">Navigate</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="navigate" class="collapse" data-parent="#visualAccordion">
+                            <div class="card-body bg-purple">
+                                <div class="row">
+                                    <img class="col img-fluid icon" src="~/images/navigate-icon.png" alt="Navigate icon" />
+                                    <div class="col">
+                                        @Html.ActionLink("Navigate", "navi", "VisualTools") lets you look around in the vicinity of a given point on the sky. Move by clicking on sky objects or the image's frame. Clicking on a sky object displays the basic properties and magnified thumbnail of the object.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Nested Quick Look Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#quick" aria-expanded="false" aria-controls="quick">
+                            <div class="row">
+                                <div class="col">Quick Look</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="quick" class="collapse" data-parent="#visualAccordion">
+                            <div class="card-body bg-purple">
+                                <div class="row">
+                                    <img class="col img-fluid icon" src="~/images/quick-look-icon.png" alt="Quick look icon" />
+                                    <div class="col">
+                                        @Html.ActionLink("Quick Look", "quickobj", "VisualTools") helps you get basic SDSS data about a single object. Data about the object is displayed in the panel. Click on other tools and links to find more information about your object.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Nested Explore Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#explore" aria-expanded="false" aria-controls="explore">
+                            <div class="row">
+                                <div class="col">Explore</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="explore" class="collapse" data-parent="#visualAccordion">
+                            <div class="card-body bg-purple">
+                                <div class="row">
+                                    <img class="col img-fluid icon" src="~/images/explore-icon.png" alt="Explore icon" />
+                                    <div class="col">
+                                        @Html.ActionLink("Explore", "obj", "VisualTools") helps you find objects based on their object IDs or their sky position. Detailed information about the object is displayed in the panel. Click on other tools and links to obtain even more information about your object.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Nested Finding Chart Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#find" aria-expanded="false" aria-controls="find">
+                            <div class="row">
+                                <div class="col">Look up a labelled image with Finding Chart</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="find" class="collapse" data-parent="#visualAccordion">
+                            <div class="card-body bg-purple">
+                                <div class="row">
+                                    <img class="col img-fluid icon" src="~/images/finding-chart-icon.png" alt="Finding chart icon" />
+                                    <div class="col">
+                                        @Html.ActionLink("Finding Chart", "chartinfo", "VisualTools") helps you  specify the location, height, and width (in celestial coordinates) Various drawing options can be specified (opt). Use mark query to select objects of special interest.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Nested Cas Jobs Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#cas" aria-expanded="false" aria-controls="cas">
+                            <div class="row">
+                                <div class="col">Create an advanced query with CasJobs</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="cas" class="collapse" data-parent="#visualAccordion">
+                            <div class="card-body bg-purple">
+                                <div class="row">
+                                    <img class="col img-fluid icon" src="~/images/casjobs.png" alt="Cas Jobs icon" />
+                                    <div class="col">
+                                        <a target="_blank" href="http://skyserver.sdss.org/CasJobs/">CasJobs</a> is an online workbench for large scientific catalogs that allows you to perform synchronous and asynchronous query free-form queries in your browser.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Education Card-->
+            <div class="card index-card outer mb-lg-3" id="education">
+                <div class="card-header collapsed card-blue" data-toggle="collapse" href="#educationAccordion" aria-expanded="false" aria-controls="educationAccordion">
+                    <div class="row">
+                        <div class="col">Educational Resources</div>
+                        <div class="col-auto plus-minus"></div>
+                    </div>
+                </div>
+                <div id="educationAccordion" class="card-body collapse" data-parent="#education">
+                    <!--Nested Visual Search Results-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#skyserver" aria-expanded="false" aria-controls="skyserver">
+                            <div class="row">
+                                <div class="col">Skyserver</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="skyserver" class="collapse" data-parent="#educationAccordion">
+                            <div class="card-body bg-purple">
+                                <p>
+                                    SkyServer's educational resources, including projects and activities for learners of all ages are now available on Voyages.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Voyages Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#voyages" aria-expanded="false" aria-controls="voyages">
+                            <div class="row">
+                                <div class="col">Voyages</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="voyages" class="collapse" data-parent="#educationAccordion">
+                            <div class="card-body bg-purple">
+                                <img src="~/images/sdssvoyages-icon.png" class="img-fluid icon" alt="Voyages Icon" />
+                                <p>
+                                    <a href="http://voyages.sdss.org/">Voyages</a> - The Educational website for the SDSS, Voyages serves up activities, resources, and research experiences that build on data from the Sloan Digital Sky Survey.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <!-- What Card-->
+            <div class="card index-card outer" id="what">
+                <div class="card-header collapsed card-blue" data-toggle="collapse" href="#whatAccordion" aria-expanded="false" aria-controls="whatAccordion">
+                    <div class="row">
+                        <div class="col">What can I do with my data?</div>
+                        <div class="col-auto plus-minus"></div>
+                    </div>
+                </div>
+                <div id="whatAccordion" class="card-body collapse" data-parent="#what">
+                    <div class="card index-card inner">
+                        <div class="card-body bg-purple">
+                            <p>Although you don't need to be logged in to SciServer to use SkyServer, logging in gives you greater ability to integrate with other SciServer web apps.</p>
+                        </div>
+                    </div>
+                    <!--Nested Visual Search Results Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#visualSearch" aria-expanded="false" aria-controls="visualSearch">
+                            <div class="row">
+                                <div class="col">Save your visual search results</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="visualSearch" class="collapse" data-parent="#whatAccordion">
+                            <div class="card-body bg-purple">
+                                <div class="row">
+                                    <img class="col img-fluid icon" src="~/images/sdsslogo.png" alt="Skyserver logo" />
+                                    <div class="col">
+                                        <p>
+                                            Navigate, Explore, and Quick Look let you save your results to an online Workbook. Just click Save in Workbook to save your results, and Show Workbook to view your results.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Nested Search Results Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#searchResults" aria-expanded="false" aria-controls="searchResults">
+                            <div class="row">
+                                <div class="col">Save your search results</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="searchResults" class="collapse" data-parent="#whatAccordion">
+                            <div class="card-body bg-purple">
+                                <div class="row">
+                                    <img class="col img-fluid icon" src="~/images/sciserver_logo_inverted_vertical.png" alt="SciServer logo" />
+                                    <div class="col">
+                                        <p>
+                                            While you are logged into SciServer search forms allow you to save your data to MyDB, your own personal database. From there, your data is available in any SciServer app.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Nested CasJobs MyDB Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#myDB" aria-expanded="false" aria-controls="myDB">
+                            <div class="row">
+                                <div class="col">Download your MyDB data from CasJobs</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="myDB" class="collapse" data-parent="#whatAccordion">
+                            <div class="card-body bg-purple">
+                                <div class="row">
+                                    <img class="col img-fluid icon" src="~/images/casjobs.png" alt="Casjobs logo" />
+                                    <div class="col">
+                                        <p>
+                                            Your MyDB tables can be viewed and downloaded from <a href="http://skyserver.sdss.org/CasJobs/MyDB.aspx">CasJobs</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Nested Compute Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#compute" aria-expanded="false" aria-controls="compute">
+                            <div class="row">
+                                <div class="col">Analyze your data with SciServer Compute</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="compute" class="collapse" data-parent="#whatAccordion">
+                            <div class="card-body bg-purple">
+                                <div class="row">
+                                    <img class="col img-fluid icon" src="~/images/sciserver_compute.png" alt="Sciserver Compute logo" />
+                                    <div class="col">
+                                        <p>
+                                            <a href="http://compute.sciserver.org/dashboard/">Compute's Jupyter Notebooks</a> enable cloud-based analysis next to your data in the cloud, no downloading required. Use Python, R, and MATLAB to analyze your data in the cloud.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Nested Compare Easy Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#compareEasy" aria-expanded="false" aria-controls="compareEasy">
+                            <div class="row">
+                                <div class="col">Compare multiple databases (easy)</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="compareEasy" class="collapse" data-parent="#whatAccordion">
+                            <div class="card-body bg-purple">
+                                <div class="row">
+                                    <img class="col img-fluid icon" src="~/images/cross-id-icon.png" alt="Cross ID icon" />
+                                    <div class="col">
+                                        <p>
+                                            <a href="http://compute.sciserver.org/dashboard/">Cross-ID</a> is a simple tool that enables you to perform dynamic cross identifications of SDSS objects against a user defined list.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Nested Compare Hard Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#compareHard" aria-expanded="false" aria-controls="compareHard">
+                            <div class="row">
+                                <div class="col">Compare multiple databases (advanced)</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="compareHard" class="collapse" data-parent="#whatAccordion">
+                            <div class="card-body bg-purple">
+                                <div class="row">
+                                    <img class="col img-fluid icon" src="~/images/skyquery.png" alt="Skyquery icon" />
+                                    <div class="col">
+                                        <a href="http://voservices.net/skyquery/">SkyQuery</a> is a scalable database system for cross-matching astronomical source catalogs.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Search Tools Card-->
+            <div class="card index-card outer">
+                <div class="card-header collapsed card-blue" data-toggle="collapse" href="#searchList" aria-expanded="false" aria-controls="searchList">
+                    <div class="row">
+                        <div class="col">Search Tools</div>
+                        <div class="col-auto plus-minus"></div>
+                    </div>
+                </div>
+                <div id="searchList" class="card-body collapse bg-purple" data-parent="#search">
+                    <ul class="styled-list fa-ul">
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            @Html.ActionLink("SQL Search", "sql", "SearchTools") - Submit a freeform SQL (Structured Query Language) query
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            <a href="http://skyserver.sdss.org/dr14/en/tools/search/form/default.aspx">EZ Search</a> - Easy search form
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            @Html.ActionLink("Rectangular Search", "rect", "SearchTools") - Search the sky in a rectangular region
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            @Html.ActionLink("Rectangular Search", "rect", "SearchTools") - Search the sky around a given point
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            @Html.ActionLink("Imaging Search", "IQS", "SearchTools") - Form-based query on imaging data
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            @Html.ActionLink("Spectroscopic Search", "SQS", "SearchTools") - Form-based query on spectroscopic data
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            @Html.ActionLink("IR Spectroscopic Search", "IRQS", "SearchTools") - Form-based query on infrared spectroscopic data
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            @Html.ActionLink("Skyquery CrossMatch", "SkyQueryCrossMatch", "CrossMatchTools") - For running a statistical crossmatch against big catalogs with SkyQuery
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--SciServer Card-->
+            <div class="card index-card outer mb-lg-3" id="sciserver">
+                <div class="card-header collapsed card-blue" data-toggle="collapse" href="#sciserverList" aria-expanded="false" aria-controls="sciserverList">
+                    <div class="row">
+                        <div class="col">SciServer</div>
+                        <div class="col-auto plus-minus"></div>
+                    </div>
+                </div>
+                <div id="sciserverList" class="card-body collapse bg-purple" data-parent="#sciserver">
+                    <div class="row">
+                        <div class="col text-center">
+                            <a href="http://skyserver.sdss.org/CasJobs/" target="_blank">
+                                <img src="~/images/casjobs.png" class="sciserver-thumbnail" alt="Casjobs icon" />
+                                <div class="caption">
+                                    <p>CasJobs</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col text-center">
+                            <a href="http://compute.sciserver.org/dashboard/" target="_blank">
+                                <img src="~/images/sciserver_compute.png" class="sciserver-thumbnail" alt="Sciserver Compute icon" />
+                                <div class="caption">
+                                    <p>Compute</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col text-center">
+                            <a href="http://scidrive.org/scidrive/" target="_blank">
+                                <img src="~/images/sciserver_icons_SciDrive.png" class="sciserver-thumbnail" alt="SciDrive icon" />
+                                <div class="caption">
+                                    <p>SciDrive</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col text-center">
+                            <a> 
+                            <img src="~/images/skyquery.png" class="sciserver-thumbnail" alt="SkyQuery icon" />
+                            <div class="caption">
+                                <a href="http://voservices.net/skyquery/">SkyQuery</a>
+                            </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <!--Help Card-->
+            <div class="card index-card outer" id="help">
+                <div class="card-header collapsed card-blue" data-toggle="collapse" href="#helpList" aria-expanded="false" aria-controls="helpList">
+                    <div class="row">
+                        <div class="col">How do I find help?</div>
+                        <div class="col-auto plus-minus"></div>
+                    </div>
+                </div>
+                <div id="helpList" class="card-body collapse bg-purple" data-parent="#help">
+                    <ul class="styled-list fa-ul">
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            Read the <a href="http://www.sciserver.org/support/help/">documentation</a> on SciServer.
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            Report a bug or ask a technical question on the <a href="http://www.sciserver.org/support/bug-report-and-suggestion-form/">SciServer helpdesk.</a>
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            Contact the SDSS helpdesk with science questions: <a href="mailto:helpdesk@sdss.org">helpdesk@sdss.org</a>
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            Read the SDSS scientific documentation for the latest Data Release at <a href="https://www.sdss.org/">sdss.org</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--Other Tools Card-->
+            <div class="card index-card outer" id="other">
+                <div class="card-header collapsed card-blue" data-toggle="collapse" href="#otherList" aria-expanded="false" aria-controls="otherList">
+                    <div class="row">
+                        <div class="col">Other Tools</div>
+                        <div class="col-auto plus-minus"></div>
+                    </div>
+                </div>
+                <div id="otherList" class="card-body collapse bg-purple" data-parent="#other">
+                    <ul class="styled-list fa-ul">
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            @Html.ActionLink("History", "UserHistory", "MoreTools") - Review the results from SkyServer tools you have used in the past.
+
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            @Html.ActionLink("Schema Browser", "browser", "MoreTools") - Browse database tables, columns, views, and stored procedures in the SDSS and other databases
+                        </li>
+                        <li>
+                            @Html.ActionLink("Scrolling Sky", "scrollhome", "MoreTools") -Watch the sky scroll past the SDSS camera during an observation.
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            Get Images...
+                            <ul class="styled-list fa-ul">
+                                <li>
+                                    <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                                    @Html.ActionLink("Get Fields", "fields", "MoreTools") - Get SDSS images from the run, camcol, field, and image size.
+                                </li>
+                                <li>
+                                    <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                                    @Html.ActionLink("Get Spectra", "spectra", "MoreTools") - Get SDSS images of spectra by plate and fiber number.
+                                </li>
+                                <li>
+                                    <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                                    @Html.ActionLink("Get Plate", "plate", "MoreTools") - Get images of spectra by Plate ID
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa fa-arrow-right"></i></span>
+                            @Html.ActionLink("CrossMatch ID", "ObjectCrossID", "CrossMatchTools") - Cross-ID is a simple tool that enables you to perform dynamic cross identifications of SDSS objects against a user defined list.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--What data Card-->
+            <div class="card index-card outer mb-3" id="data">
+                <div class="card-header collapsed card-blue" data-toggle="collapse" href="#dataAccordion" aria-expanded="false" aria-controls="dataAccordion">
+                    <div class="row">
+                        <div class="col">What data can I find here?</div>
+                        <div class="col-auto plus-minus"></div>
+                    </div>
+                </div>
+                <div id="dataAccordion" class="card-body collapse" data-parent="#data">
+                    <!--Nested SDSS Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#sdss" aria-expanded="false" aria-controls="sdss">
+                            <div class="row">
+                                <div class="col">SDSS data</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="sdss" class="collapse" data-parent="#dataAccordion">
+                            <div class="card-body bg-purple">
+                                <p>
+                                    The Sloan Digital Sky Survey has created the most detailed three-dimensional maps of the Universe ever made, with deep multi-color images of one third of the sky, and spectra for more than three million astronomical objects. Learn and explore all phases and surveys—past, present, and future—of the SDSS.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!--And Card-->
+                    <div class="card index-card inner">
+                        <div class="card-header collapsed card-blue" data-toggle="collapse" href="#and" aria-expanded="false" aria-controls="and">
+                            <div class="row">
+                                <div class="col">And...</div>
+                                <div class="col-auto plus-minus"></div>
+                            </div>
+                        </div>
+                        <div id="and" class="collapse" data-parent="#dataAccordion">
+                            <div class="card-body bg-purple">
+                                <p>
+                                    tbc
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!--container-fluid-->
