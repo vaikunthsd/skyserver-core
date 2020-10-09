@@ -1,0 +1,92 @@
+﻿@model SkyserverCore.Models.SQLModel
+@{
+    Layout = "/Views/Shared/_SearchToolsLayout.cshtml";
+    ViewData["Title"] = "SQL Search";
+}
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.3/ace.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ext-language_tools.js"></script>    
+    <script src="~/js/sqlsearch.js"></script>    
+}
+
+@section Styles {
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="~/css/skyserver.css" />
+}
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<div class="container pl-0 float-xl-left justify-content-center">
+    <div class="row">
+        <div class="col-xl-7">
+            <div class="card form-card">
+                <div class="card-body bg-purple">
+                    <form asp-action="sql" id="sqlSearchForm">
+                        <input type="hidden" asp-for="searchTool" name="searchtool" id="searchtool" value="SQL" />
+                        <input type="hidden" asp-for="TaskName" name="TaskName" id="TaskName" value="Skyserver.Search.SQL" />
+                        <input TYPE="hidden" asp-for="syntax" VALUE="NoSyntax" id="syntax" name="syntax">
+                        <input type="hidden" asp-for="ReturnHtml" name="ReturnHtml" id="ReturnHtml" value="true" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <div id="editor" name="editor" class="editor"></div>
+                            <textarea name="cmd" id="cmd" style="display:none;"></textarea>
+                        </div>
+                        <div class="row my-1">
+                            <div class="col-4">
+                                <div class="text-center bg-blue rounded">
+                                    <label asp-for="format" class="control-label">Output Format</label>
+                                </div>
+                            </div>
+                            <div class="col radio-button-group">
+                                <label class="radio-label" for="HTML" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "HTML")<span>HTML</span></label>
+                                <label class="radio-label" for="CSV" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "CSV")<span>CSV</span></label>
+                                <label class="radio-label" for="XML" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "XML")<span>XML</span></label>
+                                <label class="radio-label" for="JSON" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "JSON")<span>JSON</span></label>
+                                <label class="radio-label" for="VOTable" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "VOTable")<span>VOTable</span></label>
+                                <label class="radio-label" for="FITS" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "FITS")<span>FITS</span></label>
+                                <label class="radio-label" for="MyDB" onclick="javascript:showTable();"> @Html.RadioButtonFor(m => m.format, "MyDB")<span>MyDB</span></label>
+                            </div>
+                            <span asp-validation-for="format" class="text-danger"></span>
+                        </div>
+                        <div class="row my-1" id="table_name_group">
+                            <div class="col-4">
+                                <div class="text-center bg-blue rounded">
+                                    <label class="control-label">Table Name</label>
+                                </div>
+                            </div>
+                            <div class="col text-center">
+                                <input class="form-control form-control" type="text" asp-for="TableName" name="TableName" id="TableName" value="" />
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            <input type="submit" value="Submit" class="btn btn-success" />
+                            <input type="button" id="sqlClear" value="Clear" class="btn btn-warning" />
+                            <input type="submit" id="sqlCheck" value="Check Syntax" class="btn btn-warning" />
+                            <input type="reset" id="resetQuery" value="Reset" class="btn btn-danger" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 pl-xl-0">
+            @{
+                Html.RenderPartial("_SampleQueries");
+            }
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col" id="queryResults" name="queryResults">
+            <div id="cmd_div">
+                <div class="sample-query-text d-none">
+                    @Html.Raw(@Model.cmd)
+                </div>
+            </div>
+            <div class="query-results">
+                @Html.Raw(@Model.queryResults)
+            </div>
+        </div>
+    </div>
+</div>

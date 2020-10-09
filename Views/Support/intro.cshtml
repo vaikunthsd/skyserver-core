@@ -1,0 +1,493 @@
+﻿
+@{
+    ViewData["Title"] = "About the Database";
+    Layout = "~/Views/Shared/_SupportLayout.cshtml";
+}
+<div class="main-text">
+    <h1>@ViewData["Title"]</h1>
+    <div class="row">
+        <div class="col">
+            <p>The Catalog Archive Server (CAS) provides access to the database that contains the object catalogs and related data from the Sloan Digital Sky Survey-III (SDSS-III). It is a companion to the Science Archive Server (SAS), which allows users to download raw (FITS) images and spectra from the survey. The SkyServer provides the Web interface to the CAS database. This page describes the database organization and structure.</p>
+        </div>
+        <div class="col">
+            <ul class="rhs-pagemenu">
+                <li>
+                    <a href="#overview">Overview of Data Organization</a>
+                    <ul>
+                        <li><a href="#sdss">The SDSS Catalog Data Model</a></li>
+                        <li><a href="#imaging">Imaging (Photo) Data Tables</a></li>
+                        <li><a href="#spectro">Spectro/Tiling/GalSpec/SPP Data Tables</a></li>
+                        <li><a href="#apogee">APOGEE Tables (DR10 and beyond)</a></li>
+                        <li><a href="#manga">MaNGA Tables (DR13 and beyond)</a></li>
+                        <li><a href="#wise">WISE Tables (DR12 and beyond)</a></li>
+                        <li><a href="#galazy">Galaxy Zoo Tables</a></li>
+                        <li><a href="#boss">BOSS Galaxy Product Tables</a></li>
+                        <li><a href="#metadata">Metadata and Other Tables</a></li>
+                        <li><a href="#hierarchical">The Hierarchical Triangular Mesh (HTM)</a></li>
+                        <li><a href="#database">Database Indices</a></li>
+                    </ul>
+                </li>
+                <li><a href="#accessing">Accessing the CAS Data</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <h2 id="overview">Overview of Data Organization</h2>
+
+    <h2 id="sdss">The SDSS Catalog Data Model</h2>
+    <p>The SDSS catalog data is stored in a commercial relational database management system (DBMS) - Microsoft's SQL Server. The data is therefore organized in several 2-dimensional tables. The tables and their relationships to each other are referred to as the schema in database jargon. The Schema link in the menubar above takes you to the Schema page where you can browse the database schema.</p>
+
+    <p>Diagrammatic view of the DR15 schema Database schema</p>
+
+    <p>There are 3 different types of data in the tables - imaging data is in the photo group of tables, spectroscopic and tiling data is in the spectro tables, and other data such as documentation or other information about the photo and spectro data, i.e. metadata, is in the meta tables. Some tables are also created specifically for speed or convenience, for example the SpecPhotoAll table, which contains a pre-computed JOIN of relevant fields in the PhotoObjAll and SpecObjAll tables.</p>
+
+    <p>The important tables are described below, along with the views that are currently defined on each table. A view is a subset of the corresponding table that can be used instead of the table - in other words it is a virtual table. A view is usually faster than using the base table, since it only loads a subset of the objects, but more importantly, the views we have defined on the tables select only the objects that are important for science, and they filter out non-science objects such as sky, QA or defective observations. As such, even though we list the base tables for completeness below, in the vast majority of the cases, you should use the views defined on the tables instead of the tables themselves, e.g. use the PhotoObj and SpecObj views for science instead of the PhotoObjAll and SpecObjAll tables.</p>
+
+    <p><a class="totop">Back to top</a></p>
+
+    <h2 id="imaging">Imaging (Photo) Data Tables</h2>
+
+    <p>The important tables and views are described below. For each table, the views and indices are defined on that table are described in brief. For more information, please see the Table Descriptions help page and the Schema Browser.</p>
+
+    <h3>PhotoObjAll</h3>
+    <p>By far the largest table in the database, PhotoObjAll contains the 100+ parameters for each imaging (photo) object. For most of these parameters, there are actually 5 rows each, one for each wavelength band. This table includes data on all photo objects, not just science objects, hence the name PhotoObjAll. The view of this table that includes only science objects and excludes sky and other unknown objects is the PhotoObj view. The PhotoObjAll table is there for completeness, but science queries are usually done on the PhotoObj view.</p>
+
+    <h4>PhotoObjAll Views</h4>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>View Name</th>
+                <th>Contents</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>PhotoFamily</td>
+                <td>These are in PhotoObj, but neither PhotoPrimary or Photosecondary.</td>
+                <td>
+                    These objects are generated if they are neither primary nor secondary survey objects but a composite object that has been deblended or the part of an object that has been deblended wrongfully (like the spiral arms of a galaxy). These objects are kept to track how the deblender is working. It inherits all members of the PhotoObj class.
+                </td>
+            </tr>
+            <tr>
+                <td>PhotoObj</td>
+                <td>All primary and secondary objects in the PhotoObjAll table, which contains all the attributes of each photometric (image) object.</td>
+                <td>It selects PhotoObj with mode=1 or 2.</td>
+            </tr>
+            <tr>
+                <td>PhotoPrimary</td>
+                <td>These objects are the primary survey objects.</td>
+                <td>Each physical object on the sky has only one primary object associated with it. Upon subsequent observations secondary objects are generated. Since the survey stripes overlap, there will be secondary objects for over 10% of all primary objects, and in the southern stripes there will be a multitude of secondary objects for each primary (i.e. reobservations).</td>
+            </tr>
+            <tr>
+                <td>PhotoSecondary</td>
+                <td>Secondary objects are reobservations of the same primary object.</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>PhotoTag</td>
+                <td>The most popular columns from PhotoObjAll.</td>
+                <td>This view contains the most popular columns from the PhotoObjAll table, and is intended to enable faster queries if they only request these columns by making use of the cache. Performance is also enhanced by an index covering the columns in this view in the base table (PhotoObjAll).</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4>PhotoObjAll Indices</h4>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Index Type</th>
+                <th>Key or Field List</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>primary key</td>
+                <td>objID</td>
+            </tr>
+            <tr>
+                <td>foreign key</td>
+                <td>Field(fieldID)</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>mode, cy, cx, cz, htmID, type, flags, ra, dec, u, g, r, i, z</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>htmID, cx, cy, cz, type, mode, flags, ra, dec, u, g, r, i, z</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>htmID, run, camcol, field, rerun, type, mode, flags, cx, cy, cz, g, r</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>field, run, rerun, camcol, type, mode, flags, rowc, colc, ra, dec, u, g, r, i, z</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>fieldID, objID, ra, dec, r, type, flags</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>SpecObjID, cx, cy, cz, mode, type, flags, ra, dec, u, g, r, i, z</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>cx, cy, cz, htmID, mode, type, flags, ra, dec, u, g, r, i, z</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>run, mode, type, flags, u, g, r, i, z, Err_u, Err_g, Err_r, Err_i, Err_z</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>run, camcol, rerun, type, mode, flags, ra, dec, fieldID, field, u, g, r, i, z</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>run, camcol, field, mode, parentID, q_r, q_g, u_r, u_g, fiberMag_u, fiberMag_g, fiberMag_r, fiberMag_i, fiberMag_z</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>run, camcol, type, mode, cx, cy, cz</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>ra, [dec], type, mode, flags, u, g, r, i, z, psfMag_u, psfMag_g, psfMag_r, psfMag_i, psfMag_z</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>b, l, type, mode, flags, u, g, r, i, z, psfMag_u, psfMag_g, psfMag_r, psfMag_i, psfMag_z</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>phototag</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>parentid, mode, type</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Field</h3>
+
+    <p>This table contains all the measured parameters of each imaging field (offsite), along with relevant summary statistics, and astrometric and photometric information.</p>
+
+    <h4>Field Indices</h4>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Index Type</th>
+                <th>Key or Field List</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>primary key</td>
+                <td>fieldID</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>field, camcol, run, rerun</td>
+            </tr>
+            <tr>
+                <td>covering index</td>
+                <td>run, camcol, field, rerun</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>PhotoProfile</h3>
+
+    <p>This table contains the light profiles of SDSS photo objects.</p>
+
+    <h4>PhotoProfile Indices</h4>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Index Type</th>
+                <th>Key or Field List</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>primary key</td>
+                <td>objID, bin, band</td>
+            </tr>
+            <tr>
+                <td>foreign key</td>
+                <td>PhotoObjAll(objID)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>FieldProfile</h3>
+
+    <p>This table contains the light profiles of SDSS field objects.</p>
+
+    <h4>FieldProfile Indices</h4>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Index Type</th>
+                <th>Key or Field List</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>primary key</td>
+                <td>fieldID, bin, band</td>
+            </tr>
+            <tr>
+                <td>foreign key</td>
+                <td>Field(fieldID)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Neighbors</h3>
+
+    <p>SDSS objects within 0.5 arcmins and their match parameters are stored here. Make sure to filter out unwanted PhotoObj, like secondaries.</p>
+
+    <h4>Neighbors Indices</h4>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Index Type</th>
+                <th>Key or Field List</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>primary key</td>
+                <td>objID, NeighborObjID</td>
+            </tr>
+            <tr>
+                <td>foreign key</td>
+                <td>PhotoObjAll(objID)</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <h3>First, RC3, Rosat, TwoMASS, TwoMASSXSC and Usno</h3>
+
+    <p>These tables contain matches between the FIRST, RC3, ROSAT, 2MASS, 2MASSXSC (2MASS Extended Source Catalog) and USNO survey objects respectively and SDSS.</p>
+
+    <p><a class="totop">Back to top</a></p>
+    <h2 id="spectro">Spectro/Tiling/GalSpec/SPP Data Tables</h2>
+
+    The important spectro, tiling, galSpec and spp (Stellar Parameter Pipeline) data tables are described here. The tiling table names are prefixed by "sdss" to distinguish them from tiling tables for BOSS (Baryon Oscillation Spectroscopic Survey) data in the future. For more information, please see the Table Descriptions help page and the Schema Browser.
+    PlateX - This table contains data as exported (the X is for exported) from a given plate used for spectroscopic observations. Each plate has 640 observed spectra and hence 640 corresponding entries in SpecObjAll.
+    PlateX Indices:
+    Index Type	Key or Field List
+    primary key	plateID
+    covering index	htmID, ra, dec, cx, cy, cz
+    SpecObjAll - This is a base table containing ALL the spectroscopic information, including a lot of duplicate and bad data. Use the SpecObj view instead (see below), which has the data properly filtered for cleanliness.
+    SpecObjAll Views:
+    View Name	Contents	Description
+    SpecObj	A view of Spectro objects that just has the clean spectra.	The view excludes QA and Sky and duplicates. Use this as the main way to access the spectro objects.
+    SpecObjAll Indices:
+    Index Type	Key or Field List
+    primary key	specObjID
+    foreign key	PlateX(plateID)
+    covering index	htmID, ra, dec, cx, cy, cz, sciencePrimary
+    covering index	BestObjID, sourceType, sciencePrimary, class, htmID, ra, dec, plate, mjd, fiberid, z, zErr
+    covering index	class, zWarning, z, sciencePrimary, plateId, bestObjID, targetObjId, htmID, ra, dec
+    covering index	targetObjID, sourceType, sciencePrimary, class, htmID, ra, dec
+    covering index	ra, [dec], class, plate, tile, z, zErr, sciencePrimary, plateID, bestObjID
+    covering index	fluxObjID
+    SpecPhotoAll - The combined spectro and photo parameters of an object in SpecObjAll. This is a precomputed join between the PhotoObjAll and SpecObjAll tables. The photo attibutes included cover about the same as in the PhotoTag view. The table also includes certain attributes from the Tile table.
+    SpecPhotoAll Views:
+    View Name	Contents	Description
+    SpecPhoto	A view of joined Spectro and Photo objects that have the clean spectra.	The view includes only those pairs where the SpecObj is a sciencePrimary, and the BEST PhotoObj is a PRIMARY (mode=1).
+    SpecPhotoAll Indices:
+    Index Type	Key or Field List
+    primary key	specObjID
+    foreign key	SpecObjAll(specObjID)
+    covering index	objID, sciencePrimary, class, z, targetObjid
+    covering index	targetObjID, sciencePrimary, class, z, objid
+    sdssTileAll - Contains information about individual tiles (offsite) on the sky.
+    sdssTileAll Views:
+    View Name	Contents	Description
+    sdssTile	A view of sdssTileAll that have untiled=0	The view excludes those sdssTiles that have been untiled.
+    sdssTileAll Indices:
+    Index Type	Key or Field List
+    primary key	tile
+    foreign key	sdssTilingRun(tileRun)
+    covering unique index	tileRun, tile
+    covering index	htmID, racen, deccen, cx, cy, cz
+    sdssTiledTargetAll - This table stores information that keeps track of why a target (offsite) was assigned to a tile (offsite).
+    sdssTiledTargetAll Views:
+    None found
+    sdssTiledTargetAll Indices:
+    Index Type	Key or Field List
+    primary key	targetID
+    covering index	htmID, ra, dec, cx, cy, cz
+    sdssTilingGeometry - This table contains geometrical information about tiling regions, including tiling boundaries. The TileBoundary view serves up the boundaries.
+    sdssTilingGeometry Views:
+    View Name	Contents	Description
+    sdssTilingBoundary	A view of sdssTilingGeometry objects that have isMask = 0	The view excludes those sdssTilingGeometry objects that have isMask = 1. See also sdssTilingMask.
+    sdssTilingMask	A view of sdssTilingGeometry objects that have isMask = 1	The view excludes those sdssTilingGeometry objects that have isMask = 0. See also sdssTilingBoundary.
+    sdssTilingGeometry Indices:
+    Index Type	Key or Field List
+    primary key	tilingGeometryID
+    foreign key	sdssTilingRun(tileRun)
+    sdssTilingRun - Contains basic information about each run of the tiling software.
+    sdssTilingInfo - Contains information on what happened to a Target in a run of tiling software.
+    galSpecExtra, galSpecIndx, galSpecInfo and galSpecLine- These tables contain the estimated physical parameters, the spectral index measurements, general information about the spectroscopic analysis and the emission line measurements from the MPA-JHU spectroscopic catalog.
+    galSpecExtra Indices:
+    Index Type	Key or Field List
+    primary key	specObjID
+    galSpecIndx Indices:
+    No indices defined on this table
+    galSpecInfo Indices:
+    Index Type	Key or Field List
+    primary key	specObjID
+    galSpecLine Indices:
+    Index Type	Key or Field List
+    primary key	specObjID
+    sppLines and sppParams- These tables contain the line and paramater measurements from the Stellar Parameter Pipeline.
+    sppLines Indices:
+    Index Type	Key or Field List
+    primary key	specObjID
+    sppParams Indices:
+    Index Type	Key or Field List
+    primary key	specObjID
+
+    <p><a class="totop">Back to top</a></p>
+    <h2 id="apogee">APOGEE Tables (DR10 and beyond)</h2> Back to Top
+    These are the catlog data products for the Apache Point Observatory (APO) Galaxy Evolution Experiment survey..
+    apogeeDesign - This table contains all the design parameters used in designing plates for APOGEE spectra.
+    apogeeField - This table contains the name, location and number of visits expected for an APOGEE field.
+    apogeeObject - This table contains all the parameters that went into targeting objects for APOGEE spectra.
+    apogeePlate - This table contains the parameters for an APOGEE spectral plate.
+    apogeeStar - This table contains the data in the combined spectrum for an APOGEE star.
+    apogeeVisit - This table corresponds to the data in a single spectrum visit in APOGEE.
+    apogeeStarVisit - This is a linking table that links an APOGEE combined star spectrum with the visits that were used to create the combined spectrum.
+    apogeeStarAllVisit - This is a version of the apogeeStarVisit table that includes all the visits for that star, including good, bad, commsssioning, not, etc.
+    aspcapStar - This table contains the data in the ASPCAP (Apogee Stellar Parameter and Chemical Abundances Pipeline) entry for an APOGEE star.
+    aspcapStarCovar - This table contains selected covariance matrix fields for the ASPCAP entry for an APOGEE star.
+
+    <p><a class="totop">Back to top</a></p>
+    <h2 id="manga">MaNGA Tables (DR13 and beyond)</h2>
+    Selected catalog data products from the Mapping Nearby Galaxies at APO survey are available as of DR13 in the following tables. More data will be available in future releases. There are links to the MaNGA data cubes in the Explore page for MaNGA objects..
+    mangaDrpAll - Final summary file of the MaNGA Data Reduction Pipeline (DRP). Contains all of the information required to find a given set of spectra for a target.
+    mangaTarget - MaNGA Target Catalog. This table contains the details of the three main MaNGA samples, Primary, Secondary and Color-Enhanced, as well as the ancillary targets.
+
+    <p><a class="totop">Back to top</a></p>
+    <h2 id="wise">WISE Tables (DR12 and beyond)</h2>
+    SDSS tables associated with the Wide-field Infrared Survey Explorer (WISE) are listed here.
+    WISE_allsky - The WISE catalog. The columns have mostly been copied without modification from the WISE catalog distributed by IRSA, so that documentation (mostly copied here) largely applies.
+    WISE_allsky Indices:
+    Index Type	Key or Field List
+    primary key	cntr
+    covering index	w1mpro
+    covering index	w2mpro
+    covering index	w3mpro
+    covering index	w4mpro
+    covering index	n_2mass
+    covering index	tmass_key
+    covering index	ra, dec
+    covering index	glat, glon
+    covering index	j_m_2mass
+    covering index	h_m_2mass
+    covering index	k_m_2mass
+    covering index	w1rsemi
+    covering index	blend_ext_flags
+    covering index	w1cc_map
+    covering index	w2cc_map
+    covering index	w3cc_map
+    covering index	w4cc_map
+    covering index	rjce
+    WISE_xmatch - This is a 'join table' which contains 'pointers' to the matched objects in the SDSS and WISE tables.
+    WISE_xmatch Indices:
+    Index Type	Key or Field List
+    primary key	sdss_objID, wise_cntr
+    covering index	wise_cntr
+    wiseForcedTarget - (DR13 and beyond) This table contains WISE forced-photometry of SDSS primary sources. See here for the method.
+    wiseForcedTarget Indices:
+    Index Type	Key or Field List
+    primary key	objID
+    covering index	ra, dec, has_wise_phot, treated_as_pointsource
+
+    <p><a class="totop">Back to top</a></p>
+    <h2 id="boss">BOSS Galaxy Product Tables</h2>
+    These are derived data products from the Baryon Oscillation Spectroscopic Survey. They each have a primary key index on specobjid.
+    emissionLinesPort - Emission line kinematics results for BOSS galaxies using GANDALF.
+    stellarMassPassivePort - Estimated stellar masses for BOSS galaxies using photometric method, assuming passive model.
+    stellarMassStarformingPort - Estimated stellar masses for BOSS galaxies using photometric method, assuming a star-forming model.
+    stellarMassPCAWiscBC03 and stellarMassPCAWiscM11 - Estimated stellar masses for BOSS galaxies using PCA technique.
+
+    <p><a class="totop">Back to top</a></p>
+    <h2 id="galaxy">Galaxy Zoo Tables</h2>
+    These are the results of galaxy classification from the Galaxy Zoo site:
+    zooConfidence - Measures of classification confidence from Galaxy Zoo.
+    zooMirrorBias - Results from the bias study using mirrored images from Galaxy Zoo.
+    zooMonochromeBias - Results from the bias study that introduced monochrome images in Galaxy Zoo.
+    zooNoSpec - Morphology classifications of galaxies without spectra from Galaxy Zoo.
+    zooSpec - Morphological classifications of spectroscopic galaxies from Galaxy Zoo.
+    zooVotes - Vote breakdown in Galaxy Zoo results.
+
+    <p><a class="totop">Back to top</a></p>
+    <h2 id="metadata">Metadata and Other Tables</h2>
+    DBObjects - An auto-generated documentation table that contains a description of every object (table, view, function, stored procedure) in the database.
+    DBViewCols - An auto-generated table containing a description of every column in every table in the database.
+    DBColumns - An auto-generated table containing a description of every column in every view in the database.
+
+    <p><a class="totop">Back to top</a></p>
+    <h2 id="hierarchical">The Hierarchical Triangular Mesh (HTM)</h2>
+    We have built a spatial indexing scheme called the Hierarchical Triangular Mesh (HTM) that spatially decomposes the region of the sky that is covered by the SDSS data and enables much faster spatial searches of the data by coordinate cuts.
+
+    <p><a class="totop">Back to top</a></p>
+    <h2 id="database">Database Indices</h2>
+    In addition to the HTM, which is an overall indexing scheme for multidimensional spatial data, the DBMS itself has the capability to define indices for fast searches on each table. We have defined indices on all the major tables.
+
+    An index is a tree representation of a subset of the columns in a table that enables much faster searches of the table (compared to sequential scans of the table data) when constraints involving those columns are included in the query. All tables have an index on their primary key (unique row identifier), but the larger tables have indexes in addition to the primary key index. In all there are 3 kinds of indices:
+
+    Primary Key Index - index on the unique primary key of a table.
+    Foreign Key Index - index on a foreignkey of a table, i.e. a column that is a primary key of another table.
+    Covering Index - an index that covers one or more columns of a table. This is a combined index on those fields, so it speeds up searches if any of those fields are included in the WHERE clause.
+    Click here to view a table of all the current indices defined on the data.
+
+    <p><a class="totop">Back to top</a></p>
+    <h2 id="accessing">Accessing the CAS Data</h2>
+    The CAS uses a Microsoft SQL Server database to store and serve the data. Users can access this data by a number of methods.
+
+    Radial search. Allows entry of a central coordinate, radius, and constraints on the five simplified magnitudes (ugriz). This query returns ONLY the object coordinates, type. simplified mags with errors, and the object id, as well as the quantities necessary to get data from the SAS (run/rerun/camcol/field/obj).
+    Rectangular Search. Identical to the radial search, except that the user specifies a minimum and maximum RA and Dec.
+    Imaging Query Search (SQS) form. A comprehensive web form query to search for imaging data in the CAS (along with matching spectroscopic data if needed).
+    Spectroscopic Query Search (SQS) form. A comprehensive web form query to search for spectroscopic data in the CAS (along with matching imaging data if needed).
+    InfraRed Query Search (IRQS) form. A special web form to search for infrared (APOGEE) data.
+    SQL web form. Users can enter Structured Query Language (SQL) queries in a form, and the query will be executed. The query is limited in duration (usually 10 minutes), or output size (500k rows). This query type allows selection of various attributes, combined photometric and spectroscopic queries, and the application of complex constraints. Users new to SQL will want to read our SQL help and the description of the data model and the parameters stored in the various tables.
+    CrossID. Users input or upload a list of object names and coordinates, and get the nearest oject or objects in the SDSS database for each input object. The match radius is adjustable up to three arcminutes, and users can choose the quantities they want output for each match. The input list is limited to 1000 objects and the output to 10000 objects.
+    In addition, the SkyServer provides a tool called the Schema Browser, with which users can browse the various tables, views, and functions available for SQL queries, as well as the different columns available in each. All of the SkyServer interfaces allow data to be returned in HTML, XML, or CSV (comma separated variable) format.
+    CasJobs batch query service. CasJobs allows you to submit queries and recover the results at a later time. You may submit queries that have much more generous limits of time and output (because they are executed in asynchronous mode) and save the results to your own database on the server called MyDB. There is a user guide and FAQ available on the CasJobs site.
+    In addition to these database access tools, we have developed some simple interfaces to retrieve color JPG images for lists of objects, with optional overlays of catalog data, finding charts, and a navigation tool that allows you to move around a sky region in a MapQuest-like fashion:
+    Finding Chart. Returns a single JPEG image centered on (ra,dec). This tool allows scaling of the output image, and a variety of overlays are available.
+    Cutout Service. Users can upload a list of up to 1000 objects, and have small JPEG image cutouts for each object displayed, 100 to a page. A variety of overlays are available.
+    Navigator. Displays a JPEG of an area of the sky, and allows the user to zoom and pan. A variety of overlays are available.
+    Object Explorer. Enables you to find individual objects, either based upon their object IDs, or their sky position. The page presents a concise summary of all relevant information about the object, and provides links to all the additional information, like neighbors, fields, the spectroscopic object, spectral plates, cross-identifications in other surveys, or photometric redshifts of galaxies. We also provide links to the low-level data available as binary FITS tables. These include the corrected frames, bit-masks, binned sky, the atlas images and the spectra.
+
+    <p><a class="totop">Back to top</a></p>
+</div>
+@section Styles {
+<link rel="stylesheet" href="~/css/skyserver.css" />
+}

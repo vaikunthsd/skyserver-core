@@ -1,0 +1,169 @@
+@model SkyserverCore.Models.NavigateVisualModel
+
+@{
+    Layout = "/Views/Shared/_VisualToolsLayout.cshtml";
+    ViewData["Title"] = "Navigate";
+}
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="~/css/skyserver.css" />
+}
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<div class="row">
+    <input type="hidden" asp-for="SpecObjID" name="SpecObjID" id="SpecObjId" value="" />
+    <div class="col-auto">
+        <div>
+            <span><b> Select Image Source:  </b></span>
+            <fieldset name="imgsrc">
+                <input type="radio" id="sdss" name="imgsrc" value="sdss" checked="checked" onclick="setImageSource('Z')" /><span class='s'>SDSS</span>
+                <input type="radio" id="twomass" name="imgsrc" value="twomass" onclick="setImageSource('X')" /><span class='s'>2MASS</span>
+            </fieldset>
+            <br />
+        </div>
+        <div id="navi-wrapper" class="navi-wrapper avoid-clicks">
+            <img class="chart-image d-none" id="chart-image" src="">
+            <div class="chart-overlay d-flex flex-column">
+                <div class="row allow-clicks">
+                    <div class="col-auto" id="controls">
+                        <div class="buttons">
+                            <button type="button" class="zoom-in btn btn-light" onclick="return stepZoom(0.9)">
+                                <span><i class="fa fa-plus"></i></span>
+                            </button>
+                            <div>
+                                <div>
+                                    <div class="vrange slidecontainer allow-clicks">
+                                        <input type="range" min="0.15" max="60" value="" class="slider" id="myRange">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="zoom-out btn btn-light" onclick="return stepZoom(1.1)">
+                                <span><i class="fa fa-minus"></i></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col align-content-center">
+                    <div id="spinner" class="text-warning text-center" role="status">
+                        <h3>Loading...</h3>
+                    </div>
+                    <div id="limitedDrawingAlert" style="display: none" class="spinner-border text-danger text-center">
+                        Some "Drawing Options" aren't available at this scale
+                    </div>
+                </div>
+                <div class="row align-items-end">
+                    <div class="col">
+                        <div class="card rounded chart-card bg-purple" id="drawCard">
+                            <div class="card-header rounded collapsed allow-clicks card-blue" data-toggle="collapse" href="#draw" aria-expanded="false" aria-controls="draw">
+                                Drawing Options<br />
+                            </div>
+                            <div id="draw" class="collapse" data-parent="#drawCard">
+                                <div class="card-body rounded allow-clicks p-1">
+                                    <input type="checkbox" onclick="toggleGrid();" name="Grid" id="Grid">Grid <br />
+                                    <input type="checkbox" onclick="toggleLabel();" name="Label" id="Label">Label <br />
+                                    <input class="limitedDrawing" type="checkbox" onclick="setopt(this,'P')" name="PhotoObjs" id="PhotoObjs">Photometric objects <br />
+                                    <input class="limitedDrawing" type="checkbox" onclick="setopt(this,'S')" name="SpecObjs" id="SpecObjs">Objects with spectra <br />
+                                    <input type="checkbox" onclick="setopt(this,'I')" name="InvertImage" id="InvertImage">Invert Image <br />
+                                </div>
+                                <div class="card-header bg-blue">
+                                    Advanced options<br />
+                                </div>
+                                <div class="card-body rounded allow-clicks p-1">
+                                    <input type="checkbox" onclick="setopt(this,'A')" name="APOGEE" id="APOGEE">APOGEE Spectra <br />
+                                    <input class="limitedDrawing" type="checkbox" onclick="setopt(this,'O')" name="Outline" id="Outline">SDSS Outlines <br />
+                                    <input class="limitedDrawing" type="checkbox" onclick="setopt(this,'B')" name="BoundingBox" id="BoundingBox">SDSS Bounding Boxes <br />
+                                    <input type="checkbox" onclick="setopt(this,'F')" name="Fields" id="Fields">SDSS Fields <br />
+                                    <input type="checkbox" onclick="setopt(this,'M')" name="Masks" id="Masks">SDSS Masks <br />
+                                    <input type="checkbox" onclick="setopt(this,'Q')" name="Plates" id="Plates">SDSS Plates <br />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card rounded chart-card alllow-clicks" id="imgCard">
+                            <div class="card-header rounded collapsed card-blue allow-clicks" data-toggle="collapse" href="#img" aria-expanded="false" aria-controls="img">
+                                Image Options<br />
+                            </div>
+                            <div id="img" class="collapse" data-parent="#imgCard">
+                                <div class="card-body allow-clicks p-1">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="row allow-clicks my-1">
+                                        <div class="col-5 pr-0">
+                                            <div class="text-center bg-blue rounded">
+                                                <label class="control-label" asp-for="ra">RA (deg)</label>
+                                            </div>
+                                        </div>
+                                        <div class="col pl-1">
+                                            <input type="text" class="form-control allow-clicks" size="3" maxlength="20" align="right" value="" name="ra" id="ra" onchange="setRa(); myResubmit();">
+                                        </div>
+                                    </div>
+                                    <div class="row allow-clicks my-1">
+                                        <div class="col-5 pr-0">
+                                            <div class="text-center bg-blue rounded">
+                                                <label class="control-label" asp-for="dec">DEC (deg)</label>
+                                            </div>
+                                        </div>
+                                        <div class="col pl-1">
+                                            <input type="text" class="form-control allow-clicks" size="3" maxlength="20" align="right" value="" name="dec" id="dec" onchange="setDec();  myResubmit();">
+                                        </div>
+                                    </div>
+                                    <div class="row allow-clicks my-1">
+                                        <div class="col-5 pr-0">
+                                            <div class="text-center bg-blue rounded">
+                                                <label class="control-label" asp-for="scale">Scale ("/px)</label>
+                                            </div>
+                                        </div>
+                                        <div class="col pl-1">
+                                            <input type="text" class="form-control allow-clicks" size="3" maxlength="20" align="right" value="" name="scale" id="scale" onchange="setScale(0);  myResubmit();">
+                                        </div>
+                                    </div>
+                                    <input type="text" class="d-none" size="3" maxlength="20" align="right" value="" name="opt" id="opt">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card rounded chart-card allow-clicks" id="qryCard">
+                            <div class="card-header rounded collapsed allow-clicks card-blue" data-toggle="collapse" href="#qry" aria-expanded="false" aria-controls="qry">
+                                Use query to mark objects<br />
+                            </div>
+                            <div id="qry" class="collapse allow-clicks" data-parent="#qryCard">
+                                <div class="card-body p-1">
+                                    <textarea name="query" id="query" class="form-control" rows="5"></textarea>
+                                    <span href="javascript:void(0);" onclick="return popup();"><i class="glyphicon glyphicon-print" alt="Printable Image"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <canvas class="canvas allow-clicks" id="canvas">
+                This text is displayed if your browser does not support HTML5 Canvas.
+            </canvas>
+        </div>
+    </div>
+    <div class="col-auto">
+        @{Html.RenderPartial("ShowNearest"); }
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        const NEARESTURL = `${'@ViewData["jpegUrl"]'}?TaskName=Skyserver.Chart.Navi&`;
+        const NEARESTINFOURL = `${'@ViewData["WSMetadataUrl"]'}?query=nearestobj&`;
+        const PRINTCHARTURL = '@Url.Action("PrintChart", "Home")';
+        const IMAGEJPEGURL = '@ViewData["jpegUrl"]';
+        const SPECOBJURL = '@ViewData["specImgUrl"]';
+        const INITRA = '@ViewData["ra"]';
+        const INITDEC = '@ViewData["dec"]';
+        const INITSCALE = '@ViewData["scale"]';
+        const MINSCALE = '@ViewData["minscale"]';
+        const MAXSCALE = '@ViewData["maxscale"]';
+        const SPECIMGURL = '@Url.Action("SpecImage", "Home")';
+    </script>
+    <script src="~/js/canvasState.js"></script>
+    <script src="~/js/showCanvas.js"></script>
+    <script src="~/js/navigateVisual.js"></script>
+    <script src="~/js/wz_tooltip.js"></script>
+}

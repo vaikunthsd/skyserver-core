@@ -1,0 +1,83 @@
+﻿
+@{
+    Layout = "/Views/Shared/_VisualToolsLayout.cshtml";
+    ViewData["Title"] = "Visual Tools";
+}
+
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="~/css/skyserver.css" />
+}
+<div class="main-text">
+<h1>@ViewData["Title"]</h1>
+    <p>
+        The visual exploration tools built for the SkyServer make it easy to visualize
+        and explore detailed astronomical data in regions of the sky covered by the Sloan
+        Digital Sky Survey. One can specify regions of interest by central position and size.
+        An underlying web service then combines the relevant images to form a JPEG mosaic&#42;
+        at the requested wide range of resolutions. One can overlay additional useful
+        information, including:
+        <ul>
+
+            <li>boundaries of survey fields and aperture plates,
+            <li>outlines of individual objects and data quality masks, and
+            <li>locations of photometric and spectroscopic objects.
+
+        </ul>The tools can also search for lists of known objects, provide links for detailed
+        information, and formulate new database queries.
+    <p>
+        &#42;<em>Note</em>: The Finding Chart, Navigate and Image Lists tools build mosaics on
+        the fly by overlapping SDSS
+        <a href="http://www.sdss.org/dr15/glossary.php#field">fields<img src="~/images/offsite.png" alt=" (offsite link)" /></a> that may or may not belong to
+        different <a href="http://www.sdss.org/dr15/glossary.php#run">runs<img src="~/images/offsite.png" alt=" (offsite link)" /></a>. The field area displayed
+        in the overlap region is determined by the (arbitrary) order in
+        which the fields are being superimposed by the mosaicing software.  However,
+        the sky may have changed from one run to the next.  Observations of moving or
+        variable objects like meteors, satellites, comets, variable stars, etc. may appear
+        in one run but not in the other, or be different from one run to the other. We
+        suggest that if you want to carefully examine any object(s) close to a field boundary,
+        you should use either the <a href="../../../en/tools/getimg/fields.aspx">
+            Get Image by
+            Field
+        </a> tool which displays the whole JPEG <a href="http://www.sdss.org/dr15/glossary.php#frame">frame<img src="~/images/offsite.png" alt=" (offsite link)" /></a>
+        for individual fields in each run, or get the FITS file from the
+        <a href="../../../en/tools/explore/">Explorer</a> or the <a href="http://dr15.sdss.org/">Science Archive Server<img src="~/images/offsite.png" alt=" (offsite link)" /></a>.
+    </p>
+    <hr>
+    <p>
+        <ul>
+            <li id="chart">
+                @Html.ActionLink("Finding Chart", "chartinfo", "VisualTools")<br>
+                The page returns a JPEG image centered on (ra,dec), of size (height x width) where
+                the image is scaled to an arbitrary scale (scale). Various drawing options can be
+                specified (opt).  Please see <a>Getting Started with Finding Chart</a>. <br>
+
+            <li id="navi">
+                @Html.ActionLink("Navigate", "navi", "VisualTools")<br>
+                This page provides easy navigation in the vicinity of a given point on the sky. One
+                can move around by clicking on the frame of the image, or on individual objects. A short
+                list of the basic properties and a magnified thumbnail image of the object nearest to
+                the selected point is then displayed. Please see <a>Getting Started with Navigate</a>. <br>
+
+            <li id="list">
+                @Html.ActionLink("Image List", "list", "VisualTools")<br>
+                This page can generate thumbnails of SDSS images based upon a user defined
+                list of object positions. The images are linked to the other tools. The list can
+                also be specified with a query. Please see <a>Getting Started with Image List</a>. <br>
+
+            <li>
+                @Html.ActionLink("Quick Look", "quickobj", "VisualTools")<br>
+                The Quick Look Tool contains basic data for an object - its position, magnitude, and redshift
+
+            <li>
+                @Html.ActionLink("Explore", "obj", "VisualTools")<br>
+                The Explore Tool contains a summary of an object, and interactive links to further detailed
+                properties, like its spectrum or neighbors, etc.
+
+        </ul>
+
+        <hr>
+
+    <p>
+</div>
+@section Scripts {
+}

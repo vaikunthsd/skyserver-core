@@ -1,0 +1,109 @@
+﻿@{
+    Layout = "/Views/Shared/_MoreToolsLayout.cshtml";
+    ViewData["Title"] = "Schema Browser";
+
+}
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="~/css/skyserver.css" />
+
+    <style>
+        #schemaInformation table {
+            background-color: #FFFFFF;
+        }
+
+            #schemaInformation table > tbody tr:first-child {
+                background-color: #003466;
+            }
+
+                #schemaInformation table > tbody tr:first-child font {
+                    color: #CCD6E0;
+                    font-weight: bold;
+                }
+
+            #schemaInformation table > tbody tr font {
+                color: #000000;
+            }
+
+            #schemaInformation table td {
+                min-width: 80px;
+            }
+
+        .schema-description {
+            color: #ffffff;
+            background-color: #333366;
+            font-size: 14pt;
+        }
+
+        .schema-text {
+            font-size: 13pt;
+        }
+    </style>
+}
+<h1>@ViewData["Title"]</h1>
+<div class="row">
+    <div class="col-xs-12 col-sm-9">
+        <div class="overview-wrapper">
+            <div id="schemaInformation" style="overflow-x: auto;">
+                <h2>Overview</h2>
+                <p>
+                    The data in the database is contained in <span class="vocabulary">Tables</span>, organized in columns and rows.
+                    We have defined <span class="vocabulary">Views</span> over the tables. These represent special subsets of the
+                    original table.
+                </p>
+                <p>
+                    Most of the tables also have one or more <span class="vocabulary">Indices</span> defined on them to speed up
+                    searches on them.
+                </p>
+                <p>
+                    <span class="vocabulary">Functions</span> and stored <span class="vocabulary">Procedures</span> take a number of parameters, and execute a
+                    previously defined sequence of commands. Usually, their names are prefixed by
+                    <em>f</em> or <em>sp</em>, as in <em>fPhotoStatus</em> or <em>spGetFiberList</em>.
+                </p>
+                <p>
+                    The table <span class="vocabulary">SDSSConstants</span> contains most of the parameters relevant to the SDSS.
+                    Their values can be displayed by clicking on the link in the left hand panel.
+                </p>
+                <p>
+                    The table <span class="vocabulary">DataConstants</span> contains most of the bit-flags and enumerated quantities
+                    relevant to the SDSS. Their values " can be displayed by clicking on the link in the
+                    left hand panel. There are several access functions to make ineterpretations and
+                    the " back and forth conversions easier. They are displayed when you look" at the
+                </p>
+                <p>
+                    Click on the plus sign [+] in front of the categories on the left to get an expanded view,
+                    on the minus sign [-] to collapse the list, on the name to get a summary, and on the individual
+                    items to get their detailed description.
+                </p>
+                <p>
+                    Enter a keyword into the search box on the top, and press Enter or the Go button
+                    to search through the descriptions and units stored in the database.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-3">
+        <div>
+            <h2>Search for</h2>
+            <input id="searchTreeView" type="text" class="input-group-text" />
+            <div id="treeView"></div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        const SQLURL = 'http://skyserver.sdss.org/dr16/SkyServerWS/SearchTools/SqlSearch';
+        const treeViewData = JSON.parse(decodeHTMLEntities('@ViewData["TreeViewData"]'));
+
+        function decodeHTMLEntities(text) {
+            return $("<textarea/>").html(text).text();
+        }
+
+        function open_node(id, parentId) {
+            $.post("/MoreTools/Node", { id, parentId }, function (view) {
+                $("#schemaInformation").empty().append(view);
+            });
+        }
+    </script>
+    <script src="~/js/browser.js"></script>
+}

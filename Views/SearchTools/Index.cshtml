@@ -1,0 +1,106 @@
+﻿
+@{
+    Layout = "/Views/Shared/_SearchToolsLayout.cshtml";
+    ViewData["Title"] = "Search Tools";
+}
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="~/css/skyserver.css" />
+}
+
+<div class="main-text">
+    <h1>@ViewData["Title"]</h1>
+    You can search the SDSS database with a <em>query</em>. A query is a request for information.
+    You specify what data you want, and what conditions you want the data to satisfy. For example,
+    you might ask the database to return the positions of all stars brighter than a certain
+    magnitude in a certain filter.
+    <h4>To search the database, select one of the following tools</h4>
+    <ul>
+        <li>
+            @Html.ActionLink("Radial", "radial", "SearchTools"):
+            &nbsp;Search the sky around a given point (<b>EASY</b>)
+        <li>
+            @Html.ActionLink("Rectangular", "rect", "SearchTools"):
+            &nbsp;Search the sky in a rectangular region (<b>EASY</b>)
+
+        <li>
+            @Html.ActionLink("SQL", "sql", "SearchTools"):
+            &nbsp;Type in a SQL query directly (<b>HARDEST</b>)
+    </ul>
+
+    <h4>Search Tools for scientists</h4>
+
+    <ul>
+
+
+
+        <li>
+            @Html.ActionLink("Imaging Query", "IQS", "SearchTools"):
+            &nbsp;Form-based query on imaging data
+        <li>
+            @Html.ActionLink("Spectroscopic Query", "SQS", "SearchTools"):
+            &nbsp;Form-based query on spectroscopic data
+        <li>
+            @Html.ActionLink("IR Spectroscopic Query", "IRQS", "SearchTools"):
+            &nbsp;Form-based query on IR spectroscopic data
+
+    </ul>
+    <h4>The names and units of fields on the query pages</h4>
+    <ul>
+        <li>
+            <em>ra, dec</em> are the sky coordinates of the search.
+            <ul>
+                <li>
+                    They can be entered either in
+                    degrees or in the h:m:s, d:m:s notation.
+            </ul>
+        <li>
+            <em>radius</em> is the search radius for a radial query.
+            <ul><li> It is measured in minutes of arc.</ul>
+        <li>
+            <em>u,g,r,i,z</em> are the magnitudes of the objects in the SDSS.<br>
+            <ul>
+                <li>
+                    These represent the fluxes of light measured in logarithmic units, through various wavebands
+                    from the ultraviolet to the infrared
+            </ul>
+    </ul>
+
+    <h4>The output options and formats on the query pages</h4>
+    <ul>
+        <li>
+            <em>Return:</em> the number of objects<br>
+            <ul>
+                <li>Selecting <em>all</em> will return all objects<br>
+                <li>Selecting <em>top N</em> will return the first N objects satisfying the query
+            </ul>
+        <li>
+            <em>Format:</em> the output format<br>
+            <ul>
+                <li>It can be <em>HTML</em>, when a formatted web page is returned<br>
+                <li>
+                    It can be <em>CSV</em>, when a comma separated, unformatted text is returned, with one header line
+                    and subsequent objects in a new line, attributed separated by a comma<br>
+                <li>It can be <em>XML</em>, not yet implemented
+            </ul>
+    </ul>
+
+    <h4>Getting FITS files from the <a href="http://dr15.sdss.org/">SAS</a></h4>
+    You can easily retrieve the raw FITS file data corresponding to your query using any of the CAS search tools.
+    If the necessary columns are included in the SELECT part of your query, the appropriate button will automatically
+    appear on the query results page (below the query results) to allow you to upload the appropriate information to
+    the <a href="http://dr15.sdss.org/">SAS (Science Archive Server)</a>.  These columns are part of the default query in
+    each of the search tools, but if you modify the default query or enter your own query, be sure to include the
+    following columns:
+    <ul>
+        <li>
+            <i>run</i>, <i>rerun</i>, <i>camcol</i>, <i>field</i> from the PhotoObj (or PhotoTag) tables if you want
+            imaging FITS data from the <a href="http://dr15.sdss.org/">SAS</a>;
+        </li>
+        <li>
+            <i>plate</i>, <i>mjd</i>, <i>fiberid</i> from the SpecObj or SpecPhoto tables if you want FITS spectra from
+            the <a href="http://dr15.sdss.org/">SAS</a>.
+        </li>
+    </ul>
+</div>
+@section Scripts {
+}

@@ -1,0 +1,76 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@model IEnumerable<SkyserverCore.Models.UserHistoryModel>
+@{
+    Layout = "/Views/Shared/_MoreToolsLayout.cshtml";
+    ViewData["Title"] = "My History";
+
+}
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="~/css/skyserver.css" />
+}
+<h1>@ViewData["Title"]</h1>
+@if (HttpContextAccessor.HttpContext.Session.GetString("IsLogedIn") == "true")
+{
+    <div>My SkyServer History</div>
+    <h3>Review the results from SkyServer tools you have used in the past.</h3>
+    <input type="hidden" name="NewDateSubmmitingSection" id="NewDateSubmmitingSection" value="true" />
+    <b>Start Date</b>
+    <input name="date_low" id="datetimepicker1" type="text" value="">
+    <b>End Date</b>
+    <input name="date_high" id="datetimepicker2" type="text" value="" />
+    <input id=submit1 type=submit value=Submit onclick="getSubmittedResponseTable()" onmouseover="return escape('Press this to get your history.');">
+    <form>
+        <div class="form-group">
+            <label>Select SkyServer Tools</label>
+            <select id="applicationMenu" class="form-control" multiple></select>
+        </div>
+        <input id=applyFilter type=button value=Apply onclick="filterTable()">
+        <input id=resetTable type=button value=Reset onclick="resetTableData()">
+    </form>
+    <input type="hidden" name="settable" id="settable" value="settable" />
+    <h3>User History Table</h3>
+    <div>
+        <div style="overflow-x:auto;">
+            <table class="table-bordered sciserver-datatable" id="userHistoryTable">
+                <thead>
+                    <tr>
+                        <th class="tableHeader"></th>
+                        <th class="tableHeader">Time</th>
+                        <th class="tableHeader">Skyserver Tool</th>
+                        <th class="tableHeader">Request Parameters</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <p>
+        Please <a class="dropdown-toggle" href="#" onclick="window.location.href = '@ViewData["authURL"]' + '?callbackUrl=' + window.location.href;">Sign In</a>* in order to view your history.
+    </p>
+}
+<input type="hidden" name="NewDateSubmmitingSection" id="NewDateSubmmitingSection" value="true" />
+
+@section Scripts {
+
+    <script type="text/javascript" src="http://cdn.datatables.net/1.10.12/js/jquery.dataTables.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+    <script type="text/javascript" src="http://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css" integrity="sha256-kIxwtDqhOVbQysWu0OpR9QfijdXCfqvXgAUJuv7Uxmg=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js" integrity="sha256-RwTJwLtruVfpQ/9COgOgOoFtDQoDY92EqysD/ZMidS8=" crossorigin="anonymous"></script>
+    <script>
+        const userHistoryRequestUrl = '@ViewData["userHistoryUrl"]';
+        const doShowAllHistory = '@ViewData["doShowAllHistory"]';
+        const topRowsDefault = '@ViewData["topRowsDefault"]';
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript" src="~/js/userhistory.js"></script>
+
+}

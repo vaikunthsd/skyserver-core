@@ -1,0 +1,3005 @@
+@model SkyserverCore.Models.IQSModel
+
+@section Scripts {
+    <script src="~/js/ImagingQuery.js"></script>
+}
+
+@{
+    Layout = "/Views/Shared/_SearchToolsLayout.cshtml";
+    ViewData["Title"] = "Imaging Search";
+}
+
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="~/css/skyserver.css" />
+}
+<h1>@ViewData["Title"]</h1>
+<hr />
+<div class="card form-card">
+    <div class="card-body bg-purple">
+        <form asp-action="IQS" class="searchForm" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="searchTool" name="searchtool" id="searchtool" value="Imaging" />
+            <input type="hidden" asp-for="TaskName" name="TaskName" id="TaskName" value="Skyserver.Search.IQS" />
+            <input type="hidden" asp-for="ReturnHtml" name="ReturnHtml" id="ReturnHtml" value="true" />
+            <div class="card my-1">
+                <div class="card-header">
+                    Parameters to return
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col text-center">
+                            <div class="bg-blue rounded">
+                                <label>Imaging</label>
+                            </div>
+                            <select class="mt-2" name="imgparams" multiple="multiple" size="3" data-live-search="true">
+                                <option value="minimal" selected="">minimal</option>
+                                <option value="typical">typical</option>
+                                <option value="radec">radec</option>
+                                <option value="model_mags">model_mags</option>
+                                <option value="model_magerrs">model_magerrs</option>
+                                <option value="psf_mags">psf_mags</option>
+                                <option value="psf_magerrs">psf_magerrs</option>
+                                <option value="petro_mags">petro_mags</option>
+                                <option value="petro_magerrs">petro_magerrs</option>
+                                <option value="model_colors">model_colors</option>
+                                <option value="ugModelColor">ugModelColor</option>
+                                <option value="grModelColor">grModelColor</option>
+                                <option value="riModelColor">riModelColor</option>
+                                <option value="izModelColor">izModelColor</option>
+                                <option value="SDSSname">SDSSname</option>
+                                <option value="blankImg"> </option>
+                                <option value="airmass_g"> airmass_g</option>
+                                <option value="airmass_i">
+                                    airmass_i
+                                </option>
+                                <option value="airmass_r">
+                                    airmass_r
+                                </option>
+                                <option value="airmass_u">
+                                    airmass_u
+                                </option>
+                                <option value="airmass_z">
+                                    airmass_z
+                                </option>
+                                <option value="aperFlux7_g">
+                                    aperFlux7_g
+                                </option>
+                                <option value="aperFlux7_i">
+                                    aperFlux7_i
+                                </option>
+                                <option value="aperFlux7_r">
+                                    aperFlux7_r
+                                </option>
+                                <option value="aperFlux7_u">
+                                    aperFlux7_u
+                                </option>
+                                <option value="aperFlux7_z">
+                                    aperFlux7_z
+                                </option>
+                                <option value="aperFlux7Ivar_g">
+                                    aperFlux7Ivar_g
+                                </option>
+                                <option value="aperFlux7Ivar_i">
+                                    aperFlux7Ivar_i
+                                </option>
+                                <option value="aperFlux7Ivar_r">
+                                    aperFlux7Ivar_r
+                                </option>
+                                <option value="aperFlux7Ivar_u">
+                                    aperFlux7Ivar_u
+                                </option>
+                                <option value="aperFlux7Ivar_z">
+                                    aperFlux7Ivar_z
+                                </option>
+                                <option value="b">
+                                    b
+                                </option>
+                                <option value="balkanId">
+                                    balkanId
+                                </option>
+                                <option value="calibStatus_g">
+                                    calibStatus_g
+                                </option>
+                                <option value="calibStatus_i">
+                                    calibStatus_i
+                                </option>
+                                <option value="calibStatus_r">
+                                    calibStatus_r
+                                </option>
+                                <option value="calibStatus_u">
+                                    calibStatus_u
+                                </option>
+                                <option value="calibStatus_z">
+                                    calibStatus_z
+                                </option>
+                                <option value="camcol">
+                                    camcol
+                                </option>
+                                <option value="clean">
+                                    clean
+                                </option>
+                                <option value="cloudCam_g">
+                                    cloudCam_g
+                                </option>
+                                <option value="cloudCam_i">
+                                    cloudCam_i
+                                </option>
+                                <option value="cloudCam_r">
+                                    cloudCam_r
+                                </option>
+                                <option value="cloudCam_u">
+                                    cloudCam_u
+                                </option>
+                                <option value="cloudCam_z">
+                                    cloudCam_z
+                                </option>
+                                <option value="cModelFlux_g">
+                                    cModelFlux_g
+                                </option>
+                                <option value="cModelFlux_i">
+                                    cModelFlux_i
+                                </option>
+                                <option value="cModelFlux_r">
+                                    cModelFlux_r
+                                </option>
+                                <option value="cModelFlux_u">
+                                    cModelFlux_u
+                                </option>
+                                <option value="cModelFlux_z">
+                                    cModelFlux_z
+                                </option>
+                                <option value="cModelFluxIvar_g">
+                                    cModelFluxIvar_g
+                                </option>
+                                <option value="cModelFluxIvar_i">
+                                    cModelFluxIvar_i
+                                </option>
+                                <option value="cModelFluxIvar_r">
+                                    cModelFluxIvar_r
+                                </option>
+                                <option value="cModelFluxIvar_u">
+                                    cModelFluxIvar_u
+                                </option>
+                                <option value="cModelFluxIvar_z">
+                                    cModelFluxIvar_z
+                                </option>
+                                <option value="cModelMag_g">
+                                    cModelMag_g
+                                </option>
+                                <option value="cModelMag_i">
+                                    cModelMag_i
+                                </option>
+                                <option value="cModelMag_r">
+                                    cModelMag_r
+                                </option>
+                                <option value="cModelMag_u">
+                                    cModelMag_u
+                                </option>
+                                <option value="cModelMag_z">
+                                    cModelMag_z
+                                </option>
+                                <option value="cModelMagErr_g">
+                                    cModelMagErr_g
+                                </option>
+                                <option value="cModelMagErr_i">
+                                    cModelMagErr_i
+                                </option>
+                                <option value="cModelMagErr_r">
+                                    cModelMagErr_r
+                                </option>
+                                <option value="cModelMagErr_u">
+                                    cModelMagErr_u
+                                </option>
+                                <option value="cModelMagErr_z">
+                                    cModelMagErr_z
+                                </option>
+                                <option value="colc">
+                                    colc
+                                </option>
+                                <option value="colc_g">
+                                    colc_g
+                                </option>
+                                <option value="colc_i">
+                                    colc_i
+                                </option>
+                                <option value="colc_r">
+                                    colc_r
+                                </option>
+                                <option value="colc_u">
+                                    colc_u
+                                </option>
+                                <option value="colc_z">
+                                    colc_z
+                                </option>
+                                <option value="colcErr">
+                                    colcErr
+                                </option>
+                                <option value="colcErr_g">
+                                    colcErr_g
+                                </option>
+                                <option value="colcErr_i">
+                                    colcErr_i
+                                </option>
+                                <option value="colcErr_r">
+                                    colcErr_r
+                                </option>
+                                <option value="colcErr_u">
+                                    colcErr_u
+                                </option>
+                                <option value="colcErr_z">
+                                    colcErr_z
+                                </option>
+                                <option value="colv">
+                                    colv
+                                </option>
+                                <option value="colvErr">
+                                    colvErr
+                                </option>
+                                <option value="cx">
+                                    cx
+                                </option>
+                                <option value="cy">
+                                    cy
+                                </option>
+                                <option value="cz">
+                                    cz
+                                </option>
+                                <option value="dec">
+                                    dec
+                                </option>
+                                <option value="decErr">
+                                    decErr
+                                </option>
+                                <option value="dered_g">
+                                    dered_g
+                                </option>
+                                <option value="dered_i">
+                                    dered_i
+                                </option>
+                                <option value="dered_r">
+                                    dered_r
+                                </option>
+                                <option value="dered_u">
+                                    dered_u
+                                </option>
+                                <option value="dered_z">
+                                    dered_z
+                                </option>
+                                <option value="deVAB_g">
+                                    deVAB_g
+                                </option>
+                                <option value="deVAB_i">
+                                    deVAB_i
+                                </option>
+                                <option value="deVAB_r">
+                                    deVAB_r
+                                </option>
+                                <option value="deVAB_u">
+                                    deVAB_u
+                                </option>
+                                <option value="deVAB_z">
+                                    deVAB_z
+                                </option>
+                                <option value="deVABErr_g">
+                                    deVABErr_g
+                                </option>
+                                <option value="deVABErr_i">
+                                    deVABErr_i
+                                </option>
+                                <option value="deVABErr_r">
+                                    deVABErr_r
+                                </option>
+                                <option value="deVABErr_u">
+                                    deVABErr_u
+                                </option>
+                                <option value="deVABErr_z">
+                                    deVABErr_z
+                                </option>
+                                <option value="deVFlux_g">
+                                    deVFlux_g
+                                </option>
+                                <option value="deVFlux_i">
+                                    deVFlux_i
+                                </option>
+                                <option value="deVFlux_r">
+                                    deVFlux_r
+                                </option>
+                                <option value="deVFlux_u">
+                                    deVFlux_u
+                                </option>
+                                <option value="deVFlux_z">
+                                    deVFlux_z
+                                </option>
+                                <option value="deVFluxIvar_g">
+                                    deVFluxIvar_g
+                                </option>
+                                <option value="deVFluxIvar_i">
+                                    deVFluxIvar_i
+                                </option>
+                                <option value="deVFluxIvar_r">
+                                    deVFluxIvar_r
+                                </option>
+                                <option value="deVFluxIvar_u">
+                                    deVFluxIvar_u
+                                </option>
+                                <option value="deVFluxIvar_z">
+                                    deVFluxIvar_z
+                                </option>
+                                <option value="deVMag_g">
+                                    deVMag_g
+                                </option>
+                                <option value="deVMag_i">
+                                    deVMag_i
+                                </option>
+                                <option value="deVMag_r">
+                                    deVMag_r
+                                </option>
+                                <option value="deVMag_u">
+                                    deVMag_u
+                                </option>
+                                <option value="deVMag_z">
+                                    deVMag_z
+                                </option>
+                                <option value="deVMagErr_g">
+                                    deVMagErr_g
+                                </option>
+                                <option value="deVMagErr_i">
+                                    deVMagErr_i
+                                </option>
+                                <option value="deVMagErr_r">
+                                    deVMagErr_r
+                                </option>
+                                <option value="deVMagErr_u">
+                                    deVMagErr_u
+                                </option>
+                                <option value="deVMagErr_z">
+                                    deVMagErr_z
+                                </option>
+                                <option value="deVPhi_g">
+                                    deVPhi_g
+                                </option>
+                                <option value="deVPhi_i">
+                                    deVPhi_i
+                                </option>
+                                <option value="deVPhi_r">
+                                    deVPhi_r
+                                </option>
+                                <option value="deVPhi_u">
+                                    deVPhi_u
+                                </option>
+                                <option value="deVPhi_z">
+                                    deVPhi_z
+                                </option>
+                                <option value="deVRad_g">
+                                    deVRad_g
+                                </option>
+                                <option value="deVRad_i">
+                                    deVRad_i
+                                </option>
+                                <option value="deVRad_r">
+                                    deVRad_r
+                                </option>
+                                <option value="deVRad_u">
+                                    deVRad_u
+                                </option>
+                                <option value="deVRad_z">
+                                    deVRad_z
+                                </option>
+                                <option value="deVRadErr_g">
+                                    deVRadErr_g
+                                </option>
+                                <option value="deVRadErr_i">
+                                    deVRadErr_i
+                                </option>
+                                <option value="deVRadErr_r">
+                                    deVRadErr_r
+                                </option>
+                                <option value="deVRadErr_u">
+                                    deVRadErr_u
+                                </option>
+                                <option value="deVRadErr_z">
+                                    deVRadErr_z
+                                </option>
+                                <option value="err_g">
+                                    err_g
+                                </option>
+                                <option value="err_i">
+                                    err_i
+                                </option>
+                                <option value="err_r">
+                                    err_r
+                                </option>
+                                <option value="err_u">
+                                    err_u
+                                </option>
+                                <option value="err_z">
+                                    err_z
+                                </option>
+                                <option value="expAB_g">
+                                    expAB_g
+                                </option>
+                                <option value="expAB_i">
+                                    expAB_i
+                                </option>
+                                <option value="expAB_r">
+                                    expAB_r
+                                </option>
+                                <option value="expAB_u">
+                                    expAB_u
+                                </option>
+                                <option value="expAB_z">
+                                    expAB_z
+                                </option>
+                                <option value="expABErr_g">
+                                    expABErr_g
+                                </option>
+                                <option value="expABErr_i">
+                                    expABErr_i
+                                </option>
+                                <option value="expABErr_r">
+                                    expABErr_r
+                                </option>
+                                <option value="expABErr_u">
+                                    expABErr_u
+                                </option>
+                                <option value="expABErr_z">
+                                    expABErr_z
+                                </option>
+                                <option value="expFlux_g">
+                                    expFlux_g
+                                </option>
+                                <option value="expFlux_i">
+                                    expFlux_i
+                                </option>
+                                <option value="expFlux_r">
+                                    expFlux_r
+                                </option>
+                                <option value="expFlux_u">
+                                    expFlux_u
+                                </option>
+                                <option value="expFlux_z">
+                                    expFlux_z
+                                </option>
+                                <option value="expFluxIvar_g">
+                                    expFluxIvar_g
+                                </option>
+                                <option value="expFluxIvar_i">
+                                    expFluxIvar_i
+                                </option>
+                                <option value="expFluxIvar_r">
+                                    expFluxIvar_r
+                                </option>
+                                <option value="expFluxIvar_u">
+                                    expFluxIvar_u
+                                </option>
+                                <option value="expFluxIvar_z">
+                                    expFluxIvar_z
+                                </option>
+                                <option value="expMag_g">
+                                    expMag_g
+                                </option>
+                                <option value="expMag_i">
+                                    expMag_i
+                                </option>
+                                <option value="expMag_r">
+                                    expMag_r
+                                </option>
+                                <option value="expMag_u">
+                                    expMag_u
+                                </option>
+                                <option value="expMag_z">
+                                    expMag_z
+                                </option>
+                                <option value="expMagErr_g">
+                                    expMagErr_g
+                                </option>
+                                <option value="expMagErr_i">
+                                    expMagErr_i
+                                </option>
+                                <option value="expMagErr_r">
+                                    expMagErr_r
+                                </option>
+                                <option value="expMagErr_u">
+                                    expMagErr_u
+                                </option>
+                                <option value="expMagErr_z">
+                                    expMagErr_z
+                                </option>
+                                <option value="expPhi_g">
+                                    expPhi_g
+                                </option>
+                                <option value="expPhi_i">
+                                    expPhi_i
+                                </option>
+                                <option value="expPhi_r">
+                                    expPhi_r
+                                </option>
+                                <option value="expPhi_u">
+                                    expPhi_u
+                                </option>
+                                <option value="expPhi_z">
+                                    expPhi_z
+                                </option>
+                                <option value="expRad_g">
+                                    expRad_g
+                                </option>
+                                <option value="expRad_i">
+                                    expRad_i
+                                </option>
+                                <option value="expRad_r">
+                                    expRad_r
+                                </option>
+                                <option value="expRad_u">
+                                    expRad_u
+                                </option>
+                                <option value="expRad_z">
+                                    expRad_z
+                                </option>
+                                <option value="expRadErr_g">
+                                    expRadErr_g
+                                </option>
+                                <option value="expRadErr_i">
+                                    expRadErr_i
+                                </option>
+                                <option value="expRadErr_r">
+                                    expRadErr_r
+                                </option>
+                                <option value="expRadErr_u">
+                                    expRadErr_u
+                                </option>
+                                <option value="expRadErr_z">
+                                    expRadErr_z
+                                </option>
+                                <option value="extinction_g">
+                                    extinction_g
+                                </option>
+                                <option value="extinction_i">
+                                    extinction_i
+                                </option>
+                                <option value="extinction_r">
+                                    extinction_r
+                                </option>
+                                <option value="extinction_u">
+                                    extinction_u
+                                </option>
+                                <option value="extinction_z">
+                                    extinction_z
+                                </option>
+                                <option value="fiber2Flux_g">
+                                    fiber2Flux_g
+                                </option>
+                                <option value="fiber2Flux_i">
+                                    fiber2Flux_i
+                                </option>
+                                <option value="fiber2Flux_r">
+                                    fiber2Flux_r
+                                </option>
+                                <option value="fiber2Flux_u">
+                                    fiber2Flux_u
+                                </option>
+                                <option value="fiber2Flux_z">
+                                    fiber2Flux_z
+                                </option>
+                                <option value="fiber2FluxIvar_g">
+                                    fiber2FluxIvar_g
+                                </option>
+                                <option value="fiber2FluxIvar_i">
+                                    fiber2FluxIvar_i
+                                </option>
+                                <option value="fiber2FluxIvar_r">
+                                    fiber2FluxIvar_r
+                                </option>
+                                <option value="fiber2FluxIvar_u">
+                                    fiber2FluxIvar_u
+                                </option>
+                                <option value="fiber2FluxIvar_z">
+                                    fiber2FluxIvar_z
+                                </option>
+                                <option value="fiber2Mag_g">
+                                    fiber2Mag_g
+                                </option>
+                                <option value="fiber2Mag_i">
+                                    fiber2Mag_i
+                                </option>
+                                <option value="fiber2Mag_r">
+                                    fiber2Mag_r
+                                </option>
+                                <option value="fiber2Mag_u">
+                                    fiber2Mag_u
+                                </option>
+                                <option value="fiber2Mag_z">
+                                    fiber2Mag_z
+                                </option>
+                                <option value="fiber2MagErr_g">
+                                    fiber2MagErr_g
+                                </option>
+                                <option value="fiber2MagErr_i">
+                                    fiber2MagErr_i
+                                </option>
+                                <option value="fiber2MagErr_r">
+                                    fiber2MagErr_r
+                                </option>
+                                <option value="fiber2MagErr_u">
+                                    fiber2MagErr_u
+                                </option>
+                                <option value="fiber2MagErr_z">
+                                    fiber2MagErr_z
+                                </option>
+                                <option value="fiberFlux_g">
+                                    fiberFlux_g
+                                </option>
+                                <option value="fiberFlux_i">
+                                    fiberFlux_i
+                                </option>
+                                <option value="fiberFlux_r">
+                                    fiberFlux_r
+                                </option>
+                                <option value="fiberFlux_u">
+                                    fiberFlux_u
+                                </option>
+                                <option value="fiberFlux_z">
+                                    fiberFlux_z
+                                </option>
+                                <option value="fiberFluxIvar_g">
+                                    fiberFluxIvar_g
+                                </option>
+                                <option value="fiberFluxIvar_i">
+                                    fiberFluxIvar_i
+                                </option>
+                                <option value="fiberFluxIvar_r">
+                                    fiberFluxIvar_r
+                                </option>
+                                <option value="fiberFluxIvar_u">
+                                    fiberFluxIvar_u
+                                </option>
+                                <option value="fiberFluxIvar_z">
+                                    fiberFluxIvar_z
+                                </option>
+                                <option value="fiberMag_g">
+                                    fiberMag_g
+                                </option>
+                                <option value="fiberMag_i">
+                                    fiberMag_i
+                                </option>
+                                <option value="fiberMag_r">
+                                    fiberMag_r
+                                </option>
+                                <option value="fiberMag_u">
+                                    fiberMag_u
+                                </option>
+                                <option value="fiberMag_z">
+                                    fiberMag_z
+                                </option>
+                                <option value="fiberMagErr_g">
+                                    fiberMagErr_g
+                                </option>
+                                <option value="fiberMagErr_i">
+                                    fiberMagErr_i
+                                </option>
+                                <option value="fiberMagErr_r">
+                                    fiberMagErr_r
+                                </option>
+                                <option value="fiberMagErr_u">
+                                    fiberMagErr_u
+                                </option>
+                                <option value="fiberMagErr_z">
+                                    fiberMagErr_z
+                                </option>
+                                <option value="field">
+                                    field
+                                </option>
+                                <option value="fieldID">
+                                    fieldID
+                                </option>
+                                <option value="flags">
+                                    flags
+                                </option>
+                                <option value="flags_g">
+                                    flags_g
+                                </option>
+                                <option value="flags_i">
+                                    flags_i
+                                </option>
+                                <option value="flags_r">
+                                    flags_r
+                                </option>
+                                <option value="flags_u">
+                                    flags_u
+                                </option>
+                                <option value="flags_z">
+                                    flags_z
+                                </option>
+                                <option value="fracDeV_g">
+                                    fracDeV_g
+                                </option>
+                                <option value="fracDeV_i">
+                                    fracDeV_i
+                                </option>
+                                <option value="fracDeV_r">
+                                    fracDeV_r
+                                </option>
+                                <option value="fracDeV_u">
+                                    fracDeV_u
+                                </option>
+                                <option value="fracDeV_z">
+                                    fracDeV_z
+                                </option>
+                                <option value="g">
+                                    g
+                                </option>
+                                <option value="htmID">
+                                    htmID
+                                </option>
+                                <option value="i">
+                                    i
+                                </option>
+                                <option value="insideMask">
+                                    insideMask
+                                </option>
+                                <option value="l">
+                                    l
+                                </option>
+                                <option value="lnLDeV_g">
+                                    lnLDeV_g
+                                </option>
+                                <option value="lnLDeV_i">
+                                    lnLDeV_i
+                                </option>
+                                <option value="lnLDeV_r">
+                                    lnLDeV_r
+                                </option>
+                                <option value="lnLDeV_u">
+                                    lnLDeV_u
+                                </option>
+                                <option value="lnLDeV_z">
+                                    lnLDeV_z
+                                </option>
+                                <option value="lnLExp_g">
+                                    lnLExp_g
+                                </option>
+                                <option value="lnLExp_i">
+                                    lnLExp_i
+                                </option>
+                                <option value="lnLExp_r">
+                                    lnLExp_r
+                                </option>
+                                <option value="lnLExp_u">
+                                    lnLExp_u
+                                </option>
+                                <option value="lnLExp_z">
+                                    lnLExp_z
+                                </option>
+                                <option value="lnLStar_g">
+                                    lnLStar_g
+                                </option>
+                                <option value="lnLStar_i">
+                                    lnLStar_i
+                                </option>
+                                <option value="lnLStar_r">
+                                    lnLStar_r
+                                </option>
+                                <option value="lnLStar_u">
+                                    lnLStar_u
+                                </option>
+                                <option value="lnLStar_z">
+                                    lnLStar_z
+                                </option>
+                                <option value="loadVersion">
+                                    loadVersion
+                                </option>
+                                <option value="mCr4_g">
+                                    mCr4_g
+                                </option>
+                                <option value="mCr4_i">
+                                    mCr4_i
+                                </option>
+                                <option value="mCr4_r">
+                                    mCr4_r
+                                </option>
+                                <option value="mCr4_u">
+                                    mCr4_u
+                                </option>
+                                <option value="mCr4_z">
+                                    mCr4_z
+                                </option>
+                                <option value="mCr4PSF_g">
+                                    mCr4PSF_g
+                                </option>
+                                <option value="mCr4PSF_i">
+                                    mCr4PSF_i
+                                </option>
+                                <option value="mCr4PSF_r">
+                                    mCr4PSF_r
+                                </option>
+                                <option value="mCr4PSF_u">
+                                    mCr4PSF_u
+                                </option>
+                                <option value="mCr4PSF_z">
+                                    mCr4PSF_z
+                                </option>
+                                <option value="mE1_g">
+                                    mE1_g
+                                </option>
+                                <option value="mE1_i">
+                                    mE1_i
+                                </option>
+                                <option value="mE1_r">
+                                    mE1_r
+                                </option>
+                                <option value="mE1_u">
+                                    mE1_u
+                                </option>
+                                <option value="mE1_z">
+                                    mE1_z
+                                </option>
+                                <option value="mE1E1Err_g">
+                                    mE1E1Err_g
+                                </option>
+                                <option value="mE1E1Err_i">
+                                    mE1E1Err_i
+                                </option>
+                                <option value="mE1E1Err_r">
+                                    mE1E1Err_r
+                                </option>
+                                <option value="mE1E1Err_u">
+                                    mE1E1Err_u
+                                </option>
+                                <option value="mE1E1Err_z">
+                                    mE1E1Err_z
+                                </option>
+                                <option value="mE1E2Err_g">
+                                    mE1E2Err_g
+                                </option>
+                                <option value="mE1E2Err_i">
+                                    mE1E2Err_i
+                                </option>
+                                <option value="mE1E2Err_r">
+                                    mE1E2Err_r
+                                </option>
+                                <option value="mE1E2Err_u">
+                                    mE1E2Err_u
+                                </option>
+                                <option value="mE1E2Err_z">
+                                    mE1E2Err_z
+                                </option>
+                                <option value="mE1PSF_g">
+                                    mE1PSF_g
+                                </option>
+                                <option value="mE1PSF_i">
+                                    mE1PSF_i
+                                </option>
+                                <option value="mE1PSF_r">
+                                    mE1PSF_r
+                                </option>
+                                <option value="mE1PSF_u">
+                                    mE1PSF_u
+                                </option>
+                                <option value="mE1PSF_z">
+                                    mE1PSF_z
+                                </option>
+                                <option value="mE2_g">
+                                    mE2_g
+                                </option>
+                                <option value="mE2_i">
+                                    mE2_i
+                                </option>
+                                <option value="mE2_r">
+                                    mE2_r
+                                </option>
+                                <option value="mE2_u">
+                                    mE2_u
+                                </option>
+                                <option value="mE2_z">
+                                    mE2_z
+                                </option>
+                                <option value="mE2E2Err_g">
+                                    mE2E2Err_g
+                                </option>
+                                <option value="mE2E2Err_i">
+                                    mE2E2Err_i
+                                </option>
+                                <option value="mE2E2Err_r">
+                                    mE2E2Err_r
+                                </option>
+                                <option value="mE2E2Err_u">
+                                    mE2E2Err_u
+                                </option>
+                                <option value="mE2E2Err_z">
+                                    mE2E2Err_z
+                                </option>
+                                <option value="mE2PSF_g">
+                                    mE2PSF_g
+                                </option>
+                                <option value="mE2PSF_i">
+                                    mE2PSF_i
+                                </option>
+                                <option value="mE2PSF_r">
+                                    mE2PSF_r
+                                </option>
+                                <option value="mE2PSF_u">
+                                    mE2PSF_u
+                                </option>
+                                <option value="mE2PSF_z">
+                                    mE2PSF_z
+                                </option>
+                                <option value="mjd">
+                                    mjd
+                                </option>
+                                <option value="mode">
+                                    mode
+                                </option>
+                                <option value="modelFlux_g">
+                                    modelFlux_g
+                                </option>
+                                <option value="modelFlux_i">
+                                    modelFlux_i
+                                </option>
+                                <option value="modelFlux_r">
+                                    modelFlux_r
+                                </option>
+                                <option value="modelFlux_u">
+                                    modelFlux_u
+                                </option>
+                                <option value="modelFlux_z">
+                                    modelFlux_z
+                                </option>
+                                <option value="modelFluxIvar_g">
+                                    modelFluxIvar_g
+                                </option>
+                                <option value="modelFluxIvar_i">
+                                    modelFluxIvar_i
+                                </option>
+                                <option value="modelFluxIvar_r">
+                                    modelFluxIvar_r
+                                </option>
+                                <option value="modelFluxIvar_u">
+                                    modelFluxIvar_u
+                                </option>
+                                <option value="modelFluxIvar_z">
+                                    modelFluxIvar_z
+                                </option>
+                                <option value="modelMag_g">
+                                    modelMag_g
+                                </option>
+                                <option value="modelMag_i">
+                                    modelMag_i
+                                </option>
+                                <option value="modelMag_r">
+                                    modelMag_r
+                                </option>
+                                <option value="modelMag_u">
+                                    modelMag_u
+                                </option>
+                                <option value="modelMag_z">
+                                    modelMag_z
+                                </option>
+                                <option value="modelMagErr_g">
+                                    modelMagErr_g
+                                </option>
+                                <option value="modelMagErr_i">
+                                    modelMagErr_i
+                                </option>
+                                <option value="modelMagErr_r">
+                                    modelMagErr_r
+                                </option>
+                                <option value="modelMagErr_u">
+                                    modelMagErr_u
+                                </option>
+                                <option value="modelMagErr_z">
+                                    modelMagErr_z
+                                </option>
+                                <option value="mRrCc_g">
+                                    mRrCc_g
+                                </option>
+                                <option value="mRrCc_i">
+                                    mRrCc_i
+                                </option>
+                                <option value="mRrCc_r">
+                                    mRrCc_r
+                                </option>
+                                <option value="mRrCc_u">
+                                    mRrCc_u
+                                </option>
+                                <option value="mRrCc_z">
+                                    mRrCc_z
+                                </option>
+                                <option value="mRrCcErr_g">
+                                    mRrCcErr_g
+                                </option>
+                                <option value="mRrCcErr_i">
+                                    mRrCcErr_i
+                                </option>
+                                <option value="mRrCcErr_r">
+                                    mRrCcErr_r
+                                </option>
+                                <option value="mRrCcErr_u">
+                                    mRrCcErr_u
+                                </option>
+                                <option value="mRrCcErr_z">
+                                    mRrCcErr_z
+                                </option>
+                                <option value="mRrCcPSF_g">
+                                    mRrCcPSF_g
+                                </option>
+                                <option value="mRrCcPSF_i">
+                                    mRrCcPSF_i
+                                </option>
+                                <option value="mRrCcPSF_r">
+                                    mRrCcPSF_r
+                                </option>
+                                <option value="mRrCcPSF_u">
+                                    mRrCcPSF_u
+                                </option>
+                                <option value="mRrCcPSF_z">
+                                    mRrCcPSF_z
+                                </option>
+                                <option value="nChild">
+                                    nChild
+                                </option>
+                                <option value="nDetect">
+                                    nDetect
+                                </option>
+                                <option value="nEdge">
+                                    nEdge
+                                </option>
+                                <option value="nMgyPerCount_g">
+                                    nMgyPerCount_g
+                                </option>
+                                <option value="nMgyPerCount_i">
+                                    nMgyPerCount_i
+                                </option>
+                                <option value="nMgyPerCount_r">
+                                    nMgyPerCount_r
+                                </option>
+                                <option value="nMgyPerCount_u">
+                                    nMgyPerCount_u
+                                </option>
+                                <option value="nMgyPerCount_z">
+                                    nMgyPerCount_z
+                                </option>
+                                <option value="nObserve">
+                                    nObserve
+                                </option>
+                                <option value="nProf_g">
+                                    nProf_g
+                                </option>
+                                <option value="nProf_i">
+                                    nProf_i
+                                </option>
+                                <option value="nProf_r">
+                                    nProf_r
+                                </option>
+                                <option value="nProf_u">
+                                    nProf_u
+                                </option>
+                                <option value="nProf_z">
+                                    nProf_z
+                                </option>
+                                <option value="obj">
+                                    obj
+                                </option>
+                                <option value="objID">
+                                    objID
+                                </option>
+                                <option value="offsetDec_g">
+                                    offsetDec_g
+                                </option>
+                                <option value="offsetDec_i">
+                                    offsetDec_i
+                                </option>
+                                <option value="offsetDec_r">
+                                    offsetDec_r
+                                </option>
+                                <option value="offsetDec_u">
+                                    offsetDec_u
+                                </option>
+                                <option value="offsetDec_z">
+                                    offsetDec_z
+                                </option>
+                                <option value="offsetRa_g">
+                                    offsetRa_g
+                                </option>
+                                <option value="offsetRa_i">
+                                    offsetRa_i
+                                </option>
+                                <option value="offsetRa_r">
+                                    offsetRa_r
+                                </option>
+                                <option value="offsetRa_u">
+                                    offsetRa_u
+                                </option>
+                                <option value="offsetRa_z">
+                                    offsetRa_z
+                                </option>
+                                <option value="parentID">
+                                    parentID
+                                </option>
+                                <option value="petroFlux_g">
+                                    petroFlux_g
+                                </option>
+                                <option value="petroFlux_i">
+                                    petroFlux_i
+                                </option>
+                                <option value="petroFlux_r">
+                                    petroFlux_r
+                                </option>
+                                <option value="petroFlux_u">
+                                    petroFlux_u
+                                </option>
+                                <option value="petroFlux_z">
+                                    petroFlux_z
+                                </option>
+                                <option value="petroFluxIvar_g">
+                                    petroFluxIvar_g
+                                </option>
+                                <option value="petroFluxIvar_i">
+                                    petroFluxIvar_i
+                                </option>
+                                <option value="petroFluxIvar_r">
+                                    petroFluxIvar_r
+                                </option>
+                                <option value="petroFluxIvar_u">
+                                    petroFluxIvar_u
+                                </option>
+                                <option value="petroFluxIvar_z">
+                                    petroFluxIvar_z
+                                </option>
+                                <option value="petroMag_g">
+                                    petroMag_g
+                                </option>
+                                <option value="petroMag_i">
+                                    petroMag_i
+                                </option>
+                                <option value="petroMag_r">
+                                    petroMag_r
+                                </option>
+                                <option value="petroMag_u">
+                                    petroMag_u
+                                </option>
+                                <option value="petroMag_z">
+                                    petroMag_z
+                                </option>
+                                <option value="petroMagErr_g">
+                                    petroMagErr_g
+                                </option>
+                                <option value="petroMagErr_i">
+                                    petroMagErr_i
+                                </option>
+                                <option value="petroMagErr_r">
+                                    petroMagErr_r
+                                </option>
+                                <option value="petroMagErr_u">
+                                    petroMagErr_u
+                                </option>
+                                <option value="petroMagErr_z">
+                                    petroMagErr_z
+                                </option>
+                                <option value="petroR50_g">
+                                    petroR50_g
+                                </option>
+                                <option value="petroR50_i">
+                                    petroR50_i
+                                </option>
+                                <option value="petroR50_r">
+                                    petroR50_r
+                                </option>
+                                <option value="petroR50_u">
+                                    petroR50_u
+                                </option>
+                                <option value="petroR50_z">
+                                    petroR50_z
+                                </option>
+                                <option value="petroR50Err_g">
+                                    petroR50Err_g
+                                </option>
+                                <option value="petroR50Err_i">
+                                    petroR50Err_i
+                                </option>
+                                <option value="petroR50Err_r">
+                                    petroR50Err_r
+                                </option>
+                                <option value="petroR50Err_u">
+                                    petroR50Err_u
+                                </option>
+                                <option value="petroR50Err_z">
+                                    petroR50Err_z
+                                </option>
+                                <option value="petroR90_g">
+                                    petroR90_g
+                                </option>
+                                <option value="petroR90_i">
+                                    petroR90_i
+                                </option>
+                                <option value="petroR90_r">
+                                    petroR90_r
+                                </option>
+                                <option value="petroR90_u">
+                                    petroR90_u
+                                </option>
+                                <option value="petroR90_z">
+                                    petroR90_z
+                                </option>
+                                <option value="petroR90Err_g">
+                                    petroR90Err_g
+                                </option>
+                                <option value="petroR90Err_i">
+                                    petroR90Err_i
+                                </option>
+                                <option value="petroR90Err_r">
+                                    petroR90Err_r
+                                </option>
+                                <option value="petroR90Err_u">
+                                    petroR90Err_u
+                                </option>
+                                <option value="petroR90Err_z">
+                                    petroR90Err_z
+                                </option>
+                                <option value="petroRad_g">
+                                    petroRad_g
+                                </option>
+                                <option value="petroRad_i">
+                                    petroRad_i
+                                </option>
+                                <option value="petroRad_r">
+                                    petroRad_r
+                                </option>
+                                <option value="petroRad_u">
+                                    petroRad_u
+                                </option>
+                                <option value="petroRad_z">
+                                    petroRad_z
+                                </option>
+                                <option value="petroRadErr_g">
+                                    petroRadErr_g
+                                </option>
+                                <option value="petroRadErr_i">
+                                    petroRadErr_i
+                                </option>
+                                <option value="petroRadErr_r">
+                                    petroRadErr_r
+                                </option>
+                                <option value="petroRadErr_u">
+                                    petroRadErr_u
+                                </option>
+                                <option value="petroRadErr_z">
+                                    petroRadErr_z
+                                </option>
+                                <option value="phioffset_g">
+                                    phioffset_g
+                                </option>
+                                <option value="phioffset_i">
+                                    phioffset_i
+                                </option>
+                                <option value="phioffset_r">
+                                    phioffset_r
+                                </option>
+                                <option value="phioffset_u">
+                                    phioffset_u
+                                </option>
+                                <option value="phioffset_z">
+                                    phioffset_z
+                                </option>
+                                <option value="probPSF">
+                                    probPSF
+                                </option>
+                                <option value="probPSF_g">
+                                    probPSF_g
+                                </option>
+                                <option value="probPSF_i">
+                                    probPSF_i
+                                </option>
+                                <option value="probPSF_r">
+                                    probPSF_r
+                                </option>
+                                <option value="probPSF_u">
+                                    probPSF_u
+                                </option>
+                                <option value="probPSF_z">
+                                    probPSF_z
+                                </option>
+                                <option value="psfFlux_g">
+                                    psfFlux_g
+                                </option>
+                                <option value="psfFlux_i">
+                                    psfFlux_i
+                                </option>
+                                <option value="psfFlux_r">
+                                    psfFlux_r
+                                </option>
+                                <option value="psfFlux_u">
+                                    psfFlux_u
+                                </option>
+                                <option value="psfFlux_z">
+                                    psfFlux_z
+                                </option>
+                                <option value="psfFluxIvar_g">
+                                    psfFluxIvar_g
+                                </option>
+                                <option value="psfFluxIvar_i">
+                                    psfFluxIvar_i
+                                </option>
+                                <option value="psfFluxIvar_r">
+                                    psfFluxIvar_r
+                                </option>
+                                <option value="psfFluxIvar_u">
+                                    psfFluxIvar_u
+                                </option>
+                                <option value="psfFluxIvar_z">
+                                    psfFluxIvar_z
+                                </option>
+                                <option value="psffwhm_g">
+                                    psffwhm_g
+                                </option>
+                                <option value="psffwhm_i">
+                                    psffwhm_i
+                                </option>
+                                <option value="psffwhm_r">
+                                    psffwhm_r
+                                </option>
+                                <option value="psffwhm_u">
+                                    psffwhm_u
+                                </option>
+                                <option value="psffwhm_z">
+                                    psffwhm_z
+                                </option>
+                                <option value="psfMag_g">
+                                    psfMag_g
+                                </option>
+                                <option value="psfMag_i">
+                                    psfMag_i
+                                </option>
+                                <option value="psfMag_r">
+                                    psfMag_r
+                                </option>
+                                <option value="psfMag_u">
+                                    psfMag_u
+                                </option>
+                                <option value="psfMag_z">
+                                    psfMag_z
+                                </option>
+                                <option value="psfMagErr_g">
+                                    psfMagErr_g
+                                </option>
+                                <option value="psfMagErr_i">
+                                    psfMagErr_i
+                                </option>
+                                <option value="psfMagErr_r">
+                                    psfMagErr_r
+                                </option>
+                                <option value="psfMagErr_u">
+                                    psfMagErr_u
+                                </option>
+                                <option value="psfMagErr_z">
+                                    psfMagErr_z
+                                </option>
+                                <option value="q_g">
+                                    q_g
+                                </option>
+                                <option value="q_i">
+                                    q_i
+                                </option>
+                                <option value="q_r">
+                                    q_r
+                                </option>
+                                <option value="q_u">
+                                    q_u
+                                </option>
+                                <option value="q_z">
+                                    q_z
+                                </option>
+                                <option value="qErr_g">
+                                    qErr_g
+                                </option>
+                                <option value="qErr_i">
+                                    qErr_i
+                                </option>
+                                <option value="qErr_r">
+                                    qErr_r
+                                </option>
+                                <option value="qErr_u">
+                                    qErr_u
+                                </option>
+                                <option value="qErr_z">
+                                    qErr_z
+                                </option>
+                                <option value="r">
+                                    r
+                                </option>
+                                <option value="ra">
+                                    ra
+                                </option>
+                                <option value="raErr">
+                                    raErr
+                                </option>
+                                <option value="rerun">
+                                    rerun
+                                </option>
+                                <option value="resolveStatus">
+                                    resolveStatus
+                                </option>
+                                <option value="rowc">
+                                    rowc
+                                </option>
+                                <option value="rowc_g">
+                                    rowc_g
+                                </option>
+                                <option value="rowc_i">
+                                    rowc_i
+                                </option>
+                                <option value="rowc_r">
+                                    rowc_r
+                                </option>
+                                <option value="rowc_u">
+                                    rowc_u
+                                </option>
+                                <option value="rowc_z">
+                                    rowc_z
+                                </option>
+                                <option value="rowcErr">
+                                    rowcErr
+                                </option>
+                                <option value="rowcErr_g">
+                                    rowcErr_g
+                                </option>
+                                <option value="rowcErr_i">
+                                    rowcErr_i
+                                </option>
+                                <option value="rowcErr_r">
+                                    rowcErr_r
+                                </option>
+                                <option value="rowcErr_u">
+                                    rowcErr_u
+                                </option>
+                                <option value="rowcErr_z">
+                                    rowcErr_z
+                                </option>
+                                <option value="rowv">
+                                    rowv
+                                </option>
+                                <option value="rowvErr">
+                                    rowvErr
+                                </option>
+                                <option value="run">
+                                    run
+                                </option>
+                                <option value="score">
+                                    score
+                                </option>
+                                <option value="sky_g">
+                                    sky_g
+                                </option>
+                                <option value="sky_i">
+                                    sky_i
+                                </option>
+                                <option value="sky_r">
+                                    sky_r
+                                </option>
+                                <option value="sky_u">
+                                    sky_u
+                                </option>
+                                <option value="sky_z">
+                                    sky_z
+                                </option>
+                                <option value="skyIvar_g">
+                                    skyIvar_g
+                                </option>
+                                <option value="skyIvar_i">
+                                    skyIvar_i
+                                </option>
+                                <option value="skyIvar_r">
+                                    skyIvar_r
+                                </option>
+                                <option value="skyIvar_u">
+                                    skyIvar_u
+                                </option>
+                                <option value="skyIvar_z">
+                                    skyIvar_z
+                                </option>
+                                <option value="skyVersion">
+                                    skyVersion
+                                </option>
+                                <option value="specObjID">
+                                    specObjID
+                                </option>
+                                <option value="TAI_g">
+                                    TAI_g
+                                </option>
+                                <option value="TAI_i">
+                                    TAI_i
+                                </option>
+                                <option value="TAI_r">
+                                    TAI_r
+                                </option>
+                                <option value="TAI_u">
+                                    TAI_u
+                                </option>
+                                <option value="TAI_z">
+                                    TAI_z
+                                </option>
+                                <option value="thingId">
+                                    thingId
+                                </option>
+                                <option value="type">
+                                    type
+                                </option>
+                                <option value="type_g">
+                                    type_g
+                                </option>
+                                <option value="type_i">
+                                    type_i
+                                </option>
+                                <option value="type_r">
+                                    type_r
+                                </option>
+                                <option value="type_u">
+                                    type_u
+                                </option>
+                                <option value="type_z">
+                                    type_z
+                                </option>
+                                <option value="u">
+                                    u
+                                </option>
+                                <option value="u_g">
+                                    u_g
+                                </option>
+                                <option value="u_i">
+                                    u_i
+                                </option>
+                                <option value="u_r">
+                                    u_r
+                                </option>
+                                <option value="u_u">
+                                    u_u
+                                </option>
+                                <option value="u_z">
+                                    u_z
+                                </option>
+                                <option value="uErr_g">
+                                    uErr_g
+                                </option>
+                                <option value="uErr_i">
+                                    uErr_i
+                                </option>
+                                <option value="uErr_r">
+                                    uErr_r
+                                </option>
+                                <option value="uErr_u">
+                                    uErr_u
+                                </option>
+                                <option value="uErr_z">
+                                    uErr_z
+                                </option>
+                                <option value="z">
+                                    z
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col text-center">
+                            <div class="bg-blue rounded">
+                                <label>Spectroscopy</label>
+                            </div>
+                            <select class="mt-2" name="specparams" multiple="multiple" size="3" data-live-search="true">
+                                <option value="none" selected="">none</option>
+                                <option value="minimal">minimal</option>
+                                <option value="typical">typical</option>
+                                <option value="radec">radec</option>
+                                <option value="blankSpec"> </option>
+                                <option value="ancillary_target1">
+                                    ancillary_target1
+                                </option>
+                                <option value="ancillary_target2">
+                                    ancillary_target2
+                                </option>
+                                <option value="anyAndMask">
+                                    anyAndMask
+                                </option>
+                                <option value="anyOrMask">
+                                    anyOrMask
+                                </option>
+                                <option value="bestObjID">
+                                    bestObjID
+                                </option>
+                                <option value="blueFiber">
+                                    blueFiber
+                                </option>
+                                <option value="boss_target1">
+                                    boss_target1
+                                </option>
+                                <option value="bossPrimary">
+                                    bossPrimary
+                                </option>
+                                <option value="bossSpecObjID">
+                                    bossSpecObjID
+                                </option>
+                                <option value="chi68p">
+                                    chi68p
+                                </option>
+                                <option value="chunk">
+                                    chunk
+                                </option>
+                                <option value="class">
+                                    class
+                                </option>
+                                <option value="class_noqso">
+                                    class_noqso
+                                </option>
+                                <option value="class_person">
+                                    class_person
+                                </option>
+                                <option value="comments_person">
+                                    comments_person
+                                </option>
+                                <option value="cx">
+                                    cx
+                                </option>
+                                <option value="cy">
+                                    cy
+                                </option>
+                                <option value="cz">
+                                    cz
+                                </option>
+                                <option value="dec">
+                                    dec
+                                </option>
+                                <option value="deredSN2">
+                                    deredSN2
+                                </option>
+                                <option value="designID">
+                                    designID
+                                </option>
+                                <option value="DOF">
+                                    DOF
+                                </option>
+                                <option value="eboss_target_id">
+                                    eboss_target_id
+                                </option>
+                                <option value="eboss_target0">
+                                    eboss_target0
+                                </option>
+                                <option value="eboss_target1">
+                                    eboss_target1
+                                </option>
+                                <option value="eboss_target2">
+                                    eboss_target2
+                                </option>
+                                <option value="elodieBV">
+                                    elodieBV
+                                </option>
+                                <option value="elodieDOF">
+                                    elodieDOF
+                                </option>
+                                <option value="elodieFeH">
+                                    elodieFeH
+                                </option>
+                                <option value="elodieFileName">
+                                    elodieFileName
+                                </option>
+                                <option value="elodieLogG">
+                                    elodieLogG
+                                </option>
+                                <option value="elodieObject">
+                                    elodieObject
+                                </option>
+                                <option value="elodieRChi2">
+                                    elodieRChi2
+                                </option>
+                                <option value="elodieSpType">
+                                    elodieSpType
+                                </option>
+                                <option value="elodieTEff">
+                                    elodieTEff
+                                </option>
+                                <option value="elodieZ">
+                                    elodieZ
+                                </option>
+                                <option value="elodieZErr">
+                                    elodieZErr
+                                </option>
+                                <option value="elodieZModelErr">
+                                    elodieZModelErr
+                                </option>
+                                <option value="fiberID">
+                                    fiberID
+                                </option>
+                                <option value="firstRelease">
+                                    firstRelease
+                                </option>
+                                <option value="fluxObjID">
+                                    fluxObjID
+                                </option>
+                                <option value="fracNSigHi_1">
+                                    fracNSigHi_1
+                                </option>
+                                <option value="fracNSigHi_10">
+                                    fracNSigHi_10
+                                </option>
+                                <option value="fracNSigHi_2">
+                                    fracNSigHi_2
+                                </option>
+                                <option value="fracNSigHi_3">
+                                    fracNSigHi_3
+                                </option>
+                                <option value="fracNSigHi_4">
+                                    fracNSigHi_4
+                                </option>
+                                <option value="fracNSigHi_5">
+                                    fracNSigHi_5
+                                </option>
+                                <option value="fracNSigHi_6">
+                                    fracNSigHi_6
+                                </option>
+                                <option value="fracNSigHi_7">
+                                    fracNSigHi_7
+                                </option>
+                                <option value="fracNSigHi_8">
+                                    fracNSigHi_8
+                                </option>
+                                <option value="fracNSigHi_9">
+                                    fracNSigHi_9
+                                </option>
+                                <option value="fracNSigLo_1">
+                                    fracNSigLo_1
+                                </option>
+                                <option value="fracNSigLo_10">
+                                    fracNSigLo_10
+                                </option>
+                                <option value="fracNSigLo_2">
+                                    fracNSigLo_2
+                                </option>
+                                <option value="fracNSigLo_3">
+                                    fracNSigLo_3
+                                </option>
+                                <option value="fracNSigLo_4">
+                                    fracNSigLo_4
+                                </option>
+                                <option value="fracNSigLo_5">
+                                    fracNSigLo_5
+                                </option>
+                                <option value="fracNSigLo_6">
+                                    fracNSigLo_6
+                                </option>
+                                <option value="fracNSigLo_7">
+                                    fracNSigLo_7
+                                </option>
+                                <option value="fracNSigLo_8">
+                                    fracNSigLo_8
+                                </option>
+                                <option value="fracNSigLo_9">
+                                    fracNSigLo_9
+                                </option>
+                                <option value="fracNSigma_1">
+                                    fracNSigma_1
+                                </option>
+                                <option value="fracNSigma_10">
+                                    fracNSigma_10
+                                </option>
+                                <option value="fracNSigma_2">
+                                    fracNSigma_2
+                                </option>
+                                <option value="fracNSigma_3">
+                                    fracNSigma_3
+                                </option>
+                                <option value="fracNSigma_4">
+                                    fracNSigma_4
+                                </option>
+                                <option value="fracNSigma_5">
+                                    fracNSigma_5
+                                </option>
+                                <option value="fracNSigma_6">
+                                    fracNSigma_6
+                                </option>
+                                <option value="fracNSigma_7">
+                                    fracNSigma_7
+                                </option>
+                                <option value="fracNSigma_8">
+                                    fracNSigma_8
+                                </option>
+                                <option value="fracNSigma_9">
+                                    fracNSigma_9
+                                </option>
+                                <option value="htmID">
+                                    htmID
+                                </option>
+                                <option value="img">
+                                    img
+                                </option>
+                                <option value="instrument">
+                                    instrument
+                                </option>
+                                <option value="lambdaEff">
+                                    lambdaEff
+                                </option>
+                                <option value="legacy_target1">
+                                    legacy_target1
+                                </option>
+                                <option value="legacy_target2">
+                                    legacy_target2
+                                </option>
+                                <option value="legacyPrimary">
+                                    legacyPrimary
+                                </option>
+                                <option value="loadVersion">
+                                    loadVersion
+                                </option>
+                                <option value="mjd">
+                                    mjd
+                                </option>
+                                <option value="nPoly">
+                                    nPoly
+                                </option>
+                                <option value="plate">
+                                    plate
+                                </option>
+                                <option value="plateID">
+                                    plateID
+                                </option>
+                                <option value="platerun">
+                                    platerun
+                                </option>
+                                <option value="plateSN2">
+                                    plateSN2
+                                </option>
+                                <option value="primTarget">
+                                    primTarget
+                                </option>
+                                <option value="programname">
+                                    programname
+                                </option>
+                                <option value="ra">
+                                    ra
+                                </option>
+                                <option value="rChi2">
+                                    rChi2
+                                </option>
+                                <option value="rChi2Diff">
+                                    rChi2Diff
+                                </option>
+                                <option value="rChi2Diff_noqso">
+                                    rChi2Diff_noqso
+                                </option>
+                                <option value="run1d">
+                                    run1d
+                                </option>
+                                <option value="run2d">
+                                    run2d
+                                </option>
+                                <option value="sciencePrimary">
+                                    sciencePrimary
+                                </option>
+                                <option value="sdssPrimary">
+                                    sdssPrimary
+                                </option>
+                                <option value="secTarget">
+                                    secTarget
+                                </option>
+                                <option value="segue1_target1">
+                                    segue1_target1
+                                </option>
+                                <option value="segue1_target2">
+                                    segue1_target2
+                                </option>
+                                <option value="segue1Primary">
+                                    segue1Primary
+                                </option>
+                                <option value="segue2_target1">
+                                    segue2_target1
+                                </option>
+                                <option value="segue2_target2">
+                                    segue2_target2
+                                </option>
+                                <option value="segue2Primary">
+                                    segue2Primary
+                                </option>
+                                <option value="seguePrimary">
+                                    seguePrimary
+                                </option>
+                                <option value="sn1_g">
+                                    sn1_g
+                                </option>
+                                <option value="sn1_i">
+                                    sn1_i
+                                </option>
+                                <option value="sn1_r">
+                                    sn1_r
+                                </option>
+                                <option value="sn2_g">
+                                    sn2_g
+                                </option>
+                                <option value="sn2_i">
+                                    sn2_i
+                                </option>
+                                <option value="sn2_r">
+                                    sn2_r
+                                </option>
+                                <option value="snMedian">
+                                    snMedian
+                                </option>
+                                <option value="snMedian_g">
+                                    snMedian_g
+                                </option>
+                                <option value="snMedian_i">
+                                    snMedian_i
+                                </option>
+                                <option value="snMedian_r">
+                                    snMedian_r
+                                </option>
+                                <option value="snMedian_u">
+                                    snMedian_u
+                                </option>
+                                <option value="snMedian_z">
+                                    snMedian_z
+                                </option>
+                                <option value="snTurnoff">
+                                    snTurnoff
+                                </option>
+                                <option value="sourceType">
+                                    sourceType
+                                </option>
+                                <option value="special_target1">
+                                    special_target1
+                                </option>
+                                <option value="special_target2">
+                                    special_target2
+                                </option>
+                                <option value="specObjID">
+                                    specObjID
+                                </option>
+                                <option value="spectroFlux_g">
+                                    spectroFlux_g
+                                </option>
+                                <option value="spectroFlux_i">
+                                    spectroFlux_i
+                                </option>
+                                <option value="spectroFlux_r">
+                                    spectroFlux_r
+                                </option>
+                                <option value="spectroFlux_u">
+                                    spectroFlux_u
+                                </option>
+                                <option value="spectroFlux_z">
+                                    spectroFlux_z
+                                </option>
+                                <option value="spectroFluxIvar_g">
+                                    spectroFluxIvar_g
+                                </option>
+                                <option value="spectroFluxIvar_i">
+                                    spectroFluxIvar_i
+                                </option>
+                                <option value="spectroFluxIvar_r">
+                                    spectroFluxIvar_r
+                                </option>
+                                <option value="spectroFluxIvar_u">
+                                    spectroFluxIvar_u
+                                </option>
+                                <option value="spectroFluxIvar_z">
+                                    spectroFluxIvar_z
+                                </option>
+                                <option value="spectrographID">
+                                    spectrographID
+                                </option>
+                                <option value="spectroSkyFlux_g">
+                                    spectroSkyFlux_g
+                                </option>
+                                <option value="spectroSkyFlux_i">
+                                    spectroSkyFlux_i
+                                </option>
+                                <option value="spectroSkyFlux_r">
+                                    spectroSkyFlux_r
+                                </option>
+                                <option value="spectroSkyFlux_u">
+                                    spectroSkyFlux_u
+                                </option>
+                                <option value="spectroSkyFlux_z">
+                                    spectroSkyFlux_z
+                                </option>
+                                <option value="spectroSynFlux_g">
+                                    spectroSynFlux_g
+                                </option>
+                                <option value="spectroSynFlux_i">
+                                    spectroSynFlux_i
+                                </option>
+                                <option value="spectroSynFlux_r">
+                                    spectroSynFlux_r
+                                </option>
+                                <option value="spectroSynFlux_u">
+                                    spectroSynFlux_u
+                                </option>
+                                <option value="spectroSynFlux_z">
+                                    spectroSynFlux_z
+                                </option>
+                                <option value="spectroSynFluxIvar_g">
+                                    spectroSynFluxIvar_g
+                                </option>
+                                <option value="spectroSynFluxIvar_i">
+                                    spectroSynFluxIvar_i
+                                </option>
+                                <option value="spectroSynFluxIvar_r">
+                                    spectroSynFluxIvar_r
+                                </option>
+                                <option value="spectroSynFluxIvar_u">
+                                    spectroSynFluxIvar_u
+                                </option>
+                                <option value="spectroSynFluxIvar_z">
+                                    spectroSynFluxIvar_z
+                                </option>
+                                <option value="subClass">
+                                    subClass
+                                </option>
+                                <option value="subClass_noqso">
+                                    subClass_noqso
+                                </option>
+                                <option value="survey">
+                                    survey
+                                </option>
+                                <option value="targetObjID">
+                                    targetObjID
+                                </option>
+                                <option value="targetType">
+                                    targetType
+                                </option>
+                                <option value="tColumn_0">
+                                    tColumn_0
+                                </option>
+                                <option value="tColumn_1">
+                                    tColumn_1
+                                </option>
+                                <option value="tColumn_2">
+                                    tColumn_2
+                                </option>
+                                <option value="tColumn_3">
+                                    tColumn_3
+                                </option>
+                                <option value="tColumn_4">
+                                    tColumn_4
+                                </option>
+                                <option value="tColumn_5">
+                                    tColumn_5
+                                </option>
+                                <option value="tColumn_6">
+                                    tColumn_6
+                                </option>
+                                <option value="tColumn_7">
+                                    tColumn_7
+                                </option>
+                                <option value="tColumn_8">
+                                    tColumn_8
+                                </option>
+                                <option value="tColumn_9">
+                                    tColumn_9
+                                </option>
+                                <option value="tFile">
+                                    tFile
+                                </option>
+                                <option value="theta_0">
+                                    theta_0
+                                </option>
+                                <option value="theta_1">
+                                    theta_1
+                                </option>
+                                <option value="theta_2">
+                                    theta_2
+                                </option>
+                                <option value="theta_3">
+                                    theta_3
+                                </option>
+                                <option value="theta_4">
+                                    theta_4
+                                </option>
+                                <option value="theta_5">
+                                    theta_5
+                                </option>
+                                <option value="theta_6">
+                                    theta_6
+                                </option>
+                                <option value="theta_7">
+                                    theta_7
+                                </option>
+                                <option value="theta_8">
+                                    theta_8
+                                </option>
+                                <option value="theta_9">
+                                    theta_9
+                                </option>
+                                <option value="thing_id">
+                                    thing_id
+                                </option>
+                                <option value="thing_id_targeting">
+                                    thing_id_targeting
+                                </option>
+                                <option value="tile">
+                                    tile
+                                </option>
+                                <option value="velDisp">
+                                    velDisp
+                                </option>
+                                <option value="velDispChi2">
+                                    velDispChi2
+                                </option>
+                                <option value="velDispDOF">
+                                    velDispDOF
+                                </option>
+                                <option value="velDispErr">
+                                    velDispErr
+                                </option>
+                                <option value="velDispNPix">
+                                    velDispNPix
+                                </option>
+                                <option value="velDispZ">
+                                    velDispZ
+                                </option>
+                                <option value="velDispZErr">
+                                    velDispZErr
+                                </option>
+                                <option value="waveMax">
+                                    waveMax
+                                </option>
+                                <option value="waveMin">
+                                    waveMin
+                                </option>
+                                <option value="wCoverage">
+                                    wCoverage
+                                </option>
+                                <option value="xFocal">
+                                    xFocal
+                                </option>
+                                <option value="yFocal">
+                                    yFocal
+                                </option>
+                                <option value="z">
+                                    z
+                                </option>
+                                <option value="z_noqso">
+                                    z_noqso
+                                </option>
+                                <option value="z_person">
+                                    z_person
+                                </option>
+                                <option value="zErr">
+                                    zErr
+                                </option>
+                                <option value="zErr_noqso">
+                                    zErr_noqso
+                                </option>
+                                <option value="zOffset">
+                                    zOffset
+                                </option>
+                                <option value="zWarning">
+                                    zWarning
+                                </option>
+                                <option value="zWarning_noqso">
+                                    zWarning_noqso
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card my-1">
+                <div class="card-header">
+                    Position Constraints
+                </div>
+                <div class="card-body">
+                    <div class="row my-1">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="positionType" class="control-label">Type of search</label>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            <label class="radio-inline">
+                                <input id="rectangular" type="radio" asp-for="positionType" value="rectangular" name="positionType" checked onclick="javascript:changePositionType('rectangular');">rectangular
+                            </label>
+                            <label class="radio-inline">
+                               <input id="cone" type="radio" asp-for="positionType" value="cone" name="positionType" onclick="javascript:changePositionType('cone');">cone
+                            </label>
+                            <label class="radio-inline">
+                                <input id="proximity" type="radio" asp-for="positionType" value="proximity" name="positionType" onclick="javascript:changePositionType('proximity');">proximity
+                            </label>
+                            <label class="radio-inline">
+                                <input id="none" type="radio" asp-for="positionType" value="none" name="positionType"  onclick="javascript:changePositionType('none');">none
+                            </label>
+                            <span asp-validation-for="positionType" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 rectangular-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="raMin" class="control-label">RA range</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            @Html.TextBoxFor(m => m.raMin, new { @value = "", @id = "raMin", @class = "form-control" })
+                            <span asp-validation-for="raMin" class="text-danger"></span>
+                        </div>
+                        <div class="col-1 text-center">
+                            -
+                        </div>
+                        <div class="col">
+                            @Html.TextBoxFor(m => m.raMax, new { @value = "", @id = "raMax", @class = "form-control" })
+                            <span asp-validation-for="raMax" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mt-1 rectangular-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="decMin" class="control-label">Dec range</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            @Html.TextBoxFor(m => m.decMin, new { @value = "", @id = "decMin", @class = "form-control" })
+                            <span asp-validation-for="decMin" class="text-danger"></span>
+                        </div>
+                        <div class="col-1 text-center">
+                            -
+                        </div>
+                        <div class="col">
+                            @Html.TextBoxFor(m => m.decMax, new { @value = "", @id = "decMax", @class = "form-control" })
+                            <span asp-validation-for="decMax" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 cone-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="dec" class="control-label">Dec</label>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            @Html.TextBoxFor(m => m.dec, new { @value = "", @id = "dec", @class = "form-control" })
+                            <span asp-validation-for="dec" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 cone-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="ra" class="control-label">RA</label>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            @Html.TextBoxFor(m => m.ra, new { @value = "", @id = "ra", @class = "form-control" })
+                            <span asp-validation-for="ra" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 cone-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="radius" class="control-label">Radius (arcmin - max 30')</label>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            @Html.TextBoxFor(m => m.radius, new { @value = "", @id = "radius", @class = "form-control" })
+                            <span asp-validation-for="radius" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 proximity-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="radecTextarea" class="control-label">List of ra, dec[, radius]</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            @Html.TextArea("radecTextarea", new { rows = 4, columns = 30, @class = "form-control", @value = "added text", @id = "radecTextarea" })
+                            <span asp-validation-for="radecTextarea" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 proximity-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="searchNearBy" class="control-label">Type of search:</label>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            <div class="radio-button-group">
+                                <label class="radio-label" for="optical" onclick="javascript:changeQueryType('nearest');"> @Html.RadioButtonFor(m => m.searchNearBy, "nearest")<span>Nearest Only</span></label>
+                                <label class="radio-label" for="infrared" onclick="javascript:changeQueryType('nearby');"> @Html.RadioButtonFor(m => m.searchNearBy, "nearby")<span>All Nearby</span></label>
+                            </div>
+                            <span asp-validation-for="searchNearBy" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 proximity-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="proximityradius" class="control-label">Radius (arcmin - max 10')</label>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            @Html.TextBoxFor(m => m.proximityradius, new { @value = "", @id = "proximityradius", @class = "form-control" })
+                            <span asp-validation-for="proximityradius" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 proximity-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="radecFilename" class="control-label">Upload a file</label>
+                            </div>
+                        </div>    
+                        <div class="col">
+                                <input type="file" asp-for="radecFilename">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card my-1">
+                <div class="card-header">
+                    Imaging Constraints
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-5 mb-1">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="magType" class="control-label">Magnitude and Color Type</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="radio-button-group">
+                                <label class="radio-label" for="petro"> @Html.RadioButtonFor(m => m.magType, "petro")<span>Petro</span></label>
+                                <label class="radio-label" for="model"> @Html.RadioButtonFor(m => m.magType, "model")<span>Model</span></label>
+                                <label class="radio-label" for="psf"> @Html.RadioButtonFor(m => m.magType, "psf")<span>PSF </span></label>
+                            </div>
+                            <span asp-validation-for="magType" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="card my-1">
+                        <div class="card-header">
+                            Magnitude
+                        </div>
+                        <div class="card-body">
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">u range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="uMin" class="form-control" />
+                                    <span asp-validation-for="uMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="uMax" class="form-control" />
+                                    <span asp-validation-for="uMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">g range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="gMin" class="form-control" />
+                                    <span asp-validation-for="gMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="gMax" class="form-control" />
+                                    <span asp-validation-for="gMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">r range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="rMin" class="form-control" />
+                                    <span asp-validation-for="rMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="rMax" class="form-control" />
+                                    <span asp-validation-for="rMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">i range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="iMin" class="form-control" />
+                                    <span asp-validation-for="iMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="iMax" class="form-control" />
+                                    <span asp-validation-for="iMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">z range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="zMin" class="form-control" />
+                                    <span asp-validation-for="zMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="zMax" class="form-control" />
+                                    <span asp-validation-for="zMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card my-1">
+                        <div class="card-header">
+                            Color
+                        </div>
+                        <div class="card-body">
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">ug range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="ugMin" class="form-control" />
+                                    <span asp-validation-for="ugMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="ugMax" class="form-control" />
+                                    <span asp-validation-for="ugMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">gr range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="grMin" class="form-control" />
+                                    <span asp-validation-for="grMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="grMax" class="form-control" />
+                                    <span asp-validation-for="grMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">ri range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="riMin" class="form-control" />
+                                    <span asp-validation-for="riMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="riMax" class="form-control" />
+                                    <span asp-validation-for="riMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">iz range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="izMin" class="form-control" />
+                                    <span asp-validation-for="izMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="izMax" class="form-control" />
+                                    <span asp-validation-for="izMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row my-1">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="objType" class="control-label">Obj Type</label>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <input type="checkbox" name="doGalaxy" value="on" checked>Extended Sources (e.g.&nbspGalaxies)<br>
+                            <input type="checkbox" name="doStar" value="on" checked>Point Sources (e.g.&nbspStars)
+                        </div>
+                        <div class="col">
+                            <input type="checkbox" name="doSky" value="on"> Sky<br>
+                            <input type="checkbox" name="doUnknown" value="on"> Unknown
+                        </div>
+                        <span asp-validation-for="objType" class="text-danger"></span>
+                    </div>
+                    <div class="row my-1">
+                        <div class="col-9">
+                            <div class="text-center bg-blue rounded"><label asp-for="returnValue" class="control-label">Score</label></div>
+                        </div>
+                        <div class="col">
+                            <input type="checkbox" name="addQA" value="addQA" onclick="javascript:changeQueryType('Return Value');">Return Value
+                            <span asp-validation-for="returnValue" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1">
+                        <div class="col-9">
+                            <div class="text-center bg-blue rounded"><label asp-for="minQA" class="control-label">Min score (enter value from 0 to 1, e.g. 0.9)</label></div>
+                        </div>
+                        <div class="col text-center">
+                            <input asp-for="minQA" class="form-control" />
+                            <span asp-validation-for="minQA" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1">
+                        <div class="col text-center">
+                            <div class="bg-blue rounded">
+                                <label>
+                                    At least one of these flags ON
+                                </label>
+                            </div>
+                            <select class="mt-2" name="flagsOnList" multiple="multiple" size="5" data-live-search="true">
+                                <option value="ignore" selected="">ignore</option>
+                                <option value=""></option>
+                                <option value="CANONICAL_CENTER">
+                                    CANONICAL_CENTER
+                                </option>
+                                <option value="BRIGHT">
+                                    BRIGHT
+                                </option>
+                                <option value="EDGE">
+                                    EDGE
+                                </option>
+                                <option value="BLENDED">
+                                    BLENDED
+                                </option>
+                                <option value="CHILD">
+                                    CHILD
+                                </option>
+                                <option value="PEAKCENTER">
+                                    PEAKCENTER
+                                </option>
+                                <option value="NODEBLEND">
+                                    NODEBLEND
+                                </option>
+                                <option value="NOPROFILE">
+                                    NOPROFILE
+                                </option>
+                                <option value="NOPETRO">
+                                    NOPETRO
+                                </option>
+                                <option value="MANYPETRO">
+                                    MANYPETRO
+                                </option>
+                                <option value="NOPETRO_BIG">
+                                    NOPETRO_BIG
+                                </option>
+                                <option value="DEBLEND_TOO_MANY_PEAKS">
+                                    DEBLEND_TOO_MANY_PEAKS
+                                </option>
+                                <option value="COSMIC_RAY">
+                                    COSMIC_RAY
+                                </option>
+                                <option value="MANYR50">
+                                    MANYR50
+                                </option>
+                                <option value="MANYR90">
+                                    MANYR90
+                                </option>
+                                <option value="BAD_RADIAL">
+                                    BAD_RADIAL
+                                </option>
+                                <option value="INCOMPLETE_PROFILE">
+                                    INCOMPLETE_PROFILE
+                                </option>
+                                <option value="INTERP">
+                                    INTERP
+                                </option>
+                                <option value="SATURATED">
+                                    SATURATED
+                                </option>
+                                <option value="NOTCHECKED">
+                                    NOTCHECKED
+                                </option>
+                                <option value="SUBTRACTED">
+                                    SUBTRACTED
+                                </option>
+                                <option value="NOSTOKES">
+                                    NOSTOKES
+                                </option>
+                                <option value="BADSKY">
+                                    BADSKY
+                                </option>
+                                <option value="PETROFAINT">
+                                    PETROFAINT
+                                </option>
+                                <option value="TOO_LARGE">
+                                    TOO_LARGE
+                                </option>
+                                <option value="DEBLENDED_AS_PSF">
+                                    DEBLENDED_AS_PSF
+                                </option>
+                                <option value="DEBLEND_PRUNED">
+                                    DEBLEND_PRUNED
+                                </option>
+                                <option value="ELLIPFAINT">
+                                    ELLIPFAINT
+                                </option>
+                                <option value="BINNED1">
+                                    BINNED1
+                                </option>
+                                <option value="BINNED2">
+                                    BINNED2
+                                </option>
+                                <option value="BINNED4">
+                                    BINNED4
+                                </option>
+                                <option value="MOVED">
+                                    MOVED
+                                </option>
+                                <option value="DEBLENDED_AS_MOVING">
+                                    DEBLENDED_AS_MOVING
+                                </option>
+                                <option value="NODEBLEND_MOVING">
+                                    NODEBLEND_MOVING
+                                </option>
+                                <option value="TOO_FEW_DETECTIONS">
+                                    TOO_FEW_DETECTIONS
+                                </option>
+                                <option value="BAD_MOVING_FIT">
+                                    BAD_MOVING_FIT
+                                </option>
+                                <option value="STATIONARY">
+                                    STATIONARY
+                                </option>
+                                <option value="PEAKS_TOO_CLOSE">
+                                    PEAKS_TOO_CLOSE
+                                </option>
+                                <option value="MEDIAN_CENTER">
+                                    MEDIAN_CENTER
+                                </option>
+                                <option value="LOCAL_EDGE">
+                                    LOCAL_EDGE
+                                </option>
+                                <option value="BAD_COUNTS_ERROR">
+                                    BAD_COUNTS_ERROR
+                                </option>
+                                <option value="BAD_MOVING_FIT_CHILD">
+                                    BAD_MOVING_FIT_CHILD
+                                </option>
+                                <option value="DEBLEND_UNASSIGNED_FLUX">
+                                    DEBLEND_UNASSIGNED_FLUX
+                                </option>
+                                <option value="SATUR_CENTER">
+                                    SATUR_CENTER
+                                </option>
+                                <option value="INTERP_CENTER">
+                                    INTERP_CENTER
+                                </option>
+                                <option value="DEBLENDED_AT_EDGE">
+                                    DEBLENDED_AT_EDGE
+                                </option>
+                                <option value="DEBLEND_NOPEAK">
+                                    DEBLEND_NOPEAK
+                                </option>
+                                <option value="PSF_FLUX_INTERP">
+                                    PSF_FLUX_INTERP
+                                </option>
+                                <option value="TOO_FEW_GOOD_DETECTIONS">
+                                    TOO_FEW_GOOD_DETECTIONS
+                                </option>
+                                <option value="CENTER_OFF_AIMAGE">
+                                    CENTER_OFF_AIMAGE
+                                </option>
+                                <option value="DEBLEND_DEGENERATE">
+                                    DEBLEND_DEGENERATE
+                                </option>
+                                <option value="BRIGHTEST_GALAXY_CHILD">
+                                    BRIGHTEST_GALAXY_CHILD
+                                </option>
+                                <option value="CANONICAL_BAND">
+                                    CANONICAL_BAND
+                                </option>
+                                <option value="AMOMENT_FAINT">
+                                    AMOMENT_FAINT
+                                </option>
+                                <option value="AMOMENT_SHIFT">
+                                    AMOMENT_SHIFT
+                                </option>
+                                <option value="AMOMENT_MAXITER">
+                                    AMOMENT_MAXITER
+                                </option>
+                                <option value="MAYBE_CR">
+                                    MAYBE_CR
+                                </option>
+                                <option value="MAYBE_EGHOST">
+                                    MAYBE_EGHOST
+                                </option>
+                                <option value="NOTCHECKED_CENTER">
+                                    NOTCHECKED_CENTER
+                                </option>
+                                <option value="OBJECT2_HAS_SATUR_DN">
+                                    OBJECT2_HAS_SATUR_DN
+                                </option>
+                                <option value="OBJECT2_DEBLEND_PEEPHOLE">
+                                    OBJECT2_DEBLEND_PEEPHOLE
+                                </option>
+                                <option value="GROWN_MERGED">
+                                    GROWN_MERGED
+                                </option>
+                                <option value="HAS_CENTER">
+                                    HAS_CENTER
+                                </option>
+                                <option value="RESERVED">
+                                    RESERVED
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col text-center">
+                            <div class="bg-blue rounded">
+                                <label>
+                                    All of these flags OFF
+                                </label>
+                            </div>
+                            <select class="mt-2" name="flagsOffList" multiple="multiple" size="5" data-live-search="true">
+                                <option value="ignore" selected="">ignore</option>
+                                <option value=""></option>
+                                <option value="CANONICAL_CENTER">
+                                    CANONICAL_CENTER
+                                </option>
+                                <option value="BRIGHT">
+                                    BRIGHT
+                                </option>
+                                <option value="EDGE">
+                                    EDGE
+                                </option>
+                                <option value="BLENDED">
+                                    BLENDED
+                                </option>
+                                <option value="CHILD">
+                                    CHILD
+                                </option>
+                                <option value="PEAKCENTER">
+                                    PEAKCENTER
+                                </option>
+                                <option value="NODEBLEND">
+                                    NODEBLEND
+                                </option>
+                                <option value="NOPROFILE">
+                                    NOPROFILE
+                                </option>
+                                <option value="NOPETRO">
+                                    NOPETRO
+                                </option>
+                                <option value="MANYPETRO">
+                                    MANYPETRO
+                                </option>
+                                <option value="NOPETRO_BIG">
+                                    NOPETRO_BIG
+                                </option>
+                                <option value="DEBLEND_TOO_MANY_PEAKS">
+                                    DEBLEND_TOO_MANY_PEAKS
+                                </option>
+                                <option value="COSMIC_RAY">
+                                    COSMIC_RAY
+                                </option>
+                                <option value="MANYR50">
+                                    MANYR50
+                                </option>
+                                <option value="MANYR90">
+                                    MANYR90
+                                </option>
+                                <option value="BAD_RADIAL">
+                                    BAD_RADIAL
+                                </option>
+                                <option value="INCOMPLETE_PROFILE">
+                                    INCOMPLETE_PROFILE
+                                </option>
+                                <option value="INTERP">
+                                    INTERP
+                                </option>
+                                <option value="SATURATED">
+                                    SATURATED
+                                </option>
+                                <option value="NOTCHECKED">
+                                    NOTCHECKED
+                                </option>
+                                <option value="SUBTRACTED">
+                                    SUBTRACTED
+                                </option>
+                                <option value="NOSTOKES">
+                                    NOSTOKES
+                                </option>
+                                <option value="BADSKY">
+                                    BADSKY
+                                </option>
+                                <option value="PETROFAINT">
+                                    PETROFAINT
+                                </option>
+                                <option value="TOO_LARGE">
+                                    TOO_LARGE
+                                </option>
+                                <option value="DEBLENDED_AS_PSF">
+                                    DEBLENDED_AS_PSF
+                                </option>
+                                <option value="DEBLEND_PRUNED">
+                                    DEBLEND_PRUNED
+                                </option>
+                                <option value="ELLIPFAINT">
+                                    ELLIPFAINT
+                                </option>
+                                <option value="BINNED1">
+                                    BINNED1
+                                </option>
+                                <option value="BINNED2">
+                                    BINNED2
+                                </option>
+                                <option value="BINNED4">
+                                    BINNED4
+                                </option>
+                                <option value="MOVED">
+                                    MOVED
+                                </option>
+                                <option value="DEBLENDED_AS_MOVING">
+                                    DEBLENDED_AS_MOVING
+                                </option>
+                                <option value="NODEBLEND_MOVING">
+                                    NODEBLEND_MOVING
+                                </option>
+                                <option value="TOO_FEW_DETECTIONS">
+                                    TOO_FEW_DETECTIONS
+                                </option>
+                                <option value="BAD_MOVING_FIT">
+                                    BAD_MOVING_FIT
+                                </option>
+                                <option value="STATIONARY">
+                                    STATIONARY
+                                </option>
+                                <option value="PEAKS_TOO_CLOSE">
+                                    PEAKS_TOO_CLOSE
+                                </option>
+                                <option value="MEDIAN_CENTER">
+                                    MEDIAN_CENTER
+                                </option>
+                                <option value="LOCAL_EDGE">
+                                    LOCAL_EDGE
+                                </option>
+                                <option value="BAD_COUNTS_ERROR">
+                                    BAD_COUNTS_ERROR
+                                </option>
+                                <option value="BAD_MOVING_FIT_CHILD">
+                                    BAD_MOVING_FIT_CHILD
+                                </option>
+                                <option value="DEBLEND_UNASSIGNED_FLUX">
+                                    DEBLEND_UNASSIGNED_FLUX
+                                </option>
+                                <option value="SATUR_CENTER">
+                                    SATUR_CENTER
+                                </option>
+                                <option value="INTERP_CENTER">
+                                    INTERP_CENTER
+                                </option>
+                                <option value="DEBLENDED_AT_EDGE">
+                                    DEBLENDED_AT_EDGE
+                                </option>
+                                <option value="DEBLEND_NOPEAK">
+                                    DEBLEND_NOPEAK
+                                </option>
+                                <option value="PSF_FLUX_INTERP">
+                                    PSF_FLUX_INTERP
+                                </option>
+                                <option value="TOO_FEW_GOOD_DETECTIONS">
+                                    TOO_FEW_GOOD_DETECTIONS
+                                </option>
+                                <option value="CENTER_OFF_AIMAGE">
+                                    CENTER_OFF_AIMAGE
+                                </option>
+                                <option value="DEBLEND_DEGENERATE">
+                                    DEBLEND_DEGENERATE
+                                </option>
+                                <option value="BRIGHTEST_GALAXY_CHILD">
+                                    BRIGHTEST_GALAXY_CHILD
+                                </option>
+                                <option value="CANONICAL_BAND">
+                                    CANONICAL_BAND
+                                </option>
+                                <option value="AMOMENT_FAINT">
+                                    AMOMENT_FAINT
+                                </option>
+                                <option value="AMOMENT_SHIFT">
+                                    AMOMENT_SHIFT
+                                </option>
+                                <option value="AMOMENT_MAXITER">
+                                    AMOMENT_MAXITER
+                                </option>
+                                <option value="MAYBE_CR">
+                                    MAYBE_CR
+                                </option>
+                                <option value="MAYBE_EGHOST">
+                                    MAYBE_EGHOST
+                                </option>
+                                <option value="NOTCHECKED_CENTER">
+                                    NOTCHECKED_CENTER
+                                </option>
+                                <option value="OBJECT2_HAS_SATUR_DN">
+                                    OBJECT2_HAS_SATUR_DN
+                                </option>
+                                <option value="OBJECT2_DEBLEND_PEEPHOLE">
+                                    OBJECT2_DEBLEND_PEEPHOLE
+                                </option>
+                                <option value="GROWN_MERGED">
+                                    GROWN_MERGED
+                                </option>
+                                <option value="HAS_CENTER">
+                                    HAS_CENTER
+                                </option>
+                                <option value="RESERVED">
+                                    RESERVED
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-1">
+                <div class="col-4">
+                    <div class="text-center bg-blue rounded">
+                        <label asp-for="format" class="control-label">Output Format</label>
+                    </div>
+                </div>
+                <div class="col radio-button-group">
+                    <label class="radio-label" for="HTML" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "HTML")<span>HTML</span></label>
+                    <label class="radio-label" for="CSV" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "CSV")<span>CSV</span></label>
+                    <label class="radio-label" for="XML" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "XML")<span>XML</span></label>
+                    <label class="radio-label" for="JSON" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "JSON")<span>JSON</span></label>
+                    <label class="radio-label" for="VOTable" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "VOTable")<span>VOTable</span></label>
+                    <label class="radio-label" for="FITS" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "FITS")<span>FITS</span></label>
+                    <label class="radio-label" for="MyDB" onclick="javascript:showTable();"> @Html.RadioButtonFor(m => m.format, "MyDB")<span>MyDB</span></label>
+                </div>
+                <span asp-validation-for="format" class="text-danger"></span>
+            </div>
+            <div class="row my-1" id="table_name_group">
+                <div class="col-5">
+                    <div class="text-center bg-blue rounded">
+                        <label class="control-label">Table Name</label>
+                    </div>
+                </div>
+                <div class="col text-center">
+                    <input class="form-control form-control-sm" type="text" asp-for="TableName" name="TableName" id="TableName" value="" />
+                </div>
+            </div>
+            <div class="row my-1">
+                <div class="col-9">
+                    <div class="text-center bg-blue rounded"><label asp-for="limit" class="control-label">Limit number of output rows (0 for max) to:</label></div>
+                </div>
+                <div class="col text-center">
+                    @Html.TextBoxFor(m => m.limit, new { @value = "50", @id = "limit", @class = "form-control" })
+                </div>
+            </div>
+            <div class="row my-1">
+                <div class="col text-center mx-1">
+                    <input type="submit" value="Submit" class="btn btn-success" />
+                    <input type="reset" value="Reset" class="btn btn-danger" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

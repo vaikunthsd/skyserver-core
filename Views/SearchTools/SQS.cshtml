@@ -1,0 +1,644 @@
+﻿@model SkyserverCore.Models.SQSModel
+@{
+    Layout = "/Views/Shared/_SearchToolsLayout.cshtml";
+    ViewData["Title"] = "Spectroscopic Search";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/skyserver.css" />
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+<div class="card form-card">
+    <div class="card-body bg-purple">
+        <form asp-action="SQS" class="searchForm" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="searchTool" name="searchtool" id="searchtool" value="Spectro" />
+            <input type="hidden" asp-for="TaskName" name="TaskName" id="TaskName" value="Skyserver.Search.SQS" />
+            <input type="hidden" asp-for="ReturnHtml" name="ReturnHtml" id="ReturnHtml" value="true" />
+            <div class="card my-1">
+                <div class="card-header">
+                    Parameters to return
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col text-center">
+                            <div class="bg-blue rounded">
+                                <label>Imaging</label>
+                            </div>
+                            <select id="imgparams" name="imgparams" multiple="multiple" size="3" class="mt-2">
+                            </select>
+                        </div>
+                        <div class="col text-center">
+                            <div class="bg-blue rounded">
+                                <label>Spectroscopy</label>
+                            </div>
+                            <select id="specparams" name="specparams" multiple="multiple" size="3" class="mt-2" data-live-search="true">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card my-1">
+                <div class="card-header">
+                    Position Constraints
+                </div>
+                <div class="card-body">
+                    <div class="row my-1">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="positionType" class="control-label">Type of search</label>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            <div class="radio-button-group">
+                                <label class="radio-label" for="rectangular" onclick="javascript:changePositionType('rectangular');" checked="checked"> @Html.RadioButtonFor(m => m.positionType, "rectangular")<span>Rectangle</span></label>
+                                <label class="radio-label" for="cone" onclick="javascript:changePositionType('cone');"> @Html.RadioButtonFor(m => m.positionType, "cone")<span>Cone</span></label>
+                                <label class="radio-label" for="proximity" onclick="javascript:changePositionType('proximity');"> @Html.RadioButtonFor(m => m.positionType, "proximity")<span>Proximity</span></label>
+                                <label class="radio-label" for="none" onclick="javascript:changePositionType('none');"> @Html.RadioButtonFor(m => m.positionType, "none")<span>None</span></label>
+                            </div>
+                            <span asp-validation-for="positionType" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 rectangular-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="raMin" class="control-label">RA range</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            @Html.TextBoxFor(m => m.raMin, new { @value = "", @id = "raMin", @class = "form-control" })
+                            <span asp-validation-for="raMin" class="text-danger"></span>
+                        </div>
+                        <div class="col-1 text-center">
+                            -
+                        </div>
+                        <div class="col">
+                            @Html.TextBoxFor(m => m.raMax, new { @value = "", @id = "raMax", @class = "form-control" })
+                            <span asp-validation-for="raMax" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mt-1 rectangular-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="decMin" class="control-label">Dec range</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            @Html.TextBoxFor(m => m.decMin, new { @value = "", @id = "decMin", @class = "form-control" })
+                            <span asp-validation-for="decMin" class="text-danger"></span>
+                        </div>
+                        <div class="col-1 text-center">
+                            -
+                        </div>
+                        <div class="col">
+                            @Html.TextBoxFor(m => m.decMax, new { @value = "", @id = "decMax", @class = "form-control" })
+                            <span asp-validation-for="decMax" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 cone-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="dec" class="control-label">Dec</label>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            @Html.TextBoxFor(m => m.dec, new { @value = "", @id = "dec", @class = "form-control" })
+                            <span asp-validation-for="dec" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 cone-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="ra" class="control-label">RA</label>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            @Html.TextBoxFor(m => m.ra, new { @value = "", @id = "ra", @class = "form-control" })
+                            <span asp-validation-for="ra" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 cone-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="radius" class="control-label">Radius (arcmin - max 30')</label>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            @Html.TextBoxFor(m => m.radius, new { @value = "", @id = "radius", @class = "form-control" })
+                            <span asp-validation-for="radius" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 proximity-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="radecTextarea" class="control-label">List of ra, dec[, radius]</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            @Html.TextArea("radecTextarea", new { rows = 4, columns = 30, @class = "form-control", @value = "added text", @id = "radecTextarea" })
+                            <span asp-validation-for="radecTextarea" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 proximity-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="searchNearBy" class="control-label">Type of search:</label>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            <div class="radio-button-group">
+                                <label class="radio-label" for="optical" onclick="javascript:changeQueryType('nearest');"> @Html.RadioButtonFor(m => m.searchNearBy, "nearest")<span>Nearest Only</span></label>
+                                <label class="radio-label" for="infrared" onclick="javascript:changeQueryType('nearby');"> @Html.RadioButtonFor(m => m.searchNearBy, "nearby")<span>All Nearby</span></label>
+                            </div>
+                            <span asp-validation-for="searchNearBy" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 proximity-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="proximityradius" class="control-label">Radius (arcmin - max 10')</label>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            @Html.TextBoxFor(m => m.proximityradius, new { @value = "", @id = "proximityradius", @class = "form-control" })
+                            <span asp-validation-for="proximityradius" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1 proximity-group">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="radecFilename" class="control-label">Upload a file</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <input type="file" asp-for="radecFilename">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card my-1">
+                <div class="card-header">
+                    Spectroscopy Constraints
+                </div>
+                <div class="card-body">
+                    <div class="row my-1">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label class="control-label">Redshift range</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <input asp-for="redShiftMin" class="form-control" />
+                            <span asp-validation-for="redShiftMin" class="text-danger"></span>
+                        </div>
+                        <div class="col-1 text-center">
+                            -
+                        </div>
+                        <div class="col">
+                            <input asp-for="redShiftMax" class="form-control" />
+                            <span asp-validation-for="redShiftMax" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1">
+                        <div class="col-9">
+                            <div class="text-center bg-blue rounded"><label asp-for="zWarning" class="control-label">Redshift Warning Flags</label></div>
+                        </div>
+                        <div class="col">
+                            <input type="checkbox" name="zWarning" value="zWarning" id="zWarning" onclick="javascript:toggleWarningFlags();">No warnings
+                            <span asp-validation-for="zWarning" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group" id="zWarningFlags">
+                        <select class="form-control" size="4" name="class" multiple="multiple">
+                            <option>ALL</option>
+                            <option>STAR</option>
+                            <option>GALAXY</option>
+                            <option>QSO</option>
+                        </select>
+                    </div>
+                    <div class="card my-1">
+                        <div class="card-header">
+                            Target Flags (PRIMTARGET)
+                        </div>
+                        <div class="card-body">
+                            <div class="row my-1">
+                                <div class="col text-center">
+                                    <div class="bg-blue rounded">
+                                        <label asp-for="priFlagsOnList">At least one of these bits ON</label>
+                                    </div>
+                                    <select id="priFlagsOnList" name="priFlagsOnList" multiple="multiple" size="5" class="my-2" data-live-search="true">
+                                        <option value="ignore" selected="">ignore</option>
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="bg-blue rounded">
+                                        <label asp-for="priFlagsOffList">All of these bits OFF</label>
+                                    </div>
+                                    <select id="priFlagsOffList" name="priFlagsOffList" multiple="multiple" size="5" class="my-2" data-live-search="true">
+                                        <option value="ignore" selected="">ignore</option>
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card my-1">
+                        <div class="card-header">
+                            Target Flags (SECTARGET)
+                        </div>
+                        <div class="card-body">
+                            <div class="row my-1">
+                                <div class="col text-center">
+                                    <div class="bg-blue rounded">
+                                        <label asp-for="secFlagsOnList" class="control-label">At least one of these bits ON</label>
+                                    </div>
+                                    <select id="secFlagsOnList" name="secFlagsOnList" multiple="multiple" size="5" class="my-2" data-live-search="true">
+                                        <option value="ignore" selected="">ignore</option>
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="bg-blue rounded">
+                                        <label asp-for="secFlagsOffList">All of these bits OFF</label>
+                                    </div>
+                                    <select id="secFlagsOffList" name="secFlagsOffList" multiple="multiple" size="5" class="my-2" data-live-search="true">
+                                        <option value="ignore" selected="">ignore</option>
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card my-1">
+                        <div class="card-header">
+                            BOSS Flags (BossTarget1)
+                        </div>
+                        <div class="card-body">
+                            <div class="row my-1">
+                                <div class="col text-center">
+                                    <div class="bg-blue rounded">
+                                        <label asp-for="bossFlagsOnList" class="control-label">At least one of these bits ON</label>
+                                    </div>
+                                    <select id="bossFlagsOnList" name="bossFlagsOnList" multiple="multiple" size="5" class="my-2" data-live-search="true">
+                                        <option value="ignore" selected="">ignore</option>
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="bg-blue rounded">
+                                        <label asp-for="bossFlagsOffList" class="control-label">All of these bits OFF</label>
+                                    </div>
+                                    <select id="bossFlagsOffList" name="bossFlagsOffList" multiple="multiple" size="5" class="my-2" data-live-search="true">
+                                        <option value="ignore" selected="">ignore</option>
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card my-1">
+                        <div class="card-header">
+                            EBOSS Flags (EBossTarget0)
+                        </div>
+                        <div class="card-body">
+                            <div class="row my-1">
+                                <div class="col text-center">
+                                    <div class="bg-blue rounded">
+                                        <label asp-for="ebossFlagsOnList" class="control-label">At least one of these bits ON</label>
+                                    </div>
+                                    <select id="ebossFlagsOnList" name="ebossFlagsOnList" multiple="multiple" size="5" class="my-2" data-live-search="true">
+                                        <option value="ignore" selected="">ignore</option>
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="bg-blue rounded">
+                                        <label asp-for="ebossFlagsOffList" class="control-label">All of these bits OFF</label>
+                                    </div>
+                                    <select id="ebossFlagsOffList" name="ebossFlagsOffList" multiple="multiple" size="5" class="my-2" data-live-search="true">
+                                        <option value="ignore" selected="">ignore</option>
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card my-1">
+                <div class="card-header">
+                    Imaging Constraints
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-5 mb-1">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="magType" class="control-label">Magnitude and Color Type</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="radio-button-group">
+                                <label class="radio-label" for="petro" onclick="javascript:changeQueryType('Petro');"> @Html.RadioButtonFor(m => m.magType, "petro")<span>Petro</span></label>
+                                <label class="radio-label" for="model" onclick="javascript:changeQueryType('Model');"> @Html.RadioButtonFor(m => m.magType, "model")<span>Model</span></label>
+                                <label class="radio-label" for="psf" onclick="javascript:changeQueryType('PSF');"> @Html.RadioButtonFor(m => m.magType, "psf")<span>PSF </span></label>
+                            </div>
+                            <span asp-validation-for="objType" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="card my-1">
+                        <div class="card-header">
+                            Magnitude
+                        </div>
+                        <div class="card-body">
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">u range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="uMin" class="form-control" />
+                                    <span asp-validation-for="uMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="uMax" class="form-control" />
+                                    <span asp-validation-for="uMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">g range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="gMin" class="form-control" />
+                                    <span asp-validation-for="gMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="gMax" class="form-control" />
+                                    <span asp-validation-for="gMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">r range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="rMin" class="form-control" />
+                                    <span asp-validation-for="rMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="rMax" class="form-control" />
+                                    <span asp-validation-for="rMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">i range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="iMin" class="form-control" />
+                                    <span asp-validation-for="iMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="iMax" class="form-control" />
+                                    <span asp-validation-for="iMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">z range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="zMin" class="form-control" />
+                                    <span asp-validation-for="zMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="zMax" class="form-control" />
+                                    <span asp-validation-for="zMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card my-1">
+                        <div class="card-header">
+                            Color
+                        </div>
+                        <div class="card-body">
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">ug range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="ugMin" class="form-control" />
+                                    <span asp-validation-for="ugMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="ugMax" class="form-control" />
+                                    <span asp-validation-for="ugMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">gr range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="grMin" class="form-control" />
+                                    <span asp-validation-for="grMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="grMax" class="form-control" />
+                                    <span asp-validation-for="grMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">ri range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="riMin" class="form-control" />
+                                    <span asp-validation-for="riMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="riMax" class="form-control" />
+                                    <span asp-validation-for="riMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">iz range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="izMin" class="form-control" />
+                                    <span asp-validation-for="izMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="izMax" class="form-control" />
+                                    <span asp-validation-for="izMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row my-1">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="objType" class="control-label">Obj Type</label>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <input type="checkbox" name="doGalaxy" value="on" checked>Extended Sources (e.g.&nbspGalaxies)<br>
+                            <input type="checkbox" name="doStar" value="on" checked>Point Sources (e.g.&nbspStars)
+                        </div>
+                        <div class="col">
+                            <input type="checkbox" name="doSky" value="on"> Sky<br>
+                            <input type="checkbox" name="on" value="doUnknown"> Unknown
+                        </div>
+                        <span asp-validation-for="objType" class="text-danger"></span>
+                    </div>
+                    <div class="row my-1">
+                        <div class="col-9">
+                            <div class="text-center bg-blue rounded"><label asp-for="returnValue" class="control-label">Score</label></div>
+                        </div>
+                        <div class="col">
+                            <input type="checkbox" name="addQA" value="addQA" onclick="javascript:changeQueryType('Return Value');">Return Value
+                            <span asp-validation-for="returnValue" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1" id="retValue">
+                        <div class="col-9">
+                            <div class="text-center bg-blue rounded"><label asp-for="minQA" class="control-label">Min score (enter value from 0 to 1, e.g. 0.9)</label></div>
+                        </div>
+                        <div class="col text-center">
+                            <input asp-for="minQA" class="form-control" />
+                            <span asp-validation-for="minQA" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="card my-1">
+                        <div class="card-header">
+                            Obj Flags
+                        </div>
+                        <div class="card-body">
+                            <div class="row my-1">
+                                <div class="col text-center">
+                                    <div class="bg-blue rounded">
+                                        <label>
+                                            At least one of these flags ON
+                                        </label>
+                                    </div>
+                                    <select id="flagsOnList" class="my-2" name="flagsOnList" multiple="multiple" size="5" data-live-search="true">
+                                        <option value="ignore" selected="">ignore</option>
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="bg-blue rounded">
+                                        <label>
+                                            All of these flags OFF
+                                        </label>
+                                    </div>
+                                    <select id="flagsOffList" class="my-2" name="flagsOffList" multiple="multiple" size="5" data-live-search="true">
+                                        <option value="ignore" selected="">ignore</option>
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-1">
+                <div class="col-4">
+                    <div class="text-center bg-blue rounded">
+                        <label asp-for="format" class="control-label">Output Format</label>
+                    </div>
+                </div>
+                <div class="col radio-button-group">
+                    <label class="radio-label" for="HTML" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "HTML")<span>HTML</span></label>
+                    <label class="radio-label" for="CSV" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "CSV")<span>CSV</span></label>
+                    <label class="radio-label" for="XML" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "XML")<span>XML</span></label>
+                    <label class="radio-label" for="JSON" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "JSON")<span>JSON</span></label>
+                    <label class="radio-label" for="VOTable" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "VOTable")<span>VOTable</span></label>
+                    <label class="radio-label" for="FITS" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "FITS")<span>FITS</span></label>
+                    <label class="radio-label" for="MyDB" onclick="javascript:showTable();"> @Html.RadioButtonFor(m => m.format, "MyDB")<span>MyDB</span></label>
+                </div>
+                <span asp-validation-for="format" class="text-danger"></span>
+            </div>
+            <div class="row my-1" id="table_name_group">
+                <div class="col-5">
+                    <div class="text-center bg-blue rounded">
+                        <label class="control-label">Table Name</label>
+                    </div>
+                </div>
+                <div class="col text-center">
+                    <input class="form-control form-control-sm" type="text" asp-for="TableName" name="TableName" id="TableName" value="" />
+                </div>
+            </div>
+            <div class="row my-1">
+                <div class="col-9">
+                    <div class="text-center bg-blue rounded"><label asp-for="limit" class="control-label">Limit number of output rows (0 for max) to:</label></div>
+                </div>
+                <div class="col text-center">
+                    @Html.TextBoxFor(m => m.limit, new { @value = "50", @id = "limit", @class = "form-control" })
+                </div>
+            </div>
+            <div class="row my-1">
+                <div class="col text-center mx-1">
+                    <input type="submit" value="Submit" class="btn btn-success" />
+                    <input type="reset" value="Reset" class="btn btn-danger" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+    const WSURL = '@ViewData["WSMetadataUrl"]';
+    const SQLURL = 'http://skyserver.sdss.org/dr16/SkyServerWS/SearchTools/SqlSearch';
+    </script>
+    <script src="~/js/spectrosearch.js"></script>
+}

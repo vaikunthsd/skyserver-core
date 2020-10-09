@@ -1,0 +1,876 @@
+@model SkyserverCore.Models.IRQS
+@{
+    Layout = "/Views/Shared/_SearchToolsLayout.cshtml";
+    ViewData["Title"] = "IR Spectroscopic Search";
+}
+
+@section Styles {
+    <link rel="stylesheet"type="text/css" href="~/css/skyserver.css" />
+}
+<h1> @ViewData["Title"]</h1>
+<hr />
+<div class="card form-card">
+    <div class="card-body bg-purple">
+        <form asp-action="IRQS" class="searchForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="searchTool" name="searchtool" id="searchtool" value="IRSpectra" />
+            <input type="hidden" asp-for="TaskName" name="TaskName" id="TaskName" value="Skyserver.Search.IRQS" />
+            <input type="hidden" asp-for="ReturnHtml" name="ReturnHtml" id="ReturnHtml" value="true" />
+            <div class="card my-1">
+                <div class="card-header">
+                    Parameters to return
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6 text-center">
+                            <div class="bg-blue rounded">
+                                <label>Infrared Spectra</label>
+                            </div>
+                            <select class="mt-2" name="irspecparams" multiple="multiple" size="5">
+                                <option value="minimal">Minimal</option>
+                                <option value="typical" selected="">Typical</option>
+                                <option value="blankSpec"> </option>
+                                <option value="andflag">
+                                    andflag
+                                </option>
+                                <option value="apogee_id">
+                                    apogee_id
+                                </option>
+                                <option value="apogee_target1">
+                                    apogee_target1
+                                </option>
+                                <option value="apogee_target2">
+                                    apogee_target2
+                                </option>
+                                <option value="apogee_target3">
+                                    apogee_target3
+                                </option>
+                                <option value="apogee2_target1">
+                                    apogee2_target1
+                                </option>
+                                <option value="apogee2_target2">
+                                    apogee2_target2
+                                </option>
+                                <option value="apogee2_target3">
+                                    apogee2_target3
+                                </option>
+                                <option value="apstar_id">
+                                    apstar_id
+                                </option>
+                                <option value="apstar_version">
+                                    apstar_version
+                                </option>
+                                <option value="chi2_threshold">
+                                    chi2_threshold
+                                </option>
+                                <option value="commiss">
+                                    commiss
+                                </option>
+                                <option value="dec">
+                                    dec
+                                </option>
+                                <option value="extratarg">
+                                    extratarg
+                                </option>
+                                <option value="field">
+                                    field
+                                </option>
+                                <option value="file">
+                                    file
+                                </option>
+                                <option value="glat">
+                                    glat
+                                </option>
+                                <option value="glon">
+                                    glon
+                                </option>
+                                <option value="htmID">
+                                    htmID
+                                </option>
+                                <option value="location_id">
+                                    location_id
+                                </option>
+                                <option value="max_h">
+                                    max_h
+                                </option>
+                                <option value="max_jk">
+                                    max_jk
+                                </option>
+                                <option value="min_h">
+                                    min_h
+                                </option>
+                                <option value="min_jk">
+                                    min_jk
+                                </option>
+                                <option value="nvisits">
+                                    nvisits
+                                </option>
+                                <option value="ra">
+                                    ra
+                                </option>
+                                <option value="reduction_id">
+                                    reduction_id
+                                </option>
+                                <option value="rv_autofwhm">
+                                    rv_autofwhm
+                                </option>
+                                <option value="rv_ccfwhm">
+                                    rv_ccfwhm
+                                </option>
+                                <option value="rv_feh">
+                                    rv_feh
+                                </option>
+                                <option value="rv_logg">
+                                    rv_logg
+                                </option>
+                                <option value="rv_teff">
+                                    rv_teff
+                                </option>
+                                <option value="snr">
+                                    snr
+                                </option>
+                                <option value="stablerv_chi2">
+                                    stablerv_chi2
+                                </option>
+                                <option value="stablerv_chi2_prob">
+                                    stablerv_chi2_prob
+                                </option>
+                                <option value="stablerv_rchi2">
+                                    stablerv_rchi2
+                                </option>
+                                <option value="starflag">
+                                    starflag
+                                </option>
+                                <option value="survey">
+                                    survey
+                                </option>
+                                <option value="synthscatter">
+                                    synthscatter
+                                </option>
+                                <option value="synthverr">
+                                    synthverr
+                                </option>
+                                <option value="synthverr_med">
+                                    synthverr_med
+                                </option>
+                                <option value="synthvhelio_avg">
+                                    synthvhelio_avg
+                                </option>
+                                <option value="synthvscatter">
+                                    synthvscatter
+                                </option>
+                                <option value="target_id">
+                                    target_id
+                                </option>
+                                <option value="telescope">
+                                    telescope
+                                </option>
+                                <option value="verr">
+                                    verr
+                                </option>
+                                <option value="verr_med">
+                                    verr_med
+                                </option>
+                                <option value="vhelio_avg">
+                                    vhelio_avg
+                                </option>
+                                <option value="vscatter">
+                                    vscatter
+                                </option>
+                                <option value="blankSpec"> </option>
+                                <option value="twomassj">2MASS J</option>
+                                <option value="twomassh">2MASS H</option>
+                                <option value="twomassk">2MASS K_s</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card my-1">
+                <div class="card-header">
+                    Position Constraints
+                </div>
+                <div class="card-body">
+                    <div class="row my-1">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="positionType" class="control-label"></label>
+                            </div>
+                        </div>
+                        <div class="col text-center">
+                            <div class="radio-button-group">
+                                <label class="radio-label" for="cone" checked="checked" onclick="javascript:changeQueryType('cone');"> @Html.RadioButtonFor(m => m.positionType, "cone")<span>Ra / Dec</span></label>
+                                <label class="radio-label" for="conelb" onclick="javascript:changeQueryType('conelb');"> @Html.RadioButtonFor(m => m.positionType, "conelb")<span>Galactic Coordinates</span></label>
+                                <label class="radio-label" for="none" onclick="javascript:changeQueryType('none');"> @Html.RadioButtonFor(m => m.positionType, "none")<span>None </span></label>
+                            </div>
+                            <span asp-validation-for="positionType" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1" id="ra">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="ra" id="labelRaOrL" class="control-label">RA</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <input asp-for="ra" class="form-control" />
+                            <span asp-validation-for="ra" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1" id="dec">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="dec" id="labelDecOrB" class="control-label">Dec</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <input asp-for="dec" class="form-control" />
+                            <span asp-validation-for="dec" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1" id="l">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="Lcenter" class="control-label">l</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <input asp-for="Lcenter" class="form-control" />
+                            <span asp-validation-for="Lcenter " class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1" id="b">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="Bcenter" class="control-label">b</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <input asp-for="Bcenter" class="form-control" />
+                            <span asp-validation-for="Bcenter" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1" id="rad">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="radius" class="control-label">radius arcmins (max 30')</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <input asp-for="radius" class="form-control" />
+                            <span asp-validation-for="radius" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row my-1" id="lbRad">
+                        <div class="col-5">
+                            <div class="text-center bg-blue rounded">
+                                <label asp-for="lbRadius" class="control-label">radius arcmins (max 30')</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <input asp-for="lbRadius" class="form-control" />
+                            <span asp-validation-for="lbRadius" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card my-1">
+                <div class="card-header">
+                    Infrared Spectroscopy Constraints
+                </div>
+                <div class="card-body">
+                    <div class="card my-1">
+                        <div class="card-header">
+                            IR Magnitudes
+                        </div>
+                        <div class="card-body">
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">J range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="jMin" class="form-control" />
+                                    <span asp-validation-for="jMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="jMax" class="form-control" />
+                                    <span asp-validation-for="jMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">H range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="hMin" class="form-control" />
+                                    <span asp-validation-for="hMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="hMax" class="form-control" />
+                                    <span asp-validation-for="hMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">Ks range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="kMin" class="form-control" />
+                                    <span asp-validation-for="kMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="kMax" class="form-control" />
+                                    <span asp-validation-for="kMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card my-1">
+                        <div class="card-header">
+                            IR Colors
+                        </div>
+                        <div class="card-body">
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">J-H range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="jhMin" class="form-control" />
+                                    <span asp-validation-for="jhMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="jhMax" class="form-control" />
+                                    <span asp-validation-for="jhMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">H-Ks range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="hkMin" class="form-control" />
+                                    <span asp-validation-for="hkMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="hkMax" class="form-control" />
+                                    <span asp-validation-for="hkMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card my-1">
+                        <div class="card-header">
+                            Observational Parameters
+                        </div>
+                        <div class="card-body">
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">SNR range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="snrMin" class="form-control" />
+                                    <span asp-validation-for="snrMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="snrMax" class="form-control" />
+                                    <span asp-validation-for="snrMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">Vhelio range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="vhelioMin" class="form-control" />
+                                    <span asp-validation-for="vhelioMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="vhelioMax" class="form-control" />
+                                    <span asp-validation-for="vhelioMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">Scatter in V range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="scatterMin" class="form-control" />
+                                    <span asp-validation-for="scatterMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="scatterMax" class="form-control" />
+                                    <span asp-validation-for="scatterMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card my-1">
+                        <div class="card-header">
+                            Stellar Parameters
+                        </div>
+                        <div class="card-body">
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">Temp range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="tempMin" class="form-control" />
+                                    <span asp-validation-for="tempMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="tempMax" class="form-control" />
+                                    <span asp-validation-for="tempMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">log(g) range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="loggMin" class="form-control" />
+                                    <span asp-validation-for="loggMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="loggMax" class="form-control" />
+                                    <span asp-validation-for="loggMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">[M/H] range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="fehMin" class="form-control" />
+                                    <span asp-validation-for="fehMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="fehMax" class="form-control" />
+                                    <span asp-validation-for="fehMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-5">
+                                    <div class="text-center bg-blue rounded">
+                                        <label class="control-label">[alpha;/Fe] range</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input asp-for="afeMin" class="form-control" />
+                                    <span asp-validation-for="afeMin" class="text-danger"></span>
+                                </div>
+                                <div class="col-1 text-center">
+                                    -
+                                </div>
+                                <div class="col">
+                                    <input asp-for="afeMax" class="form-control" />
+                                    <span asp-validation-for="afeMax" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card my-1">
+                <div class="card-header">
+                    Targeting Flags #1
+                    (APOGEE_TARGET1)
+                </div>
+                <div class="card-body">
+                    <div class="row mb-1">
+                        <div class="col text-center">
+                            <div class="bg-blue rounded">
+                                <label>
+                                    At least one of these flags ON
+                                </label>
+                            </div>
+                            <SELECT class="mt-2" name="irTargetFlagsOnList" multiple="multiple" size="5">
+                                <OPTION value="ignore" selected>ignore</OPTION>
+
+                                <OPTION value="APOGEE_IRAC_DERED">
+                                    APOGEE_IRAC_DERED
+                                </OPTION>
+                                <OPTION value="APOGEE_WISE_DERED">
+                                    APOGEE_WISE_DERED
+                                </OPTION>
+                                <OPTION value="APOGEE_SFD_DERED">
+                                    APOGEE_SFD_DERED
+                                </OPTION>
+                                <OPTION value="APOGEE_NO_DERED">
+                                    APOGEE_NO_DERED
+                                </OPTION>
+                                <OPTION value="APOGEE_WASH_GIANT">
+                                    APOGEE_WASH_GIANT
+                                </OPTION>
+                                <OPTION value="APOGEE_WASH_DWARF">
+                                    APOGEE_WASH_DWARF
+                                </OPTION>
+                                <OPTION value="APOGEE_SCI_CLUSTER">
+                                    APOGEE_SCI_CLUSTER
+                                </OPTION>
+                                <OPTION value="APOGEE_EXTENDED">
+                                    APOGEE_EXTENDED
+                                </OPTION>
+                                <OPTION value="APOGEE_SHORT">
+                                    APOGEE_SHORT
+                                </OPTION>
+                                <OPTION value="APOGEE_INTERMEDIATE">
+                                    APOGEE_INTERMEDIATE
+                                </OPTION>
+                                <OPTION value="APOGEE_LONG">
+                                    APOGEE_LONG
+                                </OPTION>
+                                <OPTION value="APOGEE_SERENDIPITOUS">
+                                    APOGEE_SERENDIPITOUS
+                                </OPTION>
+                                <OPTION value="APOGEE_FIRST_LIGHT">
+                                    APOGEE_FIRST_LIGHT
+                                </OPTION>
+                                <OPTION value="APOGEE_ANCILLARY">
+                                    APOGEE_ANCILLARY
+                                </OPTION>
+                                <OPTION value="APOGEE_M31_CLUSTER">
+                                    APOGEE_M31_CLUSTER
+                                </OPTION>
+                                <OPTION value="APOGEE_MDWARF">
+                                    APOGEE_MDWARF
+                                </OPTION>
+                                <OPTION value="APOGEE_HIRES">
+                                    APOGEE_HIRES
+                                </OPTION>
+                                <OPTION value="APOGEE_OLD_STAR">
+                                    APOGEE_OLD_STAR
+                                </OPTION>
+                                <OPTION value="APOGEE_DISK_RED_GIANT">
+                                    APOGEE_DISK_RED_GIANT
+                                </OPTION>
+                                <OPTION value="APOGEE_KEPLER_EB">
+                                    APOGEE_KEPLER_EB
+                                </OPTION>
+                                <OPTION value="APOGEE_GC_PAL1">
+                                    APOGEE_GC_PAL1
+                                </OPTION>
+                                <OPTION value="APOGEE_MASSIVE_STAR">
+                                    APOGEE_MASSIVE_STAR
+                                </OPTION>
+                                <OPTION value="APOGEE_SGR_DSPH">
+                                    APOGEE_SGR_DSPH
+                                </OPTION>
+                                <OPTION value="APOGEE_KEPLER_SEISMO">
+                                    APOGEE_KEPLER_SEISMO
+                                </OPTION>
+                                <OPTION value="APOGEE_KEPLER_HOST">
+                                    APOGEE_KEPLER_HOST
+                                </OPTION>
+                                <OPTION value="APOGEE_FAINT_EXTRA">
+                                    APOGEE_FAINT_EXTRA
+                                </OPTION>
+                                <OPTION value="APOGEE_SEGUE_OVERLAP">
+                                    APOGEE_SEGUE_OVERLAP
+                                </OPTION>
+                            </SELECT>
+                        </div>
+                        <div class="col text-center">
+                            <div class="bg-blue rounded">
+                                <label>
+                                    At least one of these flags OFF
+                                </label>
+                            </div>
+                            <select class="mt-2" name="irTargetFlagsOffList" multiple="multiple" size="5">
+                                <option value="ignore" selected="">ignore</option>
+
+                                <option value="APOGEE_IRAC_DERED">
+                                    APOGEE_IRAC_DERED
+
+                                </option>
+                                <option value="APOGEE_WISE_DERED">
+                                    APOGEE_WISE_DERED
+
+                                </option>
+                                <option value="APOGEE_SFD_DERED">
+                                    APOGEE_SFD_DERED
+
+                                </option>
+                                <option value="APOGEE_NO_DERED">
+                                    APOGEE_NO_DERED
+
+                                </option>
+                                <option value="APOGEE_WASH_GIANT">
+                                    APOGEE_WASH_GIANT
+
+                                </option>
+                                <option value="APOGEE_WASH_DWARF">
+                                    APOGEE_WASH_DWARF
+
+                                </option>
+                                <option value="APOGEE_SCI_CLUSTER">
+                                    APOGEE_SCI_CLUSTER
+
+                                </option>
+                                <option value="APOGEE_EXTENDED">
+                                    APOGEE_EXTENDED
+
+                                </option>
+                                <option value="APOGEE_SHORT">
+                                    APOGEE_SHORT
+
+                                </option>
+                                <option value="APOGEE_INTERMEDIATE">
+                                    APOGEE_INTERMEDIATE
+
+                                </option>
+                                <option value="APOGEE_LONG">
+                                    APOGEE_LONG
+
+                                </option>
+                                <option value="APOGEE_SERENDIPITOUS">
+                                    APOGEE_SERENDIPITOUS
+
+                                </option>
+                                <option value="APOGEE_FIRST_LIGHT">
+                                    APOGEE_FIRST_LIGHT
+
+                                </option>
+                                <option value="APOGEE_ANCILLARY">
+                                    APOGEE_ANCILLARY
+
+                                </option>
+                                <option value="APOGEE_M31_CLUSTER">
+                                    APOGEE_M31_CLUSTER
+
+                                </option>
+                                <option value="APOGEE_MDWARF">
+                                    APOGEE_MDWARF
+
+                                </option>
+                                <option value="APOGEE_HIRES">
+                                    APOGEE_HIRES
+
+                                </option>
+                                <option value="APOGEE_OLD_STAR">
+                                    APOGEE_OLD_STAR
+
+                                </option>
+                                <option value="APOGEE_DISK_RED_GIANT">
+                                    APOGEE_DISK_RED_GIANT
+
+                                </option>
+                                <option value="APOGEE_KEPLER_EB">
+                                    APOGEE_KEPLER_EB
+
+                                </option>
+                                <option value="APOGEE_GC_PAL1">
+                                    APOGEE_GC_PAL1
+
+                                </option>
+                                <option value="APOGEE_MASSIVE_STAR">
+                                    APOGEE_MASSIVE_STAR
+
+                                </option>
+                                <option value="APOGEE_SGR_DSPH">
+                                    APOGEE_SGR_DSPH
+
+                                </option>
+                                <option value="APOGEE_KEPLER_SEISMO">
+                                    APOGEE_KEPLER_SEISMO
+
+                                </option>
+                                <option value="APOGEE_KEPLER_HOST">
+                                    APOGEE_KEPLER_HOST
+
+                                </option>
+                                <option value="APOGEE_FAINT_EXTRA">
+                                    APOGEE_FAINT_EXTRA
+
+                                </option>
+                                <option value="APOGEE_SEGUE_OVERLAP">
+                                    APOGEE_SEGUE_OVERLAP
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card my-1">
+                <div class="card-header">
+                    Targeting Flags #2
+                    (APOGEE_TARGET2)
+                </div>
+                <div class="card-body">
+                    <div class="row my-1">
+                        <div class="col text-center">
+                            <div class="bg-blue rounded">
+                                <label>
+                                    At least one of these flags ON
+                                </label>
+                            </div>
+                            <select class="mt-2" name="irTargetFlags2OnList" multiple="multiple" size="5">
+                                <option value="ignore" selected="">ignore</option>
+                                <option value="APOGEE_FLUX_STANDARD">
+                                    APOGEE_FLUX_STANDARD
+                                </option>
+                                <option value="APOGEE_STANDARD_STAR">
+                                    APOGEE_STANDARD_STAR
+                                </option>
+                                <option value="APOGEE_RV_STANDARD">
+                                    APOGEE_RV_STANDARD
+                                </option>
+                                <option value="SKY">
+                                    SKY
+                                </option>
+                                <option value="APOGEE_TELLURIC">
+                                    APOGEE_TELLURIC
+                                </option>
+                                <option value="APOGEE_CALIB_CLUSTER">
+                                    APOGEE_CALIB_CLUSTER
+                                </option>
+                                <option value="APOGEE_BULGE_GIANT">
+                                    APOGEE_BULGE_GIANT
+                                </option>
+                                <option value="APOGEE_BULGE_SUPER_GIANT">
+                                    APOGEE_BULGE_SUPER_GIANT
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col text-center">
+                            <div class="bg-blue rounded">
+                                <label>
+                                    At least one of these flags OFF
+                                </label>
+                            </div>
+                            <select class="mt-2" name="irTargetFlags2OffList" multiple="multiple" size="5">
+                                <option value="ignore" selected="">ignore</option>
+                                <option value="APOGEE_FLUX_STANDARD">
+                                    APOGEE_FLUX_STANDARD
+                                </option>
+                                <option value="APOGEE_STANDARD_STAR">
+                                    APOGEE_STANDARD_STAR
+                                </option>
+                                <option value="APOGEE_RV_STANDARD">
+                                    APOGEE_RV_STANDARD
+                                </option>
+                                <option value="SKY">
+                                    SKY
+                                </option>
+                                <option value="APOGEE_TELLURIC">
+                                    APOGEE_TELLURIC
+                                </option>
+                                <option value="APOGEE_CALIB_CLUSTER">
+                                    APOGEE_CALIB_CLUSTER
+                                </option>
+                                <option value="APOGEE_BULGE_GIANT">
+                                    APOGEE_BULGE_GIANT
+                                </option>
+                                <option value="APOGEE_BULGE_SUPER_GIANT">
+                                    APOGEE_BULGE_SUPER_GIANT
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="row my-1">
+                    <div class="col-5">
+                        <div class="text-center bg-blue rounded">
+                            <label asp-for="format" class="control-label">Output Format</label>
+                        </div>
+                    </div>
+                    <div class="col radio-button-group">
+                        <label class="radio-label" for="HTML" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "HTML")<span>HTML</span></label>
+                        <label class="radio-label" for="CSV" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "CSV")<span>CSV</span></label>
+                        <label class="radio-label" for="XML" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "XML")<span>XML</span></label>
+                        <label class="radio-label" for="JSON" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "JSON")<span>JSON</span></label>
+                        <label class="radio-label" for="VOTable" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "VOTable")<span>VOTable</span></label>
+                        <label class="radio-label" for="FITS" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "FITS")<span>FITS</span></label>
+                        <label class="radio-label" for="MyDB" onclick="javascript:showTable();"> @Html.RadioButtonFor(m => m.format, "MyDB")<span>MyDB</span></label>
+                    </div>
+                    <span asp-validation-for="format" class="text-danger"></span>
+                </div>
+                
+            <div class="row my-1" id="table_name_group">
+                <div class="col-5">
+                    <div class="text-center bg-blue rounded">
+                        <label class="control-label">Table Name</label>
+                    </div>
+                </div>
+                <div class="col text-center">
+                    <input class="form-control form-control-sm" type="text" asp-for="TableName" name="TableName" id="TableName" value="" />
+                </div>
+            </div>
+            <div class="row my-1">
+                <div class="col-9">
+                    <div class="text-center bg-blue rounded">
+                        <label asp-for="limit" class="control-label">Limit number of output rows (0 for max) to:</label>
+                    </div>
+                </div>
+                <div class="col text-center">
+                    <input class="form-control form-control-sm" type=text asp-for="limit" size=5>
+                </div>
+            </div>
+            <div class="row my-1">
+                <div class="col text-center">
+                    <input type="submit" value="Submit" class="btn btn-success" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/IRspectrosearch.js"></script>
+}

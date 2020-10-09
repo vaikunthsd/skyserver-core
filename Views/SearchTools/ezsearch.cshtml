@@ -1,0 +1,56 @@
+﻿@model SkyserverCore.Models.SQLModel
+
+@{
+    ViewData["Title"] = "EZSearch";
+    Layout = "/Views/Shared/_SearchToolsLayout.cshtml";
+}
+<h1>@ViewData["Title"]</h1>
+<hr />
+<dl class="dl-horizontal">
+    <dt>
+        @Html.DisplayNameFor(model => model.cmd)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.cmd)
+    </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.format)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.format)
+    </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.TaskName)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.TaskName)
+    </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.ReturnHtml)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ReturnHtml)
+    </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.TableName)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.TableName)
+    </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.syntax)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.syntax)
+    </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.searchTool)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.searchTool)
+    </dd>
+</dl>
+@Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ })
+@section Styles {
+    <link rel="stylesheet" href="~/css/skyserver.css" />
+}

@@ -1,0 +1,235 @@
+﻿@model SkyserverCore.Models.PlateModel
+
+@{ Layout = "/Views/Shared/_MoreToolsLayout.cshtml";
+    ViewData["Title"] = "Get Plate"; }
+
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="~/css/skyserver.css" />
+
+    <style>
+
+        table > tbody tr {
+            background-color: #003466;
+            color: #CCD6E0;
+            font-weight: bold;
+            border: solid;
+        }
+    </style>
+}
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-xs-12 col-sm-8">
+        <p>
+            Each spectroscopic plate has either 640 or 1000 spectra, observed simultaneously. The plate
+            itself is made of aluminum, with a tiny hole at the position of each object
+            to be observed. We plug an optical fiber into each hole. The other end of the
+            fibers leads the light into the spectrograph. The figure below shows where
+            each fiber has plugged in to the plate. The table below gives a list of all the objects in
+            the plate by fiber number, type, and redshift. Clicking on any entry
+            will bring up a picture of the corresponding object's spectrum.
+        </p>
+        <p>
+            This page gives you easy access to GIF images of individual spectra on a given
+            plate. Select a plate on the form below, then click on an entry to see the object's
+            spectrum. For each spectrum, there is also a
+            <a href="@Url.Action("VisualTools", "obj")">
+                <img src="~/images/img_link.jpg" style="vertical-align:initial;">
+            </a> link
+            to its corresponding object in the image catalog (PhotoObj) that takes you to the
+            Explorer page (see Visual Tools) for that object. If you want to use these images on
+            your website, please feel free to do so, but give us an acknowledgement.
+        </p>
+    </div>
+    <div class="col-xs-12 col-sm-4">
+        <img border="0" src="~/images/plate_browser.gif">
+    </div>
+
+    <div class="col-xs-12 col-sm-12">
+        <form asp-controller="MoreTools" asp-action="GetPlate"
+              data-ajax="true"
+              data-ajax-method="POST"
+              data-ajax-mode="replace"
+              data-ajax-update="#willBeReplaced">
+            <table width="600" style="border-width: 5px; " cellspacing="3" cellpadding="3">
+                <tr>
+                    <td class="b">Survey</td>
+                    <td class="b">
+                        <input type="radio" name="surveyRadio" id="sdssRadio" value="sdss" tabindex="1" class="radio-label" checked />
+                        <label for="sdssRadio">SDSS-I</label>
+                    </td>
+                    <td class="b">
+                        <input type="radio" name="surveyRadio" id="segueRadio" value="segue" tabindex="2" />
+                        <label for="segueRadio">SEGUE</label>
+                    </td>
+                    <td class="b">
+                        <input type="radio" name="surveyRadio" id="bossRadio" value="boss" tabindex="3" />
+                        <label for="bossRadio">BOSS</label>
+                    </td>
+                    <td class="b">
+                        <input type="radio" name="surveyRadio" id="apogeeRadio" value="apogee" tabindex="4" />
+                        <label for="apogeeRadio">APOGEE</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class='b'>Plate / MJD</td>
+                    <td class='b'>
+                        @*TODO: cahnge to Model*@
+                        <select asp-for="sdssiSelected" name="P" onfocus="javascript:selectRadioOption('sdssRadio');">
+                            <option value="299489402097264640">266/51602</option>
+                            <option value="299489402097264640">fake data</option>
+                        </select>
+                    </td>
+                    <td class='b'>
+                        @*TODO: cahnge to Model*@
+                        <select asp-for="segueSelected" name="S" onfocus="javascript:selectRadioOption('segueRadio');">
+                            <option value="1868993899549190144">1660/53230</option>
+                            <option value="1868993899549190144">fake data</option>
+                        </select>
+                    <td class="b">
+                        @*TODO: cahnge to Model*@
+                        <select asp-for="bossSelected" name="B" onfocus="javascript:selectRadioOption('bossRadio');">
+                            <option value="4037477152865658880">3586/55181</option>
+                            <option value="4037477152865658880">fake data</option>
+                        </select>
+                    </td>
+                    <td class="b">
+                        <select asp-for="apogeeSelected" asp-items="@Model.plateSurveyOptions.apogeeOptions" onfocus="javascript:selectRadioOption('apogeeRadio');"></select>
+                    </td>
+                </tr>
+            </table>
+            <button id="submit" type="submit" class="btn btn-primary" style="margin: 10px">Get Plate</button>
+
+            <div id="willBeReplaced" style="font-weight: bold; margin: auto; width: 50%; padding: 50px;">
+            </div>
+        </form>
+    </div>
+
+
+    <!--<div id="transp">
+
+
+
+    <form method="get" action="plate.aspx" id="form1" name="form1">
+
+        <table width="640" border="0" cellspacing="3" cellpadding="3">
+
+            <tr>
+                <td>
+                </td>
+
+            </tr>
+            <tr>
+                <td>
+                </td>
+
+            </tr>
+            <tr>
+                <td colspan="2">-->
+    <!------------------------<begin form section>------------------------>
+    <!--<table width="600" border="5" cellspacing="3" cellpadding="3">
+                    <tr>
+                        <td class="b">Survey</td>
+                        <td class="b">
+                            <input type="radio" name="choosesurvey" id="radiosdss" value="sdss" tabindex="1" checked />SDSS-I
+                        </td>
+                        <td class="b">
+                            <input type="radio" name="choosesurvey" id="radiosegue" value="segue" tabindex="2" />SEGUE
+                        </td>
+                        <td class="b">
+                            <input type="radio" name="choosesurvey" id="radioboss" value="boss" tabindex="3" />BOSS
+                        </td>
+                        <td class="b">
+                            <input type="radio" name="surveyRadio" id="radioapogee" value="apogee" tabindex="4" />APOGEE
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class='b'>Plate / MJD</td>
+                        <td class='b'>
+                            <select name="P" onfocus="javascript:selectRadioOption('radiosdss');">
+                                <%
+                                using (SqlConnection oConn = new SqlConnection(globals.ConnectionString))
+                                {
+                                oConn.Open();
+
+                                string cmd = "SELECT CAST(plateID as VARCHAR(20)), plate, mjd ";
+                                cmd += " from PlateX where survey='sdss'";
+                                cmd += " order by plateID";
+                                writeOptions(oConn, cmd);
+
+                                %>
+                            </select>
+                        </td>
+                        <td class='b'>
+                            <select name="S" onfocus="javascript:selectRadioOption('radiosegue');">
+                                <%
+                                cmd = "SELECT CAST(plateID as VARCHAR(20)), plate, mjd ";
+                                cmd += " from PlateX where survey='segue1' or survey='segue2'";
+                                cmd += " order by plateID";
+                                writeOptions(oConn, cmd);
+                                %>
+                            </select>
+                        <td class="b">
+                            <select name="B" onfocus="javascript:selectRadioOption('radioboss');">
+                                <%
+                                cmd = "SELECT CAST(plateID as VARCHAR(20)), plate, mjd ";
+                                cmd += " from PlateX where survey='boss'";
+                                cmd += " order by plateID";
+                                writeOptions(oConn, cmd);
+                                %>
+                            </select>
+
+                        </td>
+                        <td class="b">
+
+                            <select name="A" onfocus="javascript:selectRadioOption('radioapogee');">
+                                <%
+                                cmd = "SELECT plate_visit_id as plateID, plate, mjd ";
+                                cmd += " from apogeePlate";
+                                cmd += " order by plate,mjd";
+                                writeOptions(oConn, cmd);
+                                %>
+                            </select>
+                        </td>
+
+            </td>
+        </tr>
+
+    </table>
+    <p>
+        <table width="240">
+            <tr>
+                <td align="center">
+                    <input type="submit" value="Get Plate">
+                </td>
+            </tr>
+        </table>-->
+    <!--------------------<end form section>------------------------>
+    <!--</td>
+            </tr>
+            </table>
+    </form>
+    <table width="720" border="0">
+        <tr>
+            <%
+            writePlateHeader(oConn);
+            // generate the options list right out of the database
+            if (survey == "apogee") writePlateAPOGEE();
+            else writePlate();
+            }
+            %>
+        </tr>
+    </table>-->
+    <!------------------------------------<end fiber table-------------->
+    <!--</div>-->
+
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript" language="javascript">
+        function selectRadioOption(radioOption) {
+            document.getElementById(radioOption).checked = true;
+        }
+    </script>
+}

@@ -1,0 +1,265 @@
+@model SkyserverCore.Models.RadialModel
+@{
+    Layout = "/Views/Shared/_SearchToolsLayout.cshtml";
+    ViewData["Title"] = "Radial Search";
+}
+
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="~/css/skyserver.css" />
+}
+<h1>@ViewData["Title"]</h1>
+<hr />
+<div class="card form-card">
+    <div class="card-body bg-purple">
+        <form asp-action="radial" class="searchForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="searchTool" name="searchtool" id="searchtool" value="Radial" />
+            <input type="hidden" asp-for="TaskName" name="TaskName" id="TaskName" value="Skyserver.Search.Radial" />
+            <input type="hidden" asp-for="ReturnHtml" name="ReturnHtml" id="ReturnHtml" value="true" />
+            <input type="hidden" id=uband name=uband />
+            <input type="hidden" id=gband name=gband />
+            <input type="hidden" id=rband name=rband />
+            <input type="hidden" id=iband name=iband />
+            <input type="hidden" id=zband name=zband />
+            <input type="hidden" id=jband name=jband />
+            <input type="hidden" id=hband name=hband />
+            <input type="hidden" id=kband name=kband />
+            <div class="container">
+                <div class="row my-1">
+                    <div class="col-5">
+                        <div class="text-center bg-blue rounded">
+                            <label asp-for="whichphotometry" class="control-label">Type of search</label>
+                        </div>
+                    </div>
+                    <div class="col text-center">
+                        <div class="radio-button-group">
+                            <label class="radio-label" for="optical" onclick="javascript:changeQueryType('optical');"> @Html.RadioButtonFor(m => m.whichphotometry, "optical")<span>Optical</span></label>
+                            <label class="radio-label" for="infrared" onclick="javascript:changeQueryType('infrared');"> @Html.RadioButtonFor(m => m.whichphotometry, "infrared")<span>Infrared</span></label>
+                        </div>
+                        <span asp-validation-for="whichphotometry" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row my-1">
+                    <div class="col-5">
+                        <div class="text-center bg-blue rounded">
+                            <label asp-for="coordtype" class="control-label">Coordinate System</label>
+                        </div>
+                    </div>
+                    <div class="col text-center">
+                        <div class="radio-button-group">
+                            <label class="radio-label" for="equatorial" onclick="javascript:changeSearchType('equatorial');"> @Html.RadioButtonFor(m => m.coordtype, "equatorial")<span>Equatorial</span></label>
+                            <label class="radio-label" for="galactic" onclick="javascript:changeSearchType('galactic');"> @Html.RadioButtonFor(m => m.coordtype, "galactic")<span>Galactic</span></label>
+                        </div>
+                        <span asp-validation-for="coordtype" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row my-1">
+                    <div class="col-5">
+                        <div class="text-center bg-blue rounded">
+                            <label asp-for="ra" id="labelRaOrL" class="control-label">RA</label>
+                        </div>
+                    </div>
+                    <div class="col text-center">
+                        <input asp-for="ra" class="form-control form-control" />
+                        <span asp-validation-for="ra" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row my-1">
+                    <div class="col-5">
+                        <div class="text-center bg-blue rounded">
+                            <label asp-for="dec" id="labelDecOrB" class="control-label">Dec</label>
+                        </div>
+                    </div>
+                    <div class="col text-center">
+                        <input asp-for="dec" class="form-control form-control" />
+                        <span asp-validation-for="dec" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row my-1">
+                    <div class="col-5">
+                        <div class="text-center bg-blue rounded">
+                            <label asp-for="radius" class="control-label">radius (arcmins)</label>
+                        </div>
+                    </div>
+                    <div class="col text-center">
+                        <input asp-for="radius" class="form-control form-control" />
+                        <span asp-validation-for="radius" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row my-1" id="check_u_group">                          
+                    <div class="col-5 text-center">
+                        <input id=check_u name=check_u type=checkbox class="box" value=u>
+                            u Range
+                    </div>
+                    <div class="col">
+                        <input asp-for="min_u" class="form-control form-control" />
+                    </div>
+                    <div class="col-1 text-center">
+                        -
+                    </div>
+                    <div class="col">
+                        <input asp-for="max_u" class="form-control form-control" />
+                    </div>
+                </div>
+                <div class="row my-1" id="check_g_group">
+                    <div class="col-5 text-center">
+                        <input id=check_g name=check_g type=checkbox class="box" value=g>
+                        g Range
+                    </div>
+                    <div class="col">
+                        <input asp-for="min_g" class="form-control form-control" />
+                    </div>
+                    <div class="col-1 text-center">
+                        -
+                    </div>
+                    <div class="col">
+                        <input asp-for="max_g" class="form-control form-control" />
+                    </div>
+                </div>
+                <div class="row my-1" id="check_r_group">
+                    <div class="col-5 text-center">
+                        <input id=check_r name=check_r type=checkbox class="box" value=r>
+                        r Range
+                    </div>
+                    <div class="col">
+                        <input asp-for="min_r" class="form-control form-control" />
+                    </div>
+                    <div class="col-1 text-center">
+                        -
+                    </div>
+                    <div class="col">
+                        <input asp-for="max_r" class="form-control form-control" />
+                    </div>
+                </div>
+                <div class="row my-1" id="check_i_group">
+                    <div class="col-5 text-center">
+                        <input id=check_i name=check_i type=checkbox class="box" value=i>
+                        i Range
+                    </div>
+                    <div class="col">
+                        <input asp-for="min_i" class="form-control form-control" />
+                    </div>
+                    <div class="col-1 text-center">
+                        -
+                    </div>
+                    <div class="col">
+                        <input asp-for="max_i" class="form-control form-control" />
+                    </div>
+                </div>
+                <div class="row my-1" id="check_z_group">
+                    <div class="col-5 text-center">
+                        <input id=check_z name=check_z type=checkbox class="box" value=z>
+                        z Range
+                    </div>
+                    <div class="col">
+                        <input asp-for="min_z" class="form-control form-control" />
+                    </div>
+                    <div class="col-1 text-center">
+                        -
+                    </div>
+                    <div class="col">
+                        <input asp-for="max_z" class="form-control form-control" />
+                    </div>
+                </div>
+                <div class="row my-1" id="check_j_group">
+                    <div class="col-5 text-center">
+                        <input id=check_j name=check_j type=checkbox class="box" value=j>
+                        j Range
+                    </div>
+                    <div class="col">
+                        <input asp-for="min_j" class="form-control form-control" />
+                    </div>
+                    <div class="col-1 text-center">
+                        -
+                    </div>
+                    <div class="col">
+                        <input asp-for="max_j" class="form-control form-control" />
+                    </div>
+                </div>
+                <div class="row my-1" id="check_h_group">
+                    <div class="col-5">
+                        <div class="text-center">
+                            <input id=check_h name=check_h type=checkbox class="box" value=h>
+                            h Range
+                        </div>
+                    </div>
+                    <div class="col">
+                        <input asp-for="min_h" class="form-control form-control" />
+                    </div>
+                    <div class="col-1 text-center">
+                        -
+                    </div>
+                    <div class="col">
+                        <input asp-for="max_h" class="form-control form-control" />
+                    </div>
+                </div>
+                <div class="row my-1" id="check_k_group">
+                    <div class="col-5">
+                        <div class="text-center">
+                            <input id=check_k name=check_k type=checkbox class="box" value=k>
+                            k Range
+                        </div>
+                    </div>
+                    <div class="col">
+                        <input asp-for="min_k" class="form-control form-control" />
+                    </div>
+                    <div class="col-1 text-center">
+                        -
+                    </div>
+                    <div class="col">
+                        <input asp-for="max_k" class="form-control form-control" />
+                    </div>
+                </div>
+                <div class="row my-1">
+                    <div class="col-5">
+                        <div class="text-center bg-blue rounded">
+                            <label asp-for="format" class="control-label">Output Format</label>
+                        </div>
+                    </div>
+                    <div class="col radio-button-group">
+                        <label class="radio-label" for="HTML" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "HTML")<span>HTML</span></label>
+                        <label class="radio-label" for="CSV" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "CSV")<span>CSV</span></label>
+                        <label class="radio-label" for="XML" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "XML")<span>XML</span></label>
+                        <label class="radio-label" for="JSON" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "JSON")<span>JSON</span></label>
+                        <label class="radio-label" for="VOTable" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "VOTable")<span>VOTable</span></label>
+                        <label class="radio-label" for="FITS" onclick="javascript:hideTable();"> @Html.RadioButtonFor(m => m.format, "FITS")<span>FITS</span></label>
+                        <label class="radio-label" for="MyDB" onclick="javsascript:showTable();"> @Html.RadioButtonFor(m => m.format, "MyDB")<span>MyDB</span></label>
+                    </div>
+                    <span asp-validation-for="format" class="text-danger"></span>
+                </div>
+                <div class="row my-1" id="table_name_group">
+                    <div class="col-5">
+                        <div class="text-center bg-blue rounded">
+                            <label class="control-label">Table Name</label>
+                        </div>
+                    </div>
+                    <div class="col text-center">
+                        <input class="form-control form-control" type="text" asp-for="TableName" name="TableName" id="TableName" value="" />
+                    </div>
+                </div>
+                <div class="row my-1">
+                    <div class="col-9">
+                        <div class="text-center bg-blue rounded">
+                            <label asp-for="limit" class="control-label">Limit number of output rows (0 for max) to:</label>
+                        </div>
+                    </div>
+                    <div class="col text-center">
+                        <input class="form-control form-control" type=text asp-for="limit" size=5>
+                    </div>
+                </div>
+                <div class="row my-1">
+                    <div class="col text-center">
+                        <input type="submit" value="Submit" onclick="javsascript:setBands();" class="btn btn-success" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div> 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/searchformcheckbox.js"></script>
+    <script src="~/js/radialsearch.js"></script>
+    <script src="~/js/validate_search.js"></script>
+}
+
