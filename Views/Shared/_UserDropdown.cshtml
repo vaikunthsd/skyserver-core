@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+<div class="mx-md-2 py-2">
+@if (HttpContextAccessor.HttpContext.Session.GetString("IsLogedIn") == "true")
+{
+    <div class="nav-item dropdown p-0">
+        <a class="nav-link dropdown-toggle p-0" id="dropdownMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            @HttpContextAccessor.HttpContext.Session.GetString("USERID")
+        </a>
+        <ul class="dropdown-menu bg-purple" style="min-width: 120px;" aria-labelledby="dropdownMenu">
+            <li class="dropdown-item"><a href="https://apps.sciserver.org/dashboard/files#">Profile <i style="font-size:12px;" class="fas fa-external-link-alt"></i></a></li>
+            <li class="dropdown-item">@Html.ActionLink("My History", "UserHistory", "MoreTools")</li>
+            <li class="dropdown-item">@Html.ActionLink("Support", "Index", "Support")</li>
+            <li class="dropdown-item"><a href="#" onclick="window.location.href = '@Model.AuthenticationURL_Logout' + '?callbackUrl=' + window.location.href;">Sign Out</a></li>
+        </ul>
+    </div>
+}
+else
+{
+    <a href="#" onclick="window.location.href = '@Model.AuthenticationURL_Login' + '?callbackUrl=' + window.location.href;">Sign In <i style="font-size:12px;" class="fas fa-external-link-alt"></i></a>
+}
+</div>

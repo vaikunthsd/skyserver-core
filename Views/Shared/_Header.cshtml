@@ -1,0 +1,48 @@
+﻿<div class="jumbotron bg-transparent">
+    <div class="row justify-content-md-center">
+        <div class="col mr-0 pr-0 mb-4">
+            <img class="logo float-right" src="~/images/sdsslogo.png" alt="sdss logo">
+        </div>
+        <div class="col-auto mb-4 text-center">
+            <h1 class="text-white">SkyServer</h1>
+        </div>
+        <div class="col mb-4">
+        </div>
+        <div class="w-100"></div>
+        <div class="col">
+            <div class="align-items-center text-center text-white">
+                <h2 class="text-uppercase text-center mx-auto mb-2">Sloan Digital Sky Survey</h2>
+                <h2 class="text-center mx-auto">
+                    Explore the infinite beauty of the Universe: study millions of stars and galaxies from the
+                    <a class=text-white href="http://www.sdss.org">Sloan Digital Sky Survey</a> with free online tools
+                </h2>
+                <div class="dropdown d-inline-block mb-5">
+                    <button type="button" id="dselectdr" class="btn btn-default dropdown-toggle text-white w-100" data-toggle="dropdown">
+                        DR15 <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu scrollable-menu bg-purple" aria-labelled-by="dselectdr">
+                        <li class="dropdown-item">@Html.ActionLink("DR15", "Index", "Home")  </li>
+                        <li class="dropdown-item"><a target="_blank" href="http://skyserver.sdss.org/dr14/en/home.aspx">DR14</a></li>
+                        <li class="dropdown-item"><a target="_blank" href="http://skyserver.sdss.org/dr13/en/home.aspx">DR13</a></li>
+                        <li class="dropdown-item"><a target="_blank" href="http://skyserver.sdss.org/dr12/en/home.aspx">DR12</a></li>
+                        <li class="dropdown-item"><a target="_blank" href="http://skyserver.sdss.org/dr10/en/home.aspx">DR10</a></li>
+                        <li class="dropdown-item"><a target="_blank" href="http://skyserver.sdss.org/dr9/en/">DR9</a></li>
+                        <li class="dropdown-item"><a target="_blank" href="http://skyserver.sdss.org/dr8/en/">DR8</a></li>
+                        <li class="dropdown-item"><a target="_blank" href="http://skyserver.sdss.org/dr7/en/">DR7</a></li>
+                        <li class="dropdown-item"><a target="_blank" href="http://skyserver.sdss.org/dr6/en/">DR6</a></li>
+                        <li class="dropdown-item"><a target="_blank" href="http://skyserver.sdss.org/dr5/en/">DR5</a></li>
+                        <li class="dropdown-item"><a target="_blank" href="http://skyserver.sdss.org/dr4/en/">DR4</a></li>
+                        <li class="dropdown-item"><a target="_blank" href="http://skyserver.sdss.org/dr3/en/">DR3</a></li>
+                        <li class="dropdown-item"><a target="_blank" href="http://skyserver.sdss.org/dr2/en/">DR2</a></li>
+                        <li class="dropdown-item"><a target="_blank" href="http://skyserver.sdss.org/dr1/en/">DR1</a></li>
+                    </ul>
+                </div>
+                <div class="col my-auto">
+                    @{
+                        Html.RenderPartial("_QuickTools");
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,61 @@
+﻿<div class="toolgrid-outer-container _splashgrid">
+    <div class="row">
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
+            <div class="row display-flex">
+                <div class="search-tools-title">
+                    <p class="tool-header">Quick Tools</p>
+                </div>
+                <div class="search-tools-row display-flex">
+                    <div class="toolbox-container col-xs-4 col-md-2" data-toggle="tooltip" data-placement="top" title="Navigate lets you look around in the vicinity of a given point on the sky. Move by clicking on sky objects or the image's frame. Clicking on a sky object displays the basic properties and magnified thumbnail of the object.">
+                        <a href="#">
+                            <div class="toolbox">
+                                <img src="~/images/navigate-icon.png" alt="Navigate icon"/>
+                                <p>Navigate</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="toolbox-container col-xs-4 col-md-2" data-toggle="tooltip" data-placement="top" title="Explore helps you find objects based on their object IDs or their sky position. Detailed information about the object is displayed in the panel. Click on other tools and links to obtain even more information about your object.">
+                        <a href="#">
+                            <div class="toolbox">
+                                <img src="~/images/explore-icon.png" alt="Explore icon"/>
+                                <p>Explore</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="toolbox-container col-xs-4 col-md-2" data-toggle="tooltip" data-placement="top" title="Quick Look helps you get basic SDSS data about a single object. Data about the object is displayed in the panel. Click on other tools and links to find more information about your object.">
+                        <a href="#">
+                            <div class="toolbox">
+                                <img src="~/images/quick-look-icon.png" alt="Quick look icon"/>
+                                <p>Quick<br />Look</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="toolbox-container col-xs-4 col-md-2" data-toggle="tooltip" data-placement="top" title="Finding Chart helps you  specify the location, height, and width (in celestial coordinates) Various drawing options can be specified (opt). Use mark query to select objects of special interest.">
+                        <a asp-action="findChartVisualTool">
+                            <div class="toolbox">
+                                <img src="~/images/finding-chart-icon.png" alt="Finding chart icon"/>
+                                <p>Finding<br />Chart</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="toolbox-container col-xs-4 col-md-2" data-toggle="tooltip" data-placement="top" title="Easy search form">
+                        <a asp-action="EZSearch">
+                            <div class="toolbox">
+                                <img src="~/images/ez-search-icon.png" alt="EZ search icon"/>
+                                <p>EZ<br />Search</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="toolbox-container col-xs-4 col-md-2" data-toggle="tooltip" data-placement="top" title="Submit a freeform SQL (Structured Query Language) query">
+                        <a asp-action="SQLSearchTool">
+                            <div class="toolbox">
+                                <img src="~/images/sql-search-icon.png" alt="SQL search icon"/>
+                                <p>SQL<br />Search</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

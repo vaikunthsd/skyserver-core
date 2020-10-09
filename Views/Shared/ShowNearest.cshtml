@@ -1,0 +1,50 @@
+﻿
+<b>Selected object</b>
+<table width="128" border="1" cellspacing="10" bgcolor="#eeeeff">
+    <tbody>
+        <tr onmouseover="Tip('Right ascension (ra) is like longitude in the sky')" onmouseout="UnTip()"><td width="20" align="left">ra</td><td align="right" id="raNear">179.71819</td></tr>
+        <tr onmouseover="Tip('Declination (dec) is like latitude in the sky')" onmouseout="UnTip()"><td width="20" align="left">dec</td><td align="right" id="decNear">-0.45674</td></tr>
+        <tr onmouseover="Tip('STAR or GALAXY (but some bright stars are misclassified as galaxies)')" onmouseout="UnTip()"><td width="20" align="left">type</td><td align="right" id="typeNear">STAR</td></tr>
+        <tr onmouseover="Tip('Magnitude (brightness) in the ultraviolet (u) wavelength')" onmouseout="UnTip()"><td width="20" align="left">u</td><td align="right" id="uNear">15.51</td></tr>
+        <tr onmouseover="Tip('Magnitude (brightness) in the green (g) wavelength')" onmouseout="UnTip()"><td width="20" align="left">g</td><td align="right" id="gNear">13.51</td></tr>
+        <tr onmouseover="Tip('Magnitude (brightness) in the red (r) wavelength')" onmouseout="UnTip()"><td width="20" align="left">r</td><td align="right" id="rNear">12.88</td></tr>
+        <tr onmouseover="Tip('Magnitude (brightness) in the shorter infrared (i) wavelength')" onmouseout="UnTip()"><td width="20" align="left">i</td><td align="right" id="iNear">12.69</td></tr>
+        <tr onmouseover="Tip('Magnitude (brightness) in the farther infrared (z) wavelength')" onmouseout="UnTip()"><td width="20" align="left">z</td><td align="right" id="zNear">13.76</td></tr>
+    </tbody>
+</table>
+<img class="py-1" id="near" src="" width="128" height="128" onmouseover="Tip('Close-up image of selected object')" onmouseout="UnTip()" />
+<br>
+<a href="javascript:quicklook('1237648720693755949')" onmouseover="Tip('See this object\'s basic data in the Quick Look tool')" onmouseout="UnTip()">Quick Look</a>
+<br>
+<a href="javascript:explore('1237648720693755949')" onmouseover="Tip('See this object\’s complete data in the Object Explorer')" onmouseout="UnTip()">Explore</a>
+<br>
+<a href="javascript:reCenter();" onmouseover="Tip('Redraw the image with this object in the center')" onmouseout="UnTip()">Recenter</a>
+<br>
+<a href="javascript:saveBook('1237648720693755949')" onmouseover="Tip('Save this object to your online notebook')" onmouseout="UnTip()">Add to notes</a>
+<br>
+<a href="javascript:showBook()" onmouseover="Tip('Show your online notebook')" onmouseout="UnTip()">Show notes</a>
+<br>
+
+<a href="onclick='@Url.Action("obj", "VisualTools")'">
+    <img class="py-1" id="spec" src="" width="128" height="128" onmouseover="Tip('Spectrum of selected object')" onmouseout="UnTip()" />
+</a>
+<div id="imgModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" style="max-width:1490px !important" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" onclick="closeModal();" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img id="specModal" style="width:1470px; height: 647px;" />
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function closeModal() {
+        $('#imgModal').hide();
+    }
+</script>
+

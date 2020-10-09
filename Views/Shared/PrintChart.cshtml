@@ -1,0 +1,100 @@
+﻿<script>
+    function wprint() {
+        var pr = (window.print) ? 1 : 0;
+        var da = (document.all) ? 1 : 0;
+        var mac = (navigator.userAgent.indexOf("Mac") != -1);
+        if (pr && da) {		// IE5
+            window.focus();
+            window.print();
+        } else if (pr) {	// NS4
+            window.print();
+        } else {
+            alert("Sorry, your browser does not support this feature");
+        }
+    }
+</script>
+<table border=0 cellspacing=0 cellpadding=0>
+    <tr>
+        <td width="20">&nbsp;</td>
+        <td width="150">&nbsp;</td>
+        <td width="40">&nbsp;</td>
+        <td width="170">&nbsp;</td>
+        <td width="10%"></td>
+    </tr>
+
+    <tr>
+        <td>&nbsp;</td>
+        <td align=center><font size=+2>SDSS @ViewData["dataReleaseNumber"]</font><br>finding chart</td>
+        <td><img src="~/images/sdssIVlogo.png" border=0 height="50">
+        <td valign=top>
+            &nbsp;&nbsp;
+            <a href="javascript:wprint();" class='s'> Send to printer</a>&nbsp;
+            <a href="javascript:window.close();" class='s'> Close window</a>
+        </td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td colspan="5" class='s'> &nbsp;</td>
+    </tr>
+
+    <tr valign=top>
+        <td>&nbsp;</td>
+        <td colspan="2" class='s'>&nbsp;</td>
+        <td class='s'><b>Notes:</b></td>
+        <td></td>
+    </tr>
+
+    <tr valign=top>
+        <td>&nbsp;</td>
+        <td class='s' align=center>
+            <table width=200 border=0 cellspacing=0 cellpadding=0>
+                <tr><td width="20"></td><td width="64" class='s'>ra</td><td align=right class='s'>@ViewData["ra"]</td></tr>
+                <tr><td width="20"></td><td class='s'>dec</td><td align=right class='s'>@ViewData["dec"]</td></tr>
+                <tr><td width="20"></td><td class='s'>equinox</td><td align=right class='s'>J2000</td></tr>
+                <tr><td width="20"></td><td class='s'>scale</td><td align=right class='s'>@ViewData["scale"] arcsec/pix</td></tr>
+                <tr><td width="20"></td><td class='s'>width</td><td align=right class='s'>@ViewData["width"] arcmin</td></tr>
+                <tr><td width="20"></td><td class='s'>height</td><td align=right class='s'>@ViewData["height"] arcmin</td></tr>
+            </table>
+        </td>
+        <td></td>
+        <td class='s'>
+            <table width=200 border=0 cellspacing=0 cellpadding=0>
+                <tr><td class='s'>.....................................................................................................................</td></tr>
+                <tr><td class='s'>.....................................................................................................................</td></tr>
+                <tr><td class='s'>.....................................................................................................................</td></tr>
+                <tr><td class='s'>.....................................................................................................................</td></tr>
+                <tr><td class='s'>.....................................................................................................................</td></tr>
+                <tr><td class='s'>.....................................................................................................................</td></tr>
+            </table>
+        </td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td colspan="5" class='s'> &nbsp;</td>
+    </tr>
+
+    <tr>
+        <td>&nbsp;</td>
+        <td colspan="4">
+            <table border="1">
+                <tr>
+                    <td>
+                        <img id="printImage" src="">
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<script>
+    var printImageUrl = '@ViewData["imageJpegUrl"]';
+    var ra = '@ViewData["ra"]';
+    var dec = '@ViewData["dec"]';
+    var scale = '@ViewData["scale"]';
+    var width = '@ViewData["width"]';
+    var height =' @ViewData["height"]';
+    var opt = '@ViewData["opt"]';
+    document.getElementById('printImage').src = printImageUrl + '?ra=' + ra + "&dec=" + dec + "&scale=" + scale + "&width=" + width + "&height=" + height + "&opt=" + opt;
+</script>

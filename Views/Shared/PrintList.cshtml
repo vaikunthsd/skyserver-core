@@ -1,0 +1,35 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<script>
+        function page(n) {
+            document.getjpeg.page.value = n;
+            document.getjpeg.submit();
+            return false;
+        }
+
+        function wprint() {
+            var pr = (window.print) ? 1 : 0;
+            var da = (document.all) ? 1 : 0;
+            var mac = (navigator.userAgent.indexOf("Mac") != -1);
+            if (pr && da) {		// IE5
+                window.focus();
+                window.print();
+            } else if (pr) {	// NS4
+                window.print();
+            } else {
+                alert("Sorry, your browser does not support this feature");
+            }
+        }
+            function setPage(n) {
+
+              //set page value for parent, so that we come back to same page
+              if (n > 0) document.getElementById("getjpeg").page.value = n;
+
+              // set the local page value, and resubmit
+              document.getElementById("getjpeg").page.value = n;
+              document.getElementById("getjpeg").submit();
+
+              return false;
+            }
+</script>

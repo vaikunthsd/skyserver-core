@@ -1,0 +1,1639 @@
+﻿<h3>Sample Queries</h3>
+
+<div class="sql-scroll rounded">
+    <div class="card">
+        <div id="basic" class="card-header collapsed" data-toggle="collapse" href="#basic-body" aria-expanded="false" aria-controls="basic-body">
+            Basic SQL
+        </div>
+        <div id="basic-body" class="card-body collapse bg-purple p-2" data-parent=#basic>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Basic SELECT-FROM-WHERE
+                <div class="sample-query-text d-none">-- This is the "Hello world" example of how to search for data in DR8.
+-- This query shows the basic structure of a SQL query:
+-- SELECT [variables] FROM [table] WHERE [constraints]
+-- Although many of your SQL queries will be more complex,
+-- they will all follow this same basic structure.
+-- This sample query finds unique objects in an RA/Dec box.
+-- For a more efficient way to find objects by position, see the next query,
+-- Searching around a sky position.
+
+SELECT TOP 100
+objID, ra ,dec
+-- Get the unique object ID and coordinates
+FROM
+PhotoPrimary
+-- From the table containing photometric data for unique objects
+WHERE
+ra > 185 and ra < 185.1
+AND dec > 15 and dec < 15.1
+-- that matches our criteria</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Basic position search
+                <div class="sample-query-text d-none">-- Find galaxies within 1' of a given point (ra=185.0, dec=-0.5).
+-- This is a slightly more complex query, but it can be easily adapted to search
+-- around any point in the sky.
+-- To see how to limit the search only to objects with clean photometry, see the
+-- Clean imaging query.
+
+SELECT G.objID, GN.distance
+FROM Galaxy as G
+JOIN dbo.fGetNearbyObjEq(185.,-0.5, 1) AS GN
+ON G.objID = GN.objID
+ORDER BY distance</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Using PhotoTag
+                <div class="sample-query-text d-none">-- This query introduces the PhotoTag table, which contains the most frequently used columns
+-- of PhotoObj. Queries to PhotoTag will run more quickly than those to photoObj.
+-- This sample query finds data for all objects in fields with desired PSF width.
+
+SELECT TOP 100
+r.run,
+r.rerun,
+f.camCol,
+f.field,
+p.objID,
+p.ra,
+p.dec,
+p.modelMag_r,
+f.psfWidth_r
+FROM
+PhotoTag AS p
+JOIN Field AS f ON f.fieldid = p.fieldid
+JOIN Run AS r ON f.run = r.run
+WHERE mode=1     -- select primary objects only
+and f.psfWidth_r > 1.2
+and p.modelMag_r < 21.
+and r.stripe = 21</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Search for a Range of Values
+                <div class="sample-query-text d-none">-- The BETWEEN statement can be used to set constraints on a range of values.
+-- This sample query finds galaxies with g magnitudes between 18 and 19.
+
+SELECT TOP 10 objID, cModelMag_g
+FROM Galaxy
+WHERE
+cModelMag_g between 18 and 19
+-- 18 < cModelMag_g < 19</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Rectangular position search
+                <div class="sample-query-text d-none">-- There are several built-in functions available to CAS users that make spatial
+-- queries, i.e., those with coordinate cuts, much more efficient than simply
+-- including the coordinate constraints in the WHERE clause. This example
+-- illustrates the use of the dbo.fGetObjFromRectEq function that invokes
+-- the Hierarchical Triangular Mesh (HTM) functionality.
+-- a) Rectangular search using straight coordinate constraints:
+-- SELECT objID, ra, dec
+-- FROM PhotoObj
+-- WHERE (ra between 179.5 and 182.3) and (dec between -1.0 and 1.8)
+
+-- b) This query can be rewritten as follows to use the HTM function that returns a
+-- rectangular search area (The "Run this Query" button above will run this query):
+
+SELECT top 100 p.objID, p.ra, p.dec
+FROM PhotoObj p
+JOIN dbo.fGetObjFromRectEq(179.5, -1.0, 182.3, 1.8) r ON p.objID = r.objID</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                More than one table: JOIN...ON
+                <div class="sample-query-text d-none">-- When you need to search for data in two or more tables, you must "join" the tables
+-- together for the purposes of your query by using a JOIN...ON statement.
+-- JOIN...ON allows you to search for data and/or constraints in both tables.
+-- The syntax of the statement is:
+-- JOIN [the second table] ON [a variable the tables have in common].
+-- The variable the tables have in common is called the "key" (think of it
+-- as the key that unlocks your ability to search two tables).
+-- The key variable(s) in each table are shown on the About the Database page.
+-- Find the two tables you want to join and look for a key variable they have in common.
+-- The sample query looks for spectra of apogee and shows the date and time at which
+-- each spectrum was taken.
+
+SELECT TOP 100
+sp.objID,
+sp.ra,
+sp.dec,
+sp.mjd,
+px.taiBegin,
+px.taiEnd,
+sp.fiberID,
+sp.z
+FROM specPhoto AS sp
+JOIN plateX AS px
+ON sp.plateID = px.plateID
+WHERE
+(sp.class='QSO')
+AND sp.z > 3</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Photometry & spectroscopy
+                <div class="sample-query-text d-none">-- This query introduces the SpecPhoto view, which is a pre-computed join
+-- of the most commonly-searched fields in both the SpecObj view (which
+-- contains spectroscopy data) and the PhotoObj view (which
+-- contains photometry data). This means that to combine
+-- photometry and spectroscopy tables yourself using JOIN...ON,
+-- the join already has been "precomputed" and done for you.
+-- You should use specPhoto whenever your variables of interest
+-- can be found there; using specPhoto means that your queries will
+-- return results much faster than using JOIN...ON.
+-- that your queries will return results much faster than using JOIN...ON.
+-- This sample query retrieves both magnitudes (from photometry) and
+-- redshifts (from spectroscopy) of 100 apogee. Note that this query
+-- also introduces the use of mathematical operators (in this case subtraction)
+-- in queries.
+
+SELECT top 100
+objid, ra, dec, psfmag_i-extinction_i AS mag_i,
+psfmag_r-extinction_r AS mag_r, z            -- In SpecPhoto, "z" is the redshift
+FROM SpecPhoto
+WHERE
+(class = 'QSO')</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Counting by type or category
+                <div class="sample-query-text d-none">-- This simple query introduces two important SQL structures while showing how to count the number of
+-- spectra of each spectral classification (galaxy, quasar, star) in DR8.
+-- When included in the SELECT block, the count(*) statement returns the number of objects that
+-- meet your search criteria.
+-- The GROUP BY statement sorts results into groups (categories) based on the value of a data column.
+-- In this query, the grouping occurs on the 'class' column of the SpecObj view, which contains
+-- the spectral classification of the object.
+-- The query can be easily modified to find object counts sorted by other columns.
+-- For another example, see the Counts by Type and Program sample query.
+
+SELECT class, count(*)
+FROM SpecObj
+GROUP BY class</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Using flags
+                <div class="sample-query-text d-none">-- Another useful query is to select stars that are not saturated.
+-- This query introduces bitwise logic for flags, and uses the 'as' syntax to
+-- make the query more readable. Note that if a flag is not set, the value
+-- will be zero. If you want to ensure multiple flags are not set, you can
+-- either check that each individually is zero, or their sum is zero.
+-- (From Gordon Richards)
+-- Important caveat: The 'flags' column is the union of the flag values in
+-- each band,and using it may produce unexpected results, for example if a
+-- bad flag bit is set in only one band (e.g. in the 'flags_r' value), that bit
+-- will be bad in the overall 'flags' value as well. For more information,
+-- please see the 'Photometric flags detail' entry in Algorithms.
+-- NOTE: This query takes a long time to run without the "TOP 1000".
+
+SELECT TOP 1000
+objID,
+ra,
+dec,
+psfMag_u, psfMag_g, psfMag_r, psfMag_i, psfMag_z,
+dbo.fPhotoFlagsN(flags)
+FROM Galaxy
+WHERE
+(flags & (dbo.fPhotoFlags('SATURATED'))) != 0</div>
+            </a>
+        </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------------------------------------------------------- -->
+    <div class="card mt-1">
+        <div id="jujitsu" class="card-header collapsed" data-toggle="collapse" href="#jujitsu-body" aria-expanded="false" aria-controls="jujitsu-body">
+            SQL Jujitsu
+        </div>
+        <div id="jujitsu-body" class="card-body collapse bg-purple p-2" data-parent=#jujitsu>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Data subsample
+                <div class="sample-query-text d-none">-- Give me the colors of a random 1% sample of objects from all fields that
+-- are "survey quality" so that I could plot up color-color diagrams and play
+-- around with more sophisticated cuts. Query requested by Karl Glazebrook.
+-- Uses the HTM spatial index ID as a random number generator. The htmID is
+-- multiplied by a prime number (37) to remove bias and generate a random number
+-- from the lowermost 16 bits. This number is then constrained to be between 650
+-- and 65000 to generate a random sample between 1 and 100% of the data
+-- respectively. So replacing the "1" by a different number between 1 and 99
+-- will generate a sample of the required percentage of objects.
+-- Note that this is much faster than the standard "ORDER BY RANDOM()" SQL method.
+
+SELECT TOP 100 u, g, r, i, z FROM Galaxy
+WHERE
+(htmid*37 & 0x000000000000FFFF)
+< (650 * 1)
+-- Replace the "1" with a number < 99 to get a higher percentage data subsample</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Objects in close pairs
+                <div class="sample-query-text d-none">-- This query introduces the Neighbors table, which contains each
+-- object's neighbors within 30 arcseconds.
+-- Find all objects within 30 arcseconds of one another
+-- that have very similar colors: that is where the color ratios
+-- u-g, g-r, r-I are less than 0.05m.
+
+SELECT TOP 10 P.ObjID	            -- distinct cases
+FROM	PhotoPrimary AS P	        -- P is the primary object
+JOIN Neighbors AS N ON P.ObjID = N.ObjID            -- N is the neighbor link
+JOIN PhotoPrimary AS L ON L.ObjID = N.NeighborObjID
+-- L is the lens candidate of P
+WHERE
+P.ObjID < L. ObjID  -- avoid duplicates
+and abs((P.u-P.g)-(L.u-L.g))<0.05 -- L and P have similar spectra.
+              and abs((P.g-P.r)-(L.g-L.r))<0.05
+and abs((P.r-P.i)-(L.r-L.i))<0.05
+and abs((P.i-P.z)-(L.i-L.z))<0.05</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Selected neighbors in run
+                <div class="sample-query-text d-none">-- A more complex query that also uses the Neighbors table.
+-- This is a query from Robert Lupton that finds selected neighbors in a given run and
+-- camera column. It contains a nested query containing a join, and a join with the
+-- results of the nested query to select only those neighbors from the list that meet
+-- certain criteria. The nested queries are required because the Neighbors table does
+-- not contain all the parameters for the neighbor objects. This query also contains
+-- examples of setting the output precision of columns with STR.
+
+SELECT TOP 10
+obj.run, obj.camCol, str(obj.field, 3) as field,
+str(obj.rowc, 6, 1) as rowc, str(obj.colc, 6, 1) as colc,
+str(dbo.fObj(obj.objId), 4) as id,
+str(obj.psfMag_g - 0*obj.extinction_g, 6, 3) as g,
+str(obj.psfMag_r - 0*obj.extinction_r, 6, 3) as r,
+str(obj.psfMag_i - 0*obj.extinction_i, 6, 3) as i,
+str(obj.psfMag_z - 0*obj.extinction_z, 6, 3) as z,
+str(60*distance, 3, 1) as D,
+dbo.fField(neighborObjId) as nfield,
+str(dbo.fObj(neighborObjId), 4) as nid
+FROM
+(SELECT obj.objId,
+run, camCol, field, rowc, colc,
+psfMag_u, extinction_u,
+psfMag_g, extinction_g,
+psfMag_r, extinction_r,
+psfMag_i, extinction_i,
+psfMag_z, extinction_z,
+NN.neighborObjId, NN.distance
+FROM PhotoObj as obj
+JOIN neighbors as NN on obj.objId = NN.objId
+WHERE
+60*NN.distance between 0 and 15 and
+NN.mode = 1 and NN.neighborMode = 1 and
+run = 756 and camCol = 5 and
+obj.type = 6 and (obj.flags & 0x40006) = 0 and
+nchild = 0 and obj.psfMag_i < 20 and
+(g - r between 0.3 and 1.1 and r - i between -0.1 and 0.6)
+) as obj
+JOIN PhotoObj as nobj on nobj.objId = obj.neighborObjId
+WHERE
+nobj.run = obj.run and
+(abs(obj.psfMag_g - nobj.psfMag_g) < 0.5 or
+abs(obj.psfMag_r - nobj.psfMag_r) < 0.5 or
+abs(obj.psfMag_i - nobj.psfMag_i) < 0.5)</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Object counts and logic
+                <div class="sample-query-text d-none">-- Using object counting and logic in a query.
+-- Find all objects similar to the colors of a quasar at 5.5
+SELECT count(*) as 'total',
+sum( case when (Type=3) then 1 else 0 end) as 'Galaxies',
+sum( case when (Type=6) then 1 else 0 end) as 'Stars',
+sum( case when (Type not in (3,6)) then 1 else 0 end) as 'Other'
+FROM PhotoPrimary	-- for each object
+WHERE (( u - g > 2.0) or (u > 22.3) ) -- apply the quasar color cut.
+and ( i between 0 and 19 )
+and ( g - r > 1.0 )
+and ( (r - i < 0.08 + 0.42 * (g - r - 0.96)) or (g - r > 2.26 ) )
+and ( i - z < 0.25 )</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Repeated high-z objects
+                <div class="sample-query-text d-none">-- Compare different redshift measurements of the same object for objects
+-- with high redshift
+
+SELECT top 100 prim.bestObjId, prim.mjd AS PrimMJD, prim.plate AS PrimPlate,
+other.mjd AS OtherMJD, other.plate AS OtherPlate,
+prim.z AS PrimZ, other.z AS OtherZ, plate.programname
+FROM SpecObjAll prim
+JOIN SpecObjAll other ON prim.bestObjId = other.bestObjId
+JOIN platex AS plate ON other.plate = plate.plate AND other.mjd = plate.mjd
+WHERE other.bestObjId > 0
+AND prim.sciencePrimary = 1
+AND other.sciencePrimary = 0
+AND prim.z > 2.5
+ORDER BY prim.bestObjId</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Splitting 64-bit values
+                <div class="sample-query-text d-none">-- The flag fields in the SpecObjAll table are 64-bit, but some
+-- analysis tools (and FITS format) only accept 32-bit integers.
+-- Here is a way to split them up, using bitmasks to extract
+-- the higher and lower 32 bits, and dividing by a power of
+-- 2 to shift bits to the right (since there is no bit shift
+-- operator in SQL.) The hexadecimal version can be used for debugging
+-- to make sure you are splitting them up right.
+
+--SELECT TOP 10 objid,ra,dec,
+--flags,
+---- output the whole bigint as a check
+--flags & 0x00000000FFFFFFFF AS flags_lo,
+---- get the lower 32 bits with a mask
+---- shift the bigint to the right 32 bits, then use the same mask to
+---- sget upper 32 bits
+--(flags/power(cast(2 as bigint),32)) & 0x00000000FFFFFFFF AS flags_hi
+--FROM PhotoObj
+
+-- Hexadecimal version of above query - use for debugging ("Run this Query" button will run this).
+SELECT TOP 10 objid,ra,dec,
+CAST(flags AS BINARY(8)) AS flags,
+CAST(flags & 0x00000000FFFFFFFF AS BINARY(8)) AS flags_lo,
+CAST((flags/POWER(CAST(2 AS BIGINT),32)) & 0x00000000FFFFFFFF AS BINARY(8)) AS flags_hi
+FROM PhotoObj</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Using LEFT OUTER JOIN
+                <div class="sample-query-text d-none">-- This query demonstrates the use of a LEFT OUTER JOIN to include rows from the joined table
+-- that do not satisfy the JOIN condition. The OUTER JOIN (LEFT or RIGHT)
+-- is an inclusive JOIN, whereas the INNER (default) JOIN is an exclusive JOIN.
+-- In this case the query returns galaxies with or without spectra that meet the criteria
+-- in the WHERE clause. The ISNULL operator is used to replace null
+-- values with zeros for galaxies without spectra.
+
+SELECT TOP 10 p.objid, p.ra, p.dec, ISNULL(s.specobjid,0) AS specobjid, ISNULL(s.z, 0) AS z
+FROM Galaxy AS p
+LEFT OUTER JOIN SpecObj s ON s.bestObjID = p.objID
+WHERE
+p.u BETWEEN 0 AND 19.6 AND p.g BETWEEN 0 AND 20</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Using Nested Queries
+                <div class="sample-query-text d-none">-- This query demonstrates, among other things, the use of a nested query (a query
+-- inside another query) in which the outer query operates on the result of the inner query. The
+-- query also gets the sky brighness and turns it into a flux, which illustrates the use of
+-- the POWER() function and CAST to change the string representation into floating
+-- point. The First table contains matches between SDSS and FIRST survey objects.
+
+SELECT TOP 10 fld.run, fld.avg_sky_muJy, fld.runarea AS area, ISNULL(fp.nfirstmatch,0)
+FROM (
+--first part: for each run, get total area and average sky brightness
+SELECT run, sum(primaryArea) AS runarea,
+3631e6*avg(power(cast(10. as float),-0.4*sky_r)) as avg_sky_muJy
+FROM Field
+GROUP BY run
+) AS fld
+LEFT OUTER JOIN (
+-- second part: for each run,get total number of FIRST matches. To get the run number
+-- for each FIRST match, need to join FIRST with PHOTOPRIMARY. Some runs may have
+-- 0 FIRST matches, so these runs will not appear in the result set of this subquery.
+-- But we want to keep all runs from the first query in the final result, hence
+-- we need a LEFT OUTER JOIN between the first and the second query.
+-- The LEFT OUTER JOIN returns all the rows from the first subquery and matches
+-- with the corresponding rows from the second query. Where the second query
+-- has no corresponding row, a NULL is returned. The ISNULL() function in the
+-- SELECT above converts this NULL into a 0 to say "0 FIRST matches in this run".
+SELECT p.run, count(*) AS nfirstmatch
+FROM FIRST AS fm
+INNER JOIN photoprimary as p
+ON p.objid=fm.objid
+GROUP BY p.run
+) AS fp
+ON fld.run=fp.run
+ORDER BY fld.run</div>
+            </a>
+        </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------------------------------------------------------- -->
+    <div class="card mt-1">
+        <div id="misc" class="card-header collapsed" data-toggle="collapse" href="#misc-body" aria-expanded="false" aria-controls="misc-body">
+            Miscellaneous
+        </div>
+        <div id="misc-body" class="card-body collapse bg-purple p-2" data-parent=#misc>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Photometric Redshifts
+                <div class="sample-query-text d-none">-- Here is a simple query for objects with reliable redshift estimation in the 0.4 < z < 0.5 range
+-- The query uses the Photoz table that contains photometric redshift estimates for galaxies.
+
+SELECT TOP 100 objId,z,zErr,absMagR
+FROM Photoz
+WHERE
+z BETWEEN 0.4 and 0.5
+and photoErrorClass=1	-- the estimated object has low photometric errors, and enough nearest
+and nnCount>95	-- neighbors in the reference set; note that zErr=-9999 indicates an
+and zErr BETWEEN 0 and 0.03	-- unreliable redshift estimate, hence the lower bound on zErr
+-- A simple luminosity function with the same selection criteria as above
+-- Returns a histogram of absolute magnitudes for the given redshift range.
+-- (You will need to cut and paste this query if you want to run it in the SQL Search page,
+-- the above buttons will only load/run the first query).
+SELECT round(absMagR,1) as absMagR, COUNT(*) as cnt
+FROM Photoz
+WHERE
+z BETWEEN 0.4 and 0.5
+and photoErrorClass=1 and nnCount>95
+and zErr BETWEEN 0 and 0.03
+group by round(absMagR,1)
+order by round(absMagR,1)</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Spectra in Other Programs - I
+                <div class="sample-query-text d-none">-- This sample query find objects with spectra in the
+-- regular program of the SEGUE-2 survey. It checks
+-- both the "survey" tag (which tells you the overall
+-- survey) and the "programname" tag (which distinguishes
+-- subprograms within each survey). The PlateX table
+-- also has the survey and programname tags.
+
+SELECT TOP 50 ra, dec, specobjid, plate, mjd, fiberid
+FROM specObj
+WHERE survey = 'segue2' and programname = 'segue2'</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Spectra in Other Programs - II
+                <div class="sample-query-text d-none">-- There are five possible survey names ("sdss", "segue1",
+-- "segue2", "boss" and "apogee", though APOGEE is not
+-- available in DR9 and earlier). Within each survey there
+-- can be a number of programnames; the main programs
+-- of each survey are:
+-- survey = 'sdss' and programname = 'legacy'
+-- survey = 'segue1' and programname = 'segue'
+-- survey = 'segue2' and programname = 'segue2'
+-- survey = 'boss' and programname = 'boss'
+-- For the SEGUE-1 and SDSS surveys in particular there
+-- are multiple programs. A full list of surveys and programs
+-- can be obtained with:
+
+SELECT DISTINCT survey, programname
+FROM platex
+ORDER BY survey</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Counts by type and program
+                <div class="sample-query-text d-none">-- List the number of each type of object observed by each
+-- special spectroscopic observation program.
+
+SELECT plate.programname, class,
+COUNT(specObjId) AS numObjs
+FROM SpecObjAll
+JOIN PlateX AS plate ON plate.plate = specObjAll.plate
+GROUP BY plate.programname, class
+ORDER BY plate.programname, class</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Using WISE Cross-Match
+                <div class="sample-query-text d-none">-- The WISE_allsky is a straightforward import of the WISE all-sky data release catalog.
+-- It has hundreds of columns containing all manner of
+-- WISE measurements. It has 563,921,584 rows. This catalog includes data
+-- from the first part of the WISE mission, when all four of its mid-IR
+-- channels (3.4, 4.6, 12, and 22 microns) were operational. It is
+-- all-sky.
+--
+-- The WISE_xmatch is an astrometric cross-match between the WISE_allsky
+-- and SDSS photoObj objects. It contains 495,003,196 matches. The
+-- WISE_xmatch table itself just contains three columns: IDs of the WISE
+-- and SDSS objects, and the distance between them. I used a matching
+-- radius of 4 arcsec, and duplicate matches are allowed.
+--
+-- To use the WISE_xmatch table, join on one of the SDSS Photo* tables
+-- (PhotoObjAll, PhotoPrimary, PhotoTag, Galaxy, Star) and the WISE_allsky
+-- table, like so:
+
+select top 10
+S.ra as sdss_ra, S.dec as sdss_dec, W.ra as wise_ra, W.dec as wise_dec,
+S.psfmag_r as r, W.w1mpro as w1
+from wise_xmatch as X
+join wise_allsky as W on X.wise_cntr = W.cntr
+join photoTag as S on X.sdss_objid = S.objid
+where S.nchild = 0</div>
+            </a>
+        </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------------------------------------------------------- -->
+    <div class="card mt-1">
+        <div id="var" class="card-header collapsed" data-toggle="collapse" href="#var-body" aria-expanded="false" aria-controls="var-body">
+            Variability Queries
+        </div>
+        <div id="var-body" class="card-body collapse bg-purple p-2" data-parent=#var>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Stars multiply measured
+                <div class="sample-query-text d-none">-- This query selects multiply-detected sources (stars) in photometry,
+-- using the thingIndex and detectionIndex tables. thingIndex contains
+-- a list of all unique sources, with a primary key defined called thingId,
+-- and detectionIndex contains the objId of each observation of each
+-- thingId. The objId can be used to join with the Star view of the photoObjAll table
+-- in order to recover the photometric data associated with each stellar observation.
+
+SELECT TOP 10 t.thingid, t.ndetect, d.objid, p.psfMag_r,
+p.psfMagerr_r
+FROM thingIndex AS t
+JOIN detectionindex AS d ON t.thingid = d.thingid
+JOIN Star AS p ON d.objid = p.objid
+WHERE t.ndetect > 1</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Multiple Detections, Time Series
+                <div class="sample-query-text d-none">-- The detectionIndex table contains all detections of a given physical object,
+-- which is uniquely identified by the "thingid". In order to extract photometry,
+-- you need a join with the PhotoObjAll table, using the objid.
+-- There is also a flag field called isPrimary, which is 1 for the object that
+-- is found on a primary polygon/field, all the other detections have 0 in this field.
+-- Here is a compound query to find all time series around a certain object with a thingid= 97423000
+
+SELECT
+LTRIM(STR(mjd_r,20,2)) AS MJD,
+dbo.fSDSS(p.objId) AS ID,
+modelMag_g, modelMagErr_g,
+modelMag_r, modelMagErr_r,
+modelMag_i, modelMagErr_i, p.ra, p.dec
+INTO #list
+FROM detectionindex d
+JOIN PhotoObjAll p ON d.objid=p.objid
+JOIN Field f ON p.fieldid=f.fieldid
+WHERE d.thingid=97423000
+ORDER BY 1
+--
+-- Now find objects near each of the detections
+--
+SELECT a.*, b.*
+FROM #list a
+CROSS APPLY dbo.fGetNearbyObjEq(a.ra, a.dec, 0.1) b</div>
+            </a>
+        </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------------------------------------------------------- -->
+    <div class="card mt-1">
+        <div id="general" class="card-header collapsed" data-toggle="collapse" href="#general-body" aria-expanded="false" aria-controls="general-body">
+            General Astronomy
+        </div>
+        <div id="general-body" class="card-body collapse bg-purple p-2" data-parent=#general>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Only stars or galaxies
+                <div class="sample-query-text d-none">-- SkyServer includes views called Star and Galaxy, which
+-- contain photometric data (but no spectral data such as
+-- redshift) for stars and galaxies respectively.
+-- This sample query shows how you can search for data
+-- for galaxies using the Galaxy view. Searching for stars
+-- using the Star view would work the same, but with
+-- "Star" in the FROM clause.
+-- This sample query finds 1000 galaxies
+-- brighter thanr-magnitude 22, extinction-corrected.
+-- You could remove the "TOP 1000" to find all galaxies brighter
+-- than r=22, but it would take a long time to run and might
+-- time out.
+
+SELECT TOP 1000 objID
+FROM Galaxy
+WHERE
+(r - extinction_r) < 22</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Clean photometry
+                <div class="sample-query-text d-none">-- One of the most important requirements for selecting data
+-- useful for research is to select only data that has passed
+-- a certain standard of clean photometry. Starting with DR8,
+-- the SDSS-III has made this easier by providing a flag called CLEAN
+-- that indicates that an object's photometry has passed all tests
+-- to bedeclared useful for science. A value of CLEAN=1 (true)
+-- indicates that that object's photometry has been vetted as clean.
+-- For more on using flags, see the Using Flags Sample Query.
+-- In some contexts, it is important to know what conditions
+-- are required for theimaging pipeline to set the CLEAN flag,
+-- so that you can adjust these requirements to suit your needs.
+-- The CLEAN flag works differently for stars and galaxies. For stars,
+-- see the Clean photometry - stars sample query. For galaxies,
+-- see the Clean photometry - galaxies sample query.
+
+SELECT top 10 objID, ra, dec, g, clean
+FROM PhotoObj
+WHERE CLEAN=1</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Using Field MJD
+                <div class="sample-query-text d-none">-- This sample query allows you to find the MJD (astronomical date)
+-- on which a specific SDSS-III field was observed. (This query uses
+-- the r-band, but you can specify other magnitude bands.
+-- It also returns only fields observed after MJD 53140 (May 15, 2004).
+-- There is an online calculator for converting between MJDs and
+-- calendar dates.
+-- This query uses the Field table, which contains data on SDSS fields.
+-- It is also possible to search for the observation date of a specific
+-- object by joining the Field table with the PhotoObj table or its
+-- associated views.
+
+SELECT top 100
+run, rerun, camcol, field,
+mjd_r as primary_mjd
+FROM Field
+WHERE
+mjd_r > 53140</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Objects by spectral lines
+                <div class="sample-query-text d-none">-- DR8 handles searches by spectral lines differently than previous
+-- releases. In addition, spectral lines for galaxies and stars are
+-- identified through different processes.
+-- Spectral lines for galaxies are calculated using the MPA-JHU
+-- spectroscopic reanalysis (Tremonti et al. 2004; Brinchmann et al. 2004)
+-- and are stored in the galSpecLine table. For more on how spectral lines
+-- of galaxies are found, see the Galspec page of the sdss3.org website.
+-- Spectral lines for stars are calculated using the SEGUE Stellar Parameter
+-- Pipeline (SSPP; Lee et al. 2008) and are stored in the sppLines
+-- table. For more on how spectral lines of stars are found, see
+-- the SSPP page of the sdss3.org website.
+-- The "Run this Query" button will run the second query, which finds stars
+-- by searching CaII lines.
+-- a) Finding galaxies by their emission lines:
+-- This query selects galaxy spectra with high internal reddening,
+-- as measured by the standard Balmer decrement technique. It
+-- makes use of the galSpec tables for the measurements of
+-- galaxy lines. In this case we use galSpecLine, which has
+-- emission line measurements.
+
+SELECT
+s.plate, s.fiberid, s.mjd, s.z, s.zwarning,
+g.h_beta_flux, g.h_beta_flux_err,
+g.h_alpha_flux, g.h_alpha_flux_err
+FROM GalSpecLine AS g
+JOIN SpecObj AS s
+ON s.specobjid = g.specobjid
+WHERE
+h_alpha_flux > h_alpha_flux_err*5
+AND h_beta_flux > h_beta_flux_err*5
+AND h_beta_flux_err > 0
+AND h_alpha_flux > 10.*h_beta_flux
+AND s.class = 'GALAXY'
+AND s.zwarning = 0
+-- b) This query selects red stars (spectral type K), with
+-- large CaII triplet eq widths, with low errors on the CaII triplet
+-- equivalent widths.
+
+SELECT
+sl.plate,sl.mjd,sl.fiber,
+sl.caIIKside,sl.caIIKerr,sl.caIIKmask,
+sp.fehadop,sp.fehadopunc,sp.fehadopn,
+sp.loggadopn,sp.loggadopunc,sp.loggadopn
+FROM sppLines AS sl
+JOIN sppParams AS sp
+ON sl.specobjid = sp.specobjid
+WHERE
+fehadop < -3.5
+AND fehadopunc between 0.01
+and 0.5 and fehadopn > 3</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Spectra by classification
+                <div class="sample-query-text d-none">-- This sample query find all objects with spectra
+-- classified as stars. The query also checks that zWarning has no bits set,
+-- meaning that there are no known problems with the spectra.
+-- Other possible values with of class are 'QSO', 'GALAXY' and 'UNKNOWN'.
+
+SELECT TOP 100 specObjID
+FROM SpecObj
+WHERE class = 'STAR' AND zWarning = 0</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Moving asteroids
+                <div class="sample-query-text d-none">-- Provide a list of moving objects consistent with an asteroid.
+-- This sample query uses the 'as' syntax, which allows you to
+-- give your own names to columns in the results.
+-- This query is an example of a situation where you must
+-- search the full PhotoObj	view, since the
+-- columns rowv and colv are not in PhotoTag.
+
+SELECT TOP 10
+objID, ra, dec,
+sqrt( power(rowv,2) + power(colv, 2) ) as velocity
+FROM PhotoObj
+WHERE
+(power(rowv,2) + power(colv, 2)) > 50
+AND rowv != -9999 and colv != -9999</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Plates with repeat spectra
+                <div class="sample-query-text d-none">-- A query to list plates that have objects in common.
+-- Returns the pairs of plates, the total number of nights
+-- on which the objects they have in common have been observed, the progam to
+-- which the special plate belongs, and the number of objects the plates
+-- have in common.
+
+SELECT first.plate, other.plate,
+COUNT(DISTINCT other.mjd) + COUNT(DISTINCT first.mjd) AS nightsObserved,
+otherPlate.programname, count(DISTINCT other.bestObjID) AS objects
+FROM SpecObjAll first
+JOIN SpecObjAll other ON first.bestObjID = other.bestObjID
+JOIN PlateX AS firstPlate ON firstPlate.plate = first.plate
+JOIN PlateX AS otherPlate ON otherPlate.plate = other.plate
+WHERE first.scienceprimary = 1 AND other.scienceprimary = 0
+AND other.bestObjID > 0
+GROUP BY first.plate, other.plate, otherPlate.programname
+ORDER BY nightsObserved DESC, otherPlate.programname,
+first.plate, other.plate</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Galaxies blended with stars
+                <div class="sample-query-text d-none">-- Find galaxies that are blended with a star, and output the
+-- deblended galaxy magnitudes.
+-- This query introduces the use of multiple tables or views with a table JOIN clause.
+-- You can assign nicknames to tables as in the FROM clause below. Since you are using
+-- multiple tables, you must specify which table each quantity in the SELECT clause
+-- comes from. The "ON " part of the JOIN clause specifies the joining
+-- condition between the two tables, which is achieved by requiring that a quantity
+-- present in both tables be equal.
+
+SELECT TOP 10 G.ObjID, G.u, G.g, G.r, G.i, G.z	-- get the ObjID and final mags
+FROM Galaxy AS G	-- use two Views, Galaxy and Star, as a
+JOIN Star AS S
+-- convenient way to compare objects
+ON G.parentID = S.parentID
+-- JOIN condition: star has same parent
+WHERE G.parentID > 0
+-- object was deblended</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Checking SDSS footprint
+                <div class="sample-query-text d-none">-- This query uses the OUTER APPLY construct to apply a
+-- table-valued function to the results of a query.
+-- ( See also example below of checking whether a single point is in the SDSS footprint.)
+-- In this example, we use the fFootPrintEq function which returns a
+-- a non-NULL value ("POLYGON") if the area specified by the RA, dec and
+-- radius is inside the SDSS footprint.
+-- For each point in the input list, in this case the result of a query
+-- on PhotoObj, return "yes" or "no" depending on whether the point is in
+-- the SDSS footprint or not, along with any other needed columns.
+-- Note that this is really a trivial example since every point in PhotoObj
+-- is already in the SDSS footprint. To be really meaningful, a query like
+-- this needs to be run on a list of RA, decs that may or may not be in the
+-- in the SDSS footprint. This can be done using a MyDB table in CasJobs
+-- containing the list of points, for example, or by uploading a list in
+-- the Object Crossid tool.
+
+SELECT top 100 objID, ra, dec,
+(CASE WHEN q.type IS NULL THEN 'NO' ELSE 'YES' END) AS found
+FROM PhotoObj AS p
+OUTER APPLY dbo.fFootprintEq(ra,dec,0.1) AS q
+WHERE (ra BETWEEN 179.5 AND 182.3) AND (dec BETWEEN -1.0 AND 1.8)
+-- Checking the footprint for a single point with the fInFootprintEq scalar function.
+SELECT dbo.fInFootprintEq(180, -0.5, 0.2)
+-- Or if you have a table containing ra,dec values (for example a MyDB table
+-- in CasJobs), you can do something lile:
+SELECT dbo.fInFootprintEq(t.ra, t.dec, 0.1)
+FROM MyTable_10 AS t</div>
+            </a>
+        </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------------------------------------------------------- -->
+    <div class="card mt-1">
+        <div id="galaxies" class="card-header collapsed" data-toggle="collapse" href="#galaxies-body" aria-expanded="false" aria-controls="galaxies-body">
+            Galaxies
+        </div>
+        <div id="galaxies-body" class="card-body collapse bg-purple p-2" data-parent=#galaxies>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Clean photometry - Galaxies
+                <div class="sample-query-text d-none">-- The Clean Photometry sample query above showed how
+-- to select only objects for which SDSS-III imaging pipeline has declared
+-- the photometry clean. Usually, it is sufficient to search only the CLEAN flag;
+-- but in some contexts, it is important to know what conditions
+-- are required for the CLEAN flag to be set. The imaging pipeline sets the
+-- CLEAN flag based on the values of other flags; these necessary values are
+-- different for stars and galaxies. The version of this sample query for stars
+-- can be found in the Clean photometry - Stars sample query.
+-- For galaxies (i.e. not using PSF mags): Again use only PRIMARY objects. Other
+-- cuts are nearly the same, but remove the cut on EDGE. Possibly also remove
+-- the cut on INTERP flags.
+-- In this query, the human-readable flag names (through calls to the flag
+-- functions have been replaced with explicit values. Using explicit values for flags
+-- makes the queries run much faster.
+
+SELECT TOP 10 u,g,r,i,z,ra,dec, flags_r
+FROM Galaxy
+WHERE
+ra BETWEEN 180 and 181 AND dec BETWEEN -0.5 and 0.5
+AND ((flags_r & 0x10000000) != 0)
+-- detected in BINNED1
+AND ((flags_r & 0x8100000c00a0) = 0)
+-- not NOPROFILE, PEAKCENTER, NOTCHECKED, PSF_FLUX_INTERP, SATURATED,
+-- or BAD_COUNTS_ERROR.
+-- if you want to accept objects with interpolation problems for PSF mags,
+-- change this to: AND ((flags_r & 0x800a0) = 0)
+AND (((flags_r & 0x400000000000) = 0) or (psfmagerr_r <= 0.2))
+-- not DEBLEND_NOPEAK or small PSF error
+-- (substitute psfmagerr in other band as appropriate)
+AND (((flags_r & 0x100000000000) = 0) or (flags_r & 0x1000) = 0)
+-- not INTERP_CENTER or not COSMIC_RAY - omit this AND clause if you want to
+-- accept objects with interpolation problems for PSF mags.</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Galaxies with blue centers
+                <div class="sample-query-text d-none">-- Galaxies with bluer centers, by Michael Strauss. For all galaxies with r_Petro < 18,
+-- not saturated, not bright, and not edge, give me those with centers appreciably bluer
+-- than their outer parts, i.e., define the center color as: u_psf - g_psf and define
+-- the outer color as: u_model - g_model; give me all objs which have
+--     (u_model - g_model) - (u_psf - g_psf) < -0.4
+--
+-- Another flags-based query.
+-- NOTE: This query takes a long time to run without the "TOP 1000".
+
+SELECT TOP 1000
+modelMag_u, modelMag_g, objID
+FROM Galaxy
+WHERE
+( Flags & (dbo.fPhotoFlags('SATURATED') +
+dbo.fPhotoFlags('BRIGHT') +
+dbo.fPhotoFlags('EDGE')) ) = 0
+and petroRad_r < 18
+and ((modelMag_u - modelMag_g) - (psfMag_u - psfMag_g)) < -0.4</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Diameter limited sample
+                <div class="sample-query-text d-none">-- Diameter-limited sample of galaxies from James Annis.
+-- Another query showing the use of flags, now using the bitwise '|' (or).
+-- NOTE: This query takes a long time to run without the "TOP 10", please see below for a faster version.
+
+SELECT TOP 10
+run,
+camCol,
+rerun,
+field,
+objID,
+ra,
+dec
+FROM Galaxy
+WHERE ( flags & (dbo.fPhotoFlags('BINNED1')
+| dbo.fPhotoFlags('BINNED2')
+| dbo.fPhotoFlags('BINNED4')) ) > 0
+and ( flags & (dbo.fPhotoFlags('BLENDED')
+| dbo.fPhotoFlags('NODEBLEND')
+| dbo.fPhotoFlags('CHILD')) ) != dbo.fPhotoFlags('BLENDED')
+and ( (flags & dbo.fPhotoFlags('NOPETRO') = 0)
+and petroR50_i >-- A much faster way to do this query is to substitute the actual flag values rather
+-- than calling the dbo.fPhotoFlags functions for each row selected by the query.
+-- Invoking these functions for potentially millions of rows is quite expensive. You
+-- can avoid this by first running the 4 quick "pre-queries" shown below, with the
+-- indicated values returned from each query. Then use these values to substitute
+-- in the original query as shown in the last query below.
+
+1) SELECT (dbo.fPhotoFlags('BINNED1')
+| dbo.fPhotoFlags('BINNED2')
+| dbo.fPhotoFlags('BINNED4'))
+-- This returns the value 1879048192.
+
+2) SELECT (dbo.fPhotoFlags('BLENDED')
+| dbo.fPhotoFlags('NODEBLEND')
+| dbo.fPhotoFlags('CHILD'))
+-- This returns the value 88.
+
+3) SELECT dbo.fPhotoFlags('BLENDED')        -- This returns 8.
+4) SELECT dbo.fPhotoFlags('NOPETRO')        -- This returns 256.
+-- Finally, here is the original query with these values instead of the function calls.
+SELECT TOP 10
+run,
+camCol,
+rerun,
+field,
+objID,
+ra,
+dec
+FROM Galaxy
+WHERE
+( flags & 1879048192 ) > 0
+and ( flags & 88 ) != 8
+and ( (flags & 256 = 0)
+and petroR50_i > 15)</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                LRG sample selection
+                <div class="sample-query-text d-none">-- A version of the LRG sample, by James Annis.
+-- Not precisely the same version as that used in target selection.
+-- Another query with many conditions and flag tests.
+-- As with the previous example, this query will run much faster if
+-- the flag function calls are replaced with explicit values.
+
+SELECT TOP 10
+run,
+camCol,
+rerun,
+field,
+objID,
+ra,
+dec
+FROM Galaxy
+WHERE ( ( flags & (dbo.fPhotoFlags('BINNED1')
+| dbo.fPhotoFlags('BINNED2')
+| dbo.fPhotoFlags('BINNED4')) ) > 0
+and ( flags & (dbo.fPhotoFlags('BLENDED')
+| dbo.fPhotoFlags('NODEBLEND')
+| dbo.fPhotoFlags('CHILD')) ) != dbo.fPhotoFlags('BLENDED')
+and ( flags & (dbo.fPhotoFlags('EDGE')
+| dbo.fPhotoFlags('SATURATED')) ) = 0
+and petroMag_i > 17.5
+and (petroMag_r > 15.5 or petroR50_r > 2)
+and (petroMag_r > 0 and g > 0 and r > 0 and i > 0)
+and ( (petroMag_r-extinction_r) < 19.2
+and (petroMag_r - extinction_r <
+(13.1 + (7/3) * (dered_g - dered_r) + 4 * (dered_r - dered_i)
+- 4 * 0.18) )
+and ( (dered_r - dered_i - (dered_g - dered_r)/4 - 0.18) < 0.2)
+and ( (dered_r - dered_i - (dered_g - dered_r)/4 - 0.18) > -0.2)
+-- dered_ quantities already include reddening
+and ( (petroMag_r - extinction_r +
+2.5 * LOG10(2 * 3.1415 * petroR50_r * petroR50_r)) < 24.2) )
+or ( (petroMag_r - extinction_r < 19.5)
+and ( (dered_r - dered_i - (dered_g - dered_r)/4 - 0.18) > (0.45 - 4 *
+(dered_g - dered_r)) )
+and ( (dered_g - dered_r) > (1.35 + 0.25 * (dered_r - dered_i)) ) )
+and ( (petroMag_r - extinction_r +
+2.5 * LOG10(2 * 3.1415 * petroR50_r * petroR50_r) ) < 23.3 ) )</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Galaxy counts on HTM grid
+                <div class="sample-query-text d-none">-- Create a count of galaxies for each of the HTM triangles.
+-- Galaxies should satisfy a certain color cut, like
+-- 0.7u-0.5g-0.2i<1.25 && r<21.75, output it in a form
+-- adequate for visualization.
+SELECT (htmID / power(2,24)) as htm_8 ,
+-- group by 8-deep HTMID (rshift HTM by 12)
+    avg(ra) as ra,
+    avg(dec) as [dec],
+    count(*) as pop	-- return center point and count for display
+FROM Galaxy	-- only look at galaxies
+WHERE (0.7*u - 0.5*g - 0.2*i) < 1.25 -- meeting this color cut
+    and r < 21.75	-- brighter than 21.75 magnitude in red band.
+group by (htmID /power(2,24))	-- group into 8-deep HTM buckets.</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Galaxy Zoo classifications
+                <div class="sample-query-text d-none">-- DR8 includes data on visual galaxy morphologies from the
+-- Galaxy Zoo project. Galaxy Zoo is a web-based project
+-- that used the collective efforts of about 100,000 volunteer
+-- citizen scientists to classify more than one million
+-- SDSS DR7 Main Galaxy Sample (MGS) galaxies.
+-- Full details on the classification process, including the operation
+-- of the site and estimates of classification accurary, are given in
+-- Lintott et al. (2008).
+-- Galaxy Zoo data are contained in tables that begin with zoo
+-- in the DR8 schema. For each galaxy, available data includes its
+-- SDSS object ID and weighted probabilities for each of six different
+-- morphological classifications based on counts of volunteer "votes".
+-- Full details on what data the Galaxy Zoo catalog contains are given
+-- in Lintott et al. (2010).
+-- The first query below finds the weighted probability that a given galaxy
+-- has each of the six morphological classifications.
+-- The second query finds 100 galaxies that have clean photometry,
+-- at least 10 Galaxy Zoo volunteer votes and at least an 80% probability
+-- of being clockwise spirals.
+
+SELECT
+objid, nvote,
+p_el as elliptical,
+p_cw as spiralclock, p_acw as spiralanticlock, p_edge as edgeon,
+p_dk as dontknow, p_mg as merger
+FROM ZooNoSpec
+WHERE objid = 1237656495650570395
+-- Second query: find likely clockwise spirals.
+
+SELECT TOP 100
+g.objid, zns.nvote,
+zns.p_el as elliptical,
+zns.p_cw as spiralclock, zns.p_acw as spiralanticlock, zns.p_edge as edgeon,
+zns.p_dk as dontknow, zns.p_mg as merger
+FROM Galaxy as G
+JOIN ZooNoSpec AS zns
+ON G.objid = zns.objid
+WHERE g.clean=1 and zns.nvote >= 10 and zns.p_cw > 0.8</div>
+            </a>
+        </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------------------------------------------------------- -->
+    <div class="card mt-1">
+        <div id="stars" class="card-header collapsed" data-toggle="collapse" href="#stars-body" aria-expanded="false" aria-controls="stars-body">
+            Stars
+        </div>
+        <div id="stars-body" class="card-body collapse bg-purple p-2" data-parent=#stars>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Clean photometry - Stars
+                <div class="sample-query-text d-none">-- The Clean Photometry sample query above showed how
+-- to select only objects for which SDSS-III imaging pipeline has declared
+-- the photometry clean. Usually, it is sufficient to search only the CLEAN flag;
+-- but in some contexts, it is important to know what conditions
+-- are required for the CLEAN flag to be set. The imaging pipeline sets the
+-- CLEAN flag based on the values of other flags; these necessary values are
+-- different for stars and galaxies. The version of this sample query for galaxies
+-- can be found in the Clean photometry - Galaxies sample query.
+-- For queries on star objects, when you use PSF mags, use only PRIMARY objects
+-- and the flag combinations indicated below. If you use the Star view as this sample
+-- query does, you will get only primary objects; otherwise you will need to add
+-- a "mode=1" constraint. For example, if you are interested in r-band magnitudes
+-- of objects, perform the following checks (add analogous checks with AND for
+-- other bands if you are interested in multiple magnitudes or colors).
+-- In this query, the human-readable flag names (through calls to the flag
+-- functions have been replaced with explicit values. Using explicit values for flags
+-- makes the queries run much faster.
+
+SELECT TOP 10 u,g,r,i,z,ra,dec, flags_r
+FROM Star
+WHERE
+ra BETWEEN 180 and 181 AND dec BETWEEN -0.5 and 0.5
+AND ((flags_r & 0x10000000) != 0)
+-- detected in BINNED1
+AND ((flags_r & 0x8100000c00a4) = 0)
+-- not EDGE, NOPROFILE, PEAKCENTER, NOTCHECKED, PSF_FLUX_INTERP,
+-- SATURATED, or BAD_COUNTS_ERROR
+AND (((flags_r & 0x400000000000) = 0) or (psfmagerr_r <= 0.2))
+-- not DEBLEND_NOPEAK or small PSF error
+-- (substitute psfmagerr in other band as appropriate)
+AND (((flags_r & 0x100000000000) = 0) or (flags_r & 0x1000) = 0)
+-- not INTERP_CENTER or not COSMIC_RAY</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                CVs using colors
+                <div class="sample-query-text d-none">-- Search for Cataclysmic Variables and pre-CVs with White Dwarfs and
+-- very late secondaries, using simple color cuts from Paula Szkody.
+-- This is a simple query that uses math in the WHERE clause.
+
+SELECT TOP 100 run,
+camCol,
+rerun,
+field,
+objID,
+u, g, r, i, z,
+ra, dec
+-- Just get some basic quantities
+FROM Star	-- From all stellar primary detections
+WHERE u - g < 0.4
+and g - r < 0.7
+and r - i > 0.4
+and i - z > 0.4-- that meet the color criteria</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Binary stars colors
+                <div class="sample-query-text d-none">-- Find binary stars with specific colors.
+-- At least one of them should have the colors of a white dwarf.
+
+SELECT TOP 100 s1.objID as s1, s2.objID as s2
+FROM	Star AS S1	-- S1 is the white dwarf
+JOIN Neighbors AS N ON S1.objID = N.objID	-- N is the precomputed neighbors lists
+JOIN Star AS S2 ON S2.objID = N.NeighborObjID	-- S2 is the second star
+WHERE
+N.NeighborType = dbo.fPhotoType('Star')
+-- and S2 is a star
+and N.distance < .05
+-- the 3 arcsecond test
+and ((S1.u - S1.g) < 0.4 )
+-- and S1 meets Paul Szkodys color cut for
+and (S1.g - S1.r) < 0.7
+-- white dwarfs.
+and (S1.r - S1.i) > 0.4
+and (S1.i - S1.z) > 0.4</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Using sppLines table
+                <div class="sample-query-text d-none">-- Another example of using the sppLines table generated by
+-- the SEGUE Spectroscopic Parameter Pipeline. This sample query
+-- selects low metallicity stars ([Fe/H] < -3.5) where more than three
+-- different measures of feh are ok and are averaged.
+
+SELECT sl.plate, sl.mjd, sl.fiber,
+sl.caIIKside, sl.caIIKerr, sl.caIIKmask,
+sp.fehadop, sp.fehadopunc,sp. fehadopn,
+sp.loggadopn,sp.loggadopunc,sp.loggadopn
+
+FROM sppLines AS sl
+JOIN sppParams AS sp ON sl.specobjid = sp.specobjid
+
+WHERE
+fehadop < -3.5 and fehadopunc between 0.01 and 0.5
+AND fehadopn > 3</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Using sppParams table
+                <div class="sample-query-text d-none">-- This sample query searches the sppParams table, which contains
+-- stellar parameters calculated by the SEGUE Spectroscopic Parameter Pipeline.
+-- The sample query selects spectroscopic stars in specific ranges of metallicity,
+-- gravity and temperature (with some flag checks).
+
+SELECT top 10 so.bestobjid, so.specobjid, so.plate, so.mjd, so.fiberid,
+sp.teffadop, sp.fehadop, sp.loggadop, sp.snr, sp.flag
+FROM specobjall so
+-- get the stellar params for each spectrum.
+-- the sciencePrimary=1 guarantees no repeats in this query, but not all
+-- these spectra will be from SEGUE
+JOIN sppparams sp ON so.specobjid = sp.specobjid and so.sciencePrimary=1
+-- get the photometry info. note the "dr7" context prefix that will go
+-- away when we get the dr8 imaging
+WHERE sp.teffadop > 4500 and sp.teffadop < 5500
+and fehadop > -2 and fehadop < -1.5
+and loggadop > 2 and loggadop < 3
+-- demand that the first two letters of the sspp flags be n (see web page docs)
+-- the like and % are for sub-string comparisons
+and sp.flag like '_n%'
+and sp.snr > 30</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                Proper motions
+                <div class="sample-query-text d-none">-- Select stars surrounding the open cluster M67, include positions, color mag
+-- and propermotion and pm errors.
+
+SELECT TOP 100 s.ra, s.dec, s.psfmag_g, (s.psfmag_g - s.psfmag_r) as gmr,
+pm.pmra, pm.pmdec, pm.pmraerr, pm.pmdecerr, pm.pml, pm.pmb
+FROM star s
+JOIN propermotions pm ON s.objid = pm.objid
+WHERE
+s.ra between 132.85-0.25 and 132.85+0.25
+and s.dec between 11.82-0.25 and 11.82+0.25</div>
+            </a>
+        </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------------------------------------------------------- -->
+    <div class="card mt-1">
+        <div id="quasars" class="card-header collapsed" data-toggle="collapse" href="#quasars-body" aria-expanded="false" aria-controls="quasars-body">
+            Quasars
+        </div>
+        <div id="quasars-body" class="card-body collapse bg-purple p-2" data-parent=#quasars>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                QSOs by spectroscopy
+                <div class="sample-query-text d-none">-- The easiest way to find apogee is by finding objects whose spectra have
+-- been classified as apogee. This sample query searches the SpecObj
+-- table for the IDs and redshifts of objects with the class column equal to 'QSO'
+
+SELECT TOP 100 specObjID, z
+FROM SpecObj
+WHERE class = 'QSO' AND zWarning = 0</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                QSOs by colors
+                <div class="sample-query-text d-none">-- Low-z QSO candidates using the color cuts from Gordon Richards.
+-- Also a simple query with a long WHERE clause.
+
+SELECT TOP 100
+g,
+run,
+rerun,
+camcol,
+field,
+objID
+FROM Galaxy
+WHERE ( (g <= 22)
+and (u - g >= -0.27)
+and (u - g < 0.71)
+and (g - r >= -0.24)
+and (g - r < 0.35)
+and (r - i >= -0.27)
+and (r - i < 0.57)
+and (i - z >= -0.35)
+and (i - z < 0.70) )</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                FIRST matches for apogee
+                <div class="sample-query-text d-none">-- This sample query is a useful quasar query (from Sebastian Jester).
+-- Getting magnitudes for spectroscopic apogee - retrieves photometry.
+-- This query uses the SpecPhoto view of the SpecPhotoAll table, which is a pre-computed join
+-- of the important fields in the SpecObjAll and PhotoObjAll tables. It is very convenient and much
+-- faster to use this when you can instead of doing the join yourself.
+-- Getting FIRST data for spectroscopic apogee - returns only those apogee that have
+-- matches in the FIRST (Far-InfraRed Survey Telescope) table.
+
+SELECT sp.ra,sp.dec,sp.z,
+sp.psfmag_i-sp.extinction_i AS mag_i,
+peak,integr
+FROM SpecPhoto AS sp
+INNER JOIN FIRST AS f ON sp.objid = f.objid
+WHERE
+class = 'QSO'</div>
+            </a>
+        </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------------------------------------------------------- -->
+    <div class="card mt-1">
+        <div id="boss" class="card-header collapsed" data-toggle="collapse" href="#boss-body" aria-expanded="false" aria-controls="boss-body">
+            BOSS
+        </div>
+        <div id="boss-body" class="card-body collapse bg-purple p-2" data-parent=#boss>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                BOSS target selection
+                <div class="sample-query-text d-none">-- This query selects Luminous Red Galaxies between redshifts 0.4 and 0.65,
+-- in a quasi-mass limited manner. This query is very similar to part of the
+-- selection of BOSS targets (the so-called CMASS LRGs).
+
+SELECT TOP 10 *
+FROM photoprimary
+WHERE
+(dered_r-dered_i) < 2 AND
+cmodelmag_i-extinction_i BETWEEN 17.5 AND 19.9 AND
+(dered_r-dered_i) - (dered_g-dered_r)/8. > 0.55 AND
+fiber2mag_i < 21.7 AND devrad_i < 20. AND
+dered_i < 19.86 + 1.60*((dered_r-dered_i) - (dered_g-dered_r)/8. - 0.80)</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                BOSS Stellar Masses
+                <div class="sample-query-text d-none">-- This query does a table JOIN between the Portsmouth Passive (stellarMassPassivePort)
+-- and Portsmouth Starforming (stellarMassStarformingPort) and Wisconsin PCA (stellarMassPCAWiscBC03)
+-- tables and selects the stellar masses for a particular PLATE-MJD:
+
+SELECT TOP 10 passive.fiberid as fiberID, passive.ra, passive.dec,
+passive.z as z_noqso, passive.zerr as z_noqso_err,
+passive.logmass as passive_logmass,
+starforming.logmass as starforming_logmass,
+pca.mstellar_median as pca_logmass
+FROM stellarMassPassivePort AS passive
+JOIN stellarMassStarformingPort AS starforming ON passive.specobjid =
+starforming.specobjid
+JOIN stellarMassPCAWiscBC03 AS pca ON passive.specobjid = pca.specobjid
+WHERE passive.plate = 3606 AND passive.mjd = 55182 AND pca.warning=0</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                BOSS Stellar Vel. Disps.
+                <div class="sample-query-text d-none">-- This query does a table JOIN between the Portsmouth Emission Lines (emissionLinesPort)
+-- and Wisconsin PCA (stellarmMassPCAWisc) and the SpecObj tables and selects
+-- the velocity dispersion for a particular PLATE-MJD:
+
+SELECT TOP 10 emline.fiberid as fiberID, emline.ra, emline.dec,
+emline.z as z_noqso, emline.zerr as z_noqso_err,
+emline.sigmaStars as emline_vdisp, emline.sigmaStarsErr as emline_vdisp_err,
+pca.vdisp_median as pca_vdisp, pca.vdisp_err as pca_vdisp_err,
+sp.veldisp as sp_vdisp, sp.veldisperr as sp_vdisp_err
+FROM emissionLinesPort AS emline
+JOIN stellarMassPCAWisc AS pca ON emline.specobjid = pca.specobjid
+JOIN specObj as sp ON emline.specobjid = sp.specobjid
+WHERE emline.plate = 3606 AND emline.mjd = 55182 AND pca.warning=0</div>
+            </a>
+        </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------------------------------------------------------- -->
+    <div class="card mt-1">
+        <div id="apogee" class="card-header collapsed" data-toggle="collapse" href="#apogee-body" aria-expanded="false" aria-controls="apogee-body">
+            APOGEE
+        </div>
+        <div id="apogee-body" class="card-body collapse bg-purple p-2" data-parent=#apogee>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                All APOGEE Plate Visits
+                <div class="sample-query-text d-none">-- Get all PLATES observed for a given LOCATION_ID:
+-- The APOGEE survey is conducted along a number of different lines of
+-- sight, each referred to as as a "field" or "location"
+-- (interchangeably). Each field has a name and an id number
+-- (LOCATION_ID). The stars in each field are observed multiple times on
+-- multiple visits, on different MJDs. These may involve one or more
+-- physical plug plates.
+--
+-- To find all the plate visits, one can search as follows (for LOCATION_ID
+-- 4105):
+
+SELECT plate, mjd FROM apogeePlate WHERE location_id=4105
+-- The same field can be searched by its name (in this case 'M13'):
+
+SELECT plate, mjd FROM apogeePlate WHERE name = 'M13'</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                ASPCAP Parameters and Errors
+                <div class="sample-query-text d-none">-- Get ASPCAP parameters and errors for all stars that were targeted as part of the main APOGEE survey:
+-- The stellar parameters are available for all stars that had ASPCAP run
+-- on them. However, this includes some spectra known to be bad as well as
+-- stars targeted as part of ancillary programs of various
+-- sorts. Restricting to the good, main survey targets requires checking on
+-- target and catalog flags, as in the examples below:
+
+SELECT TOP 100
+s.apogee_id,s.ra, s.dec, s.glon, s.glat,
+s.vhelio_avg,s.vscatter,
+a.teff, a.teff_err, a.logg, a.logg_err, a.param_m_h, a.param_m_h_err,
+a.param_alpha_m, a.param_alpha_m_err,
+dbo.fApogeeAspcapFlagN(a.aspxcapflag),
+dbo.fApogeeStarFlagN(s.starflag)
+FROM apogeeStar s
+JOIN aspcapStar a on a.apstar_id = s.apstar_id
+WHERE (a.aspxcapflag & dbo.fApogeeAspcapFlag('STAR_BAD')) = 0 and
+s.commiss = 0 and
+(s.apogee_target1 &
+(dbo.fApogeeTarget1('APOGEE_SHORT')+
+dbo.fApogeeTarget1('APOGEE_INTERMEDIATE')+
+dbo.fApogeeTarget1('APOGEE_LONG'))) != 0</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                APOGEE Stars No BAD Flags
+                <div class="sample-query-text d-none">-- Get parameters for all stars with [Fe/H] < -2 with no BAD FLAGS set:
+-- You can also select a subset of the stars based on their
+-- properties. This example finds a set of metal-poor stars, without any
+-- flags set indicating that the observations or analysis is bad.
+
+SELECT TOP 100
+s.apogee_id,s.ra, s.dec, s.glon, s.glat,
+s.vhelio_avg,s.vscatter,
+a.teff,a.logg, a.param_m_h, a.param_alpha_m,
+dbo.fApogeeAspcapFlagN(a.aspxcapflag),
+dbo.fApogeeStarFlagN(s.starflag)
+FROM apogeeStar s
+JOIN aspcapStar a on a.apstar_id = s.apstar_id
+WHERE (a.aspxcapflag & dbo.fApogeeAspcapFlag('STAR_BAD')) = 0
+and a.teff > 0 and a.param_m_h < -2</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                ASPCAP Params for Cluster Mbrs
+                <div class="sample-query-text d-none">-- Get ASPCAP parameters for stars flagged as known cluster members:
+-- In addition to selecting main survey targets, you can
+-- select other objects according how they were selected. This is
+-- an example of selecting objects chosen to be calibrator stars in
+-- clusters with known metallicities (APOGEE_CALIB_CLUSTER).
+
+SELECT TOP 100
+s.apogee_id,s.ra, s.dec, s.glon, s.glat,
+s.vhelio_avg,s.vscatter,
+a.teff, a.teff_err, a.logg, a.logg_err, a.param_m_h, a.param_m_h_err,
+a.param_alpha_m, a.param_alpha_m_err,
+dbo.fApogeeAspcapFlagN(a.aspxcapflag),
+dbo.fApogeeStarFlagN(s.starflag)
+FROM apogeeStar s
+JOIN aspcapStar a on a.apstar_id = s.apstar_id
+WHERE (a.aspxcapflag & dbo.fApogeeAspcapFlag('STAR_BAD')) = 0 and
+s.commiss = 0 and
+(s.apogee_target2 & (dbo.fApogeeTarget2('APOGEE_CALIB_CLUSTER')) != 0)</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                APOGEE Proper Motions
+                <div class="sample-query-text d-none">-- Get proper motions, JHK mag and errors, K-band extinction and radial
+-- velocities, for stars with RVs >-- There is photometric data associated with each target, including proper
+-- motions and other information. This example looks for such information
+-- for larger (heliocentric) radial velocity stars. It restricts to objects
+-- with good measured ASPCAP parameters. This requires joining the apogeeStar and
+-- aspcapStar tables with the apogeeObject table, which has the target information.
+
+SELECT TOP 100
+star.apogee_id, star.ra, star.dec, star.glon, star.glat,
+star.vhelio_avg, star.vscatter,
+obj.j, obj.h, obj.k, obj.ak_targ, obj.ak_targ_method, obj.ak_wise,
+aspcap.teff, aspcap.logg, aspcap.param_m_h
+FROM apogeeStar star
+JOIN aspcapStar aspcap on aspcap.apstar_id = star.apstar_id
+JOIN apogeeObject obj on aspcap.target_id = obj.target_id
+WHERE (aspcap.aspxcapflag & dbo.fApogeeAspcapFlag('STAR_BAD')) = 0 and aspcap.teff > 0
+and (star.vhelio_avg > 300) and (star.starflag &
+dbo.fApogeeStarFlag('SUSPECT_RV_COMBINATION')) = 0
+and star.nvisits > 2 order by aspcap.apogee_id</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                APOGEE Stars Near Cluster Ctr
+                <div class="sample-query-text d-none">-- Get ASPCAP parameters and targeting flags for all stars with 1 degree of a cluster center:
+-- CASJobs allows search for objects near any particular RA and Dec. The
+-- following example searches for ASPCAP parameters and targeting flags for
+-- the stars observed near M13.
+
+SELECT star.apstar_id,
+star.apogee_id, star.ra, star.dec, star.glon, star.glat,
+star.apogee_target1, star.apogee_target2,
+aspcap.teff,aspcap.logg,aspcap.param_m_h
+FROM apogeeStar star
+JOIN dbo.fGetNearbyApogeeStarEq(250.423458,36.461306,60) near on
+star.apstar_id=near.apstar_id
+JOIN aspcapStar aspcap on aspcap.apstar_id = star.apstar_id</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                RVs for Individual APOGEE Visits
+                <div class="sample-query-text d-none">-- Get individual RVs from individual visits, the ASPCAP parameters for the combined
+-- spectra for stars which have more than 6 visits:
+-- Each star is visited several times, and in some case many times, in
+-- order to build up signal-to-noise and to detect radial velocity
+-- variations. The information about each visit to each star is in the
+-- apogeeVisit table. One could join this table with apogeeStar on
+-- apogee_id in order to literally find all visits to each star. However,
+-- in this example we are interested in just finding those visits that
+-- actually contributed to each combined spectrum. In this case, bad visits
+-- are excluded and commissioning data and survey data are kept separate
+-- (not combined). To find these stars, one may use the apogeeStarVisit
+-- table in CAS, or the array visit_pk which exists for each star in the
+-- allStar file. Alternatively, if you wanted to find all visits to a
+-- particular star, one could replace in the code below apogeeStarVisit
+-- with apogeeStarAllVisit and visit_pk with all_visit_pk.
+
+SELECT top 100
+visit.*, aspcap.teff, aspcap.logg, aspcap.param_m_h
+FROM apogeeVisit visit
+JOIN apogeeStarVisit starvisit on visit.visit_id = starvisit.visit_id
+JOIN aspcapStar aspcap on aspcap.apstar_id = starvisit.apstar_id
+JOIN apogeeStar star on star.apstar_id = starvisit.apstar_id
+WHERE (aspcap.aspxcapflag & dbo.fApogeeAspcapFlag('STAR_BAD')) = 0 and aspcap.teff > 0
+and (star.apogee_target1 & dbo.fApogeeTarget1('APOGEE_LONG')) > 0
+and star.nvisits > 6
+ORDER BY visit.apogee_id</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                APOGEE and SEGUE Spectra
+                <div class="sample-query-text d-none">-- Get APOGEE_IDs and SDSS/BOSS plate, mjd, fiberid for all stars that have both APOGEE and SEGUE spectra:
+-- A small number of objects have been observed both in the optical with
+-- the SDSS and/or BOSS spectrographs and in the infrared with the APOGEE
+-- spectrograph. The examples below finds all matches between primary
+-- SDSS/BOSS spectra and APOGEE stars with a 3 arcsec tolerance for such
+-- cases (note that there are some cases where an entry in one catalog
+-- matches multiple entries in the other).
+
+SELECT TOP 50
+specobj.plate as specobj_plate, specobj.mjd as specobj_mjd,
+specobj.fiberid as specobj_fiberid,
+specobj.ra as specobj_ra, specobj.dec as specobj_dec,
+star.apstar_id, star.ra as star_ra, star.dec as star_dec
+FROM apogeeStar AS star
+CROSS APPLY dbo.fGetNearestSpecObjEq( star.ra, star.dec, 0.05) AS near
+JOIN specobj ON near.specobjid=specobj.specobjid</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                SDSS photometry for APOGEE Stars
+                <div class="sample-query-text d-none">-- Get SDSS ugriz photometry, errors and flags, ASPCAP parameters for the APOGEE stars with b >-- In addition to matching to the SDSS spectroscopy, you can also match to
+-- the SDSS photometric imaging data. In this case, we only give an example
+-- within CAS. To do this purely with flat files requires either
+-- downloading the full photometric catalog (about 3 Tbytes) or the
+-- "datasweep" files (about 300 Gbytes), both described in the imaging data
+-- access documentation, and constructing an efficient flat-file method to
+-- do the matching. For most purposes, CAS will be the right way to do this.
+
+SELECT TOP 50
+photoobj.run, photoobj.camcol, photoobj.field, photoobj.obj,
+photoobj.psfmag_u, photoobj.psfmag_g, photoobj.psfmag_r,
+photoobj.psfmag_i, photoobj.psfmag_z,
+photoobj.ra as photoobj_ra, photoobj.dec as photoobj_dec,
+star.apstar_id, star.ra as star_ra, star.dec as star_dec,
+aspcap.teff, aspcap.param_m_h, aspcap.logg
+FROM apogeeStar AS star
+CROSS APPLY dbo.fGetNearestObjEq( star.ra, star.dec, 0.05) AS near
+JOIN photoobj ON near.objid=photoobj.objid
+JOIN aspcapStar as aspcap ON star.apstar_id = aspcap.apstar_id
+WHERE star.glat > 60. and aspcap.teff > 0</div>
+            </a>
+        </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------------------------------------------------------- -->
+    <div class="card mt-1">
+        <div id="eboss" class="card-header collapsed" data-toggle="collapse" href="#eboss-body" aria-expanded="false" aria-controls="eboss-body">
+            eBOSS
+        </div>
+        <div id="eboss-body" class="card-body collapse bg-purple p-2" data-parent=#eboss>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                QSO Variability
+                <div class="sample-query-text d-none">-- An example of how to use the eBOSS QSO Variability VAC
+-- Get the structure function parameters (A,gamma) from PTF photometry for all quasar targets,
+-- except in the stripe region.
+-- The cut VAR_CHI2>2 and VAR_A>0.1 selects objects with a significantly varying lightcurve.
+
+SELECT
+TOP 100 RA, DEC, VAR_A, VAR_GAMMA, VAR_CHI2
+FROM qsoVarPTF
+WHERE qsoVarPTF.VAR_CHI2>2 AND qsoVarPTF.VAR_A>0.1</div>
+            </a>
+        </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------------------------------------------------------- -->
+    <div class="card mt-1">
+        <div id="manga" class="card-header collapsed" data-toggle="collapse" href="#manga-body" aria-expanded="false" aria-controls="manga-body">
+            MaNGA
+        </div>
+        <div id="manga-body" class="card-body collapse bg-purple p-2" data-parent=#manga>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                MaNGA Data Cubes
+                <div class="sample-query-text d-none">-- Find all MaNGA data cubes of galaxies in the main or ancillary target sample.
+-- Get the unique observation identifier (plateifu), object identifier (mangaid),
+-- object coordinates, primary sample targeting bit (mngtarg1) and summary data
+-- reduction quality bit (drp3qual)
+-- A basic SELECT-FROM-WHERE query.
+
+SELECT TOP 2000 plateifu, -- Get the unique object ID,
+mangaid, objra, objdec, mngtarg1, drp3qual -- and other quantities
+FROM mangadrpall -- From the drpall catalog
+WHERE
+mngtarg1 != 0 or mngtarg3 != 0 -- Require that either mngtarg1 is nonzero
+-- (galaxy in the primary, secondary, or color-enhanced sample) or that
+-- mngtarg3 is nonzero (galaxy is an ancillary program target)</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                MaNGA Data Cubes of Good Quality
+                <div class="sample-query-text d-none">-- Find all MaNGA data cubes of galaxies in the main
+-- or ancillary target sample that are of good reduction quality
+-- Use the largest 127-fiber bundles, have NSA redshift >-- and have NSA elliptical petrosian stellar mass > 10^10 Msun.
+
+SELECT TOP 2000 plateifu, -- Get the unique object ID,
+mangaid, objra, objdec, mngtarg1, drp3qual -- and other quantities
+FROM mangadrpall -- From the drpall catalog
+WHERE
+((mngtarg1 != 0 or mngtarg3 != 0)
+and (drp3qual < 10000)
+and (ifudesignsize = 127)
+and (nsa_z > 0.03)
+and (nsa_elpetro_mass >1e10))</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                MaNGA Data Cubes of Primary Sample
+                <div class="sample-query-text d-none">-- Find all MaNGA data cubes of galaxies in the
+-- Primary+ (Primary v1_2_0 and color enhanced v1_2_0) sample
+-- that are of good reduction quality.
+
+SELECT TOP 2000 plateifu,    -- Get the unique object ID,
+mangaid, objra, objdec, mngtarg1, drp3qual -- and other quantities
+FROM mangadrpall -- From the drpall catalog
+WHERE
+(((mngtarg1 & (power(2,10)+power(2,12))) != 0) -- Either bit 10 or 12 of mngtarg1
+and ((drp3qual & power(2,30)) = 0)) -- Not bit 30 of drp3qual</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                MaNGA Targets
+                <div class="sample-query-text d-none">-- Find all MaNGA targets in the Primary sample allocated to a tile
+-- Return the unique identifier (mangaID), the tile they were allocated
+-- to (manga_tileid) and the size of the IFU they were allocated
+-- (ifudesignsize)
+
+SELECT mangaID,manga_tileid,ifudesignsize
+FROM mangatarget
+WHERE (manga_target1 & (power(2,10)) != 0) AND manga_tileid > 0 AND IFUDESIGNSIZE > 0
+-- Find all of the MaNGA data cubes that were in the Primary+ sample
+--- match to the target catalog and return the minimum and maximum
+-- redshift each target could have been observed over (ezmin, ezmax).
+-- These can be used to calculate Vmax weights.
+
+/* ( To run second query, click 'Load Query', delete first query, uncomment this one and press Submit)
+SELECT m.plateifu,t.mangaID,t.ezmin,t.ezmax,m.mngtarg1
+FROM mangatarget as t, mangadrpall as m
+WHERE t.mangaID = m.mangaID AND ((mngtarg1 & (power(2,10)+power(2,12)))
+!= 0)
+ORDER BY m.plateifu
+*/</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                MaNGA DAP Galaxies
+                <div class="sample-query-text d-none">-- An example of using the MaNGA Data Analysis Pipeline (DAP)
+-- Find all galaxies with a star-formation rate within one effective radii >-- solar masses per year.
+
+SELECT
+TOP 100 mangaid, objra, objdec, daptype, z, sfr_1re
+FROM mangaDAPall
+WHERE sfr_1re > 5 and daptype = 'HYB10-GAU-MILESHC'</div>
+            </a>
+        </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------------------------------------------------------- -->
+    <div class="card mt-1">
+        <div id="mastar" class="card-header collapsed" data-toggle="collapse" href="#mastar-body" aria-expanded="false" aria-controls="mastar-body">
+            MaStar
+        </div>
+        <div id="mastar-body" class="card-body collapse bg-purple p-2" data-parent=#mastar>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                MaStar Selecting G-stars
+                <div class="sample-query-text d-none">-- Selecting G-stars from Mastar_Goodstars
+-- This query returns the parameters for the first 50 G-stars in the mastar_goodstars table.
+-- G-stars are selected using a temperature criterion.
+
+SELECT
+TOP 100 mangaid, input_teff, input_logg, input_fe_h, input_alpha_m
+FROM MaStar_goodstars
+WHERE input_teff BETWEEN 5000 AND 6000</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                MaStar Stars near cluster center
+                <div class="sample-query-text d-none">-- Selecting stars near cluster center
+-- This query returns the coordinates and parameters for stars within 0.5 degrees of
+-- the open cluster M67 (central coordinates 132.83, 11.82) in the Mastar_ggodstars
+-- the mastar_goodstars table that have been observed more than once (nvisits).
+
+SELECT
+TOP 100 mangaid, nvisits, objra, objdec, input_teff, input_teff, input_logg,
+input_fe_h, input_alpha_m
+FROM MaStar_goodstars
+WHERE
+POWER(objra - 132.83, 2) + POWER(objdec - 11.82, 2) < POWER(0.5, 2)
+AND nvisits ≥ 2</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                MaStar High-velocity stars
+                <div class="sample-query-text d-none">-- High Velocity Stars in mastar_goodvisits
+-- This query returns the gri magnitudes, radial velocities and uncertainties,
+-- for stars with velocities >-- measurements through the v_errcode selection criteria.
+
+SELECT
+TOP 100 mangaid, objra, objdec, psfmag_2, psfmag_3, psfmag_4, heliov, verr
+FROM MaStar_goodvisits
+WHERE heliov > 300
+AND v_errcode = 0</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                MaStar K-type dwarfs using colors
+                <div class="sample-query-text d-none">-- Search for K-type dwarfs using color criteria
+-- This query searches for K-type dwarfs using color cuts from SEGUE.
+-- Returns the gri magnitudes, plate ID and fiber bundle.
+-- Uses the mngtarg2 flag to select stars from the same photometry
+-- source catalog. Bit 8 is set for stars from the APASS system.
+
+SELECT
+TOP 100 mangaid, psfmag_2, psfmag_3, psfmag_4, plate, IFUDESIGN
+FROM MaStar_goodvisits
+WHERE
+(mngtarg2 & POWER(2, 8)) <> 0
+AND psfmag_3 BETWEEN 14.5 AND 19.0
+AND (psfmag_2 - psfmag_3) BETWEEN 0.55 AND 0.75</div>
+            </a>
+            <a href="#" class="list-group-item rounded my-1 p-2" onclick="loadQuery(this)">
+                MaStar Info from stars near cluster ctr
+                <div class="sample-query-text d-none">-- Retrieve parameters and observation information for stars near cluster center
+-- This query joins the mastar_goodstars and mastar_goodvisits tables
+-- to retrieve the parameters, plate ID, fiber bundle, and
+-- spectral quality flags for stars within 0.5 degrees
+-- of the open cluster M67 (central coordinates 132.833, 11.82)
+-- that have been observed more than once (nvisits).
+
+SELECT
+s.mangaid, s.input_teff, s.input_teff, s.input_logg,
+s.input_fe_h, s.input_alpha_m, v.plate, v.ifudesign, v.mjdqual
+FROM mastar_goodstars AS s
+JOIN mastar_goodvisits AS v ON s.mangaid = v.mangaid
+WHERE
+POWER(s.objra - 132.83, 2) + POWER(s.objdec - 11.82, 2) < POWER(0.5, 2)
+AND s.nvisits ≥ 2</div>
+            </a>
+        </div>
+    </div>
+</div>
